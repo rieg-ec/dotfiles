@@ -16,10 +16,13 @@
 ### navigation:
 
 - /<text> ~ highlight <text>
+- :noh ~ reset highlighed text
 - n-N ~ navigate highlighted text
 - G ~ go bottom
 - gg ~ go top
 - { ~ navigate blocks of text
+- gf ~ go to filepath on new buffer
+- <C-o> go to previous buffer
 
 ### rollback changes:
 
@@ -57,11 +60,17 @@
 - :PlugDiff      ~ Examine changes from the previous update and the pending changes
 
 ### Tab management:
-- :tab <tabname> ~ create new tab inside nvim
-- gt ~ next tab
+- gt ~ next tab (normal mode)
 - gT ~ previous tab
-- <Ctrl-PgUp/PgDown> ~ next/previous tab
+- <TAB> ~ next tab (normal mode)
+- <S-TAB> ~ previous tab (normal mode)
+
+- :tab <tabname> ~ create new tab inside nvim
 - :tab split ~ duplicate current tab
+- :split ~ create vertical split
+- :hsplit ~ create horizontal split
+- <C-h/j/k/l> ~ switch tabs
+- <A-left/right> ~ resize tabs horizontally
 
 
 
@@ -76,7 +85,7 @@
 - <C-f> ~ find current file on nerdtree
 
 ### TODO:
-
+- auto source config files
 - setup:
 
 plugins:

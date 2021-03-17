@@ -40,6 +40,16 @@ inoremap <C-Up> <Esc>:m .-2<CR>gi
 nnoremap <TAB> :tabn<CR>
 nnoremap <S-TAB> :tabp<CR>
 
+" move through tab splits
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" resize tab splits
+nnoremap <A-Left> <C-w><
+nnoremap <A-Right> <C-w>>
+
 " indent blocks without loosing selection
 vnoremap < <gv
 vnoremap > >gv
