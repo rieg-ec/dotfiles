@@ -19,7 +19,7 @@
 - n-N ~ navigate highlighted text
 - G ~ go bottom
 - gg ~ go top
-- { ~  
+- { ~ navigate blocks of text
 
 ### rollback changes:
 
