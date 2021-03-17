@@ -36,6 +36,19 @@ noremap     <F8>                  :wq<CR> " save with f8
 inoremap <C-Down> <Esc>:m .+1<CR>gi
 inoremap <C-Up> <Esc>:m .-2<CR>gi
 
-" NERDTree
+" switch tabs
+nnoremap <TAB> :tabn<CR>
+nnoremap <S-TAB> :tabp<CR>
+
+" indent blocks without loosing selection
+vnoremap < <gv
+vnoremap > >gv
+
+" move left a line of text in insert mode
+inoremap <S-TAB> <C-D>
+vnoremap <TAB> >gv
+vnoremap <S-TAB> <gv
+
+"NERDTree
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
