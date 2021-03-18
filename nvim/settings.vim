@@ -12,9 +12,13 @@ set number                  " add line numbers
 set wildmode=longest,list   " get bash-like tab completions
 set nowrap                  " long lines as just one line
 set smarttab                " detect if i have 2-4 spaces as tab
-
+set cursorline              " highlight complete line under cursor
+set completeopt=menuone,noselect " required for compe
 filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
+
+autocmd WinEnter * setlocal cursorline " not working
+autocmd WinLeave * setlocal nocursorline
 
 function! s:DiffWithSaved()
   let filetype=&ft

@@ -56,11 +56,26 @@ nnoremap <A-Right> <C-w>>
 
 " indent blocks without loosing selection
 vnoremap < <gv
+
 vnoremap > >gv
 
 " search/replace functionality:
 " highlight the visual selection after pressing enter.
-xnoremap <silent> <cr> "*y:silent! let searchTerm = '\V'.substitute(escape(@*, '\/'), "\n", '\\n', "g") <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<cr>
+xnoremap <silent> <cr> "*y:silent! let searchTerm = '\V'.substitute(escape(@*, '\/'), "\n", '\\n', "g") <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<CR>
+" highlight text under cursor pressing enter
+nnoremap <silent> <cr> :let searchTerm = '\v<'.expand("<cword>").'>' <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<cr>
+
+" disable highlight when entering insert mode
+nnoremap i :noh<CR>i
+nnoremap a :noh<CR>a
+
+nnoremap <Enter> <Enter>
+
+vnoremap <Enter> <Enter>
+xnoremap <Enter> <Enter>
+
+" prompt to replace highlighted text one by one with y/n
+nnoremap <Leader>f :%s///gc<Left><Left><Left><Left>
 
 " move left a line of text in insert mode
 inoremap <S-TAB> <C-D>

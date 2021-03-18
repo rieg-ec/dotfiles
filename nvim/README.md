@@ -11,7 +11,8 @@
 
 ### copy/paste:
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
-- p ~ paste (from system clipboard, visual mode)
+- p ~ paste (from system clipboard, visual/normal mode)
+- <C-o>p ~ paste (from system clipboard, insert mode)
 
 ### navigation:
 
@@ -25,6 +26,12 @@
 - <C-o> go to previous buffer
 
 - * ~ highlight word under cursor
+- <Enter> highlight word under cursor (normal mode)
+
+- :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
+- :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
+- \f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
+- <C-r> ~ enter text and replace with y/n one by one 
 
 - :DiffSaved ~ see changes from last saved
 
@@ -45,6 +52,7 @@
 
 ### text & formatting:
 - ~  ~ swap case
+- r + <char> ~ swap char under cursor by <char> (normal)
 
 ### Modes:
 
@@ -74,6 +82,8 @@
 - <C-h/j/k/l> ~ switch tabs
 - <A-left/right> ~ resize tabs horizontally
 
+### Codi:
+- :Codi ~ start codi
 
 ### plugin manager:
 - vim-plug
@@ -89,16 +99,28 @@
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
 
+### lsp-nvim
+- LspInstall ~ install language server for current filetype
+    - install plugins
+    - install language servers (lsp github instructions)
+
+### command history:
+
+- q: ~ show commmmand history
+
+
 ### TODO:
+- setup lsp and figure out wtf with lua support
 - auto source config files
+- setup vim-plug installation in install.sh
+- make codi launch automatically
 
 plugins:
-- ranger (search for files and preview them)
-- colorizer
-- fz?
-- file icons
 - autocompletion plugin (lsp native)
-- highlight/replace text
+- ranger (search for files and preview them)?
+- colorizer
+- fzf?
+- file icons (nerd fonts)
 - move blocks of selected code (and auto indent)
 
 
