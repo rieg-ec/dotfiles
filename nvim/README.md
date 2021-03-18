@@ -24,6 +24,10 @@
 - gf ~ go to filepath on new buffer
 - <C-o> go to previous buffer
 
+- * ~ highlight word under cursor
+
+- :DiffSaved ~ see changes from last saved
+
 ### rollback changes:
 
 - u ~ revert in normal mode
@@ -35,13 +39,11 @@
 - d ~ delete text and copy deleted text to so clipboard
 - dd ~ delete line
 - x ~ delete text
+- <C-v> + <S-arrow> ~ select text vertically
 
 -  < & > ~ shift left/right
 
 ### text & formatting:
-
-- Gu ~ MAKE UPPERCASE
-- GU ~ MAKE LOWERCASE
 - ~  ~ swap case
 
 ### Modes:
@@ -73,7 +75,6 @@
 - <A-left/right> ~ resize tabs horizontally
 
 
-
 ### plugin manager:
 - vim-plug
 
@@ -84,21 +85,20 @@
 - <C-t> ~ toggle nerdtree
 - <C-f> ~ find current file on nerdtree
 
+## vim-commentary:
+- gc ~ comment line/block (visual mode)
+- gcc ~ comment line (normal mode)
+
 ### TODO:
 - auto source config files
-- setup:
 
 plugins:
-- vim-which-key
-- ranger
+- ranger (search for files and preview them)
 - colorizer
-
+- fz?
 - file icons
 - autocompletion plugin (lsp native)
-- fuzzy finder
-- font colors
 - highlight/replace text
 - move blocks of selected code (and auto indent)
-- vertical mouse creation
 
 

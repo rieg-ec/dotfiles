@@ -18,3 +18,10 @@ prefix + : ~ enter commands
 2. hold shift and select with mouse
 3. copy
 4. paste
+
+## Plugins
+
+### vim-resurrection:
+
+- prefix + ctrl-s ~ save session
+- prefix + ctrl -r ~ restore saved session

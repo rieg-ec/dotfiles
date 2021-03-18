@@ -32,6 +32,10 @@ vmap        <End>                 <Esc><End>
 
 noremap     <F8>                  :wq<CR> " save with f8
 
+" exchange cut for deletion
+nnoremap d "_d
+vnoremap d "_d
+
 " switch lines
 inoremap <C-Down> <Esc>:m .+1<CR>gi
 inoremap <C-Up> <Esc>:m .-2<CR>gi
@@ -53,6 +57,10 @@ nnoremap <A-Right> <C-w>>
 " indent blocks without loosing selection
 vnoremap < <gv
 vnoremap > >gv
+
+" search/replace functionality:
+" highlight the visual selection after pressing enter.
+xnoremap <silent> <cr> "*y:silent! let searchTerm = '\V'.substitute(escape(@*, '\/'), "\n", '\\n', "g") <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<cr>
 
 " move left a line of text in insert mode
 inoremap <S-TAB> <C-D>
