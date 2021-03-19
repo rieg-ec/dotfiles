@@ -77,6 +77,12 @@ xnoremap <Enter> <Enter>
 " prompt to replace highlighted text one by one with y/n
 nnoremap <Leader>f :%s///gc<Left><Left><Left><Left>
 
+" LSP mappings:
+nnoremap <Leader>gr :LspReference<CR>
+nnoremap <Leader>gd :LspDefinition<CR>
+nnoremap <Leader>gdc :LspDeclaration<CR>
+nnoremap <Leader>h :LspHover<CR>
+
 " move left a line of text in insert mode
 inoremap <S-TAB> <C-D>
 vnoremap <TAB> >gv

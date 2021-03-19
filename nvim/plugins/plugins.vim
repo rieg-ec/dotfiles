@@ -15,11 +15,12 @@ call plug#begin('~/.config/nvim/plugged')
     " Plug 'vwxyutarooo/nerdtree-devicons-syntax'
     Plug 'tpope/vim-commentary'    " comment lines and blocks of text
     " Plug 'lifecrisis/vim-difforig'
+
     " real time debugging with codi
-    Plug 'metakirby5/codi.vim'
-    " auto completion with compe
+    Plug 'metakirby5/codi.vim' 
+    " cling in cpp
+    
     " Plug 'neovim/nvim-lspconfig' requires lua support
-    " LSP
     Plug 'prabirshrestha/vim-lsp'
     Plug 'mattn/vim-lsp-settings'
 

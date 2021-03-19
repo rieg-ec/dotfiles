@@ -99,10 +99,16 @@
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
 
-### lsp-nvim
+### lsp-nvim (all in normal mode)
 - LspInstall ~ install language server for current filetype
-    - install plugins
-    - install language servers (lsp github instructions)
+- LspDocumentDiagnostics ~ diagnostics
+- LspDocumentFormat ~ format
+- <Leader>h ~ hover information
+- <Leader><gr/gd/gdc> :Lsp<Reference/Definition/Declaration>
+
+Needed at reinstallation:
+- install plugins
+- install language servers (lsp github instructions)
 
 ### command history:
 
@@ -116,10 +122,8 @@
 - make codi launch automatically
 
 plugins:
-- autocompletion plugin (lsp native)
 - ranger (search for files and preview them)?
 - colorizer
-- fzf?
 - file icons (nerd fonts)
 - move blocks of selected code (and auto indent)
 
