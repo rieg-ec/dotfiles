@@ -18,6 +18,7 @@ filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
 
 let mapleader = ";"
+let lsp_diagnostics_enabled = 0
 
 autocmd WinEnter * setlocal cursorline " not working
 autocmd WinLeave * setlocal nocursorline

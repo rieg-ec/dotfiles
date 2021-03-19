@@ -30,7 +30,7 @@
 
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
 - :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
-- \f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
+- <Leader>f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
 - <C-r> ~ enter text and replace with y/n one by one 
 
 - :DiffSaved ~ see changes from last saved
@@ -82,13 +82,18 @@
 - <C-h/j/k/l> ~ switch tabs
 - <A-left/right> ~ resize tabs horizontally
 
-### Codi:
-- :Codi ~ start codi
+### shortcuts and macros management
+- @: ~ repeat last ex command
+- @@ ~ repeat last macro
 
 ### plugin manager:
 - vim-plug
 
 # plugins shortcuts:
+
+
+### Codi:
+- :Codi ~ start codi
 
 ## NERDTree:
 - q ~ close nerdtree
@@ -103,7 +108,7 @@
 - LspInstall ~ install language server for current filetype
 - LspDocumentDiagnostics ~ diagnostics
 - LspDocumentFormat ~ format
-- <Leader>h ~ hover information
+- <Leader>h ~ hover information (press again to jump to definition window)
 - <Leader><gr/gd/gdc> :Lsp<Reference/Definition/Declaration>
 
 Needed at reinstallation:
@@ -117,9 +122,10 @@ Needed at reinstallation:
 
 ### TODO:
 - setup lsp and figure out wtf with lua support
-- auto source config files
+- setup autocompletion for used languages
+- find a way to toggle diagnostics
 - setup vim-plug installation in install.sh
-- make codi launch automatically
+- auto source config files
 
 plugins:
 - ranger (search for files and preview them)?

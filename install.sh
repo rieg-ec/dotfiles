@@ -1,6 +1,11 @@
 
 
-
+# nvim:
+# install nvim
+# install vim-plug
+# install nerdtree icons (pending: install nerdtree plugin)
+# 
+# install plugins
 
 # tmux:
 
