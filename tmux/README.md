@@ -9,13 +9,13 @@
 - <prefix> + " ~ crear tab en la misma columna
 - <prefix> + arrow keys ~ navegar tabs
 - <prefix> + z ~ zoom (poner tab en terminal entera)
-- exit ~ close pane/window
+- exit ~ close window
 - <prefix> + ALT + arrow ~ resize pan
 - <prefix> + : ~ enter command mode
 
 **copy/paste**:
 
-- <perfix> + z ~ zoom pane
+- <prefix> + z ~ zoom pane
 - <prefix> + [ ~ copy mode
 - hold shift and select with mouse (copy mode)
 
