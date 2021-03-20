@@ -5,5 +5,5 @@ source $HOME/.config/nvim/themes/onedark.vim
 " LSP
 source $HOME/.config/nvim/lsp/lsp-config.vim
 " compe
-source $HOME/.config/nvim/plugins/compe-config.vim
- 
+" luafile $HOME/.config/nvim/lua/plugins/compe-config.lua 
+

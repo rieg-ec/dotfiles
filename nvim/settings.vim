@@ -23,6 +23,14 @@ let lsp_diagnostics_enabled = 0
 autocmd WinEnter * setlocal cursorline " not working
 autocmd WinLeave * setlocal nocursorline
 
+" close completion window after completion is done (asyncomplete)
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+" enable preview window 
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menuone,noinsert,noselect,preview
+
+let g:airline#extensions#tabline#enabled = 1 " airline tabs
+
 function! s:DiffWithSaved()
   let filetype=&ft
   diffthis

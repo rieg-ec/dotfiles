@@ -30,8 +30,6 @@ vmap        <PageDown>            <Esc><PageDown>
 vmap        <Home>                <Esc><Home>
 vmap        <End>                 <Esc><End>
 
-noremap     <F8>                  :wq<CR> " save with f8
-
 " exchange cut for deletion
 nnoremap d "_d
 vnoremap d "_d
@@ -40,9 +38,14 @@ vnoremap d "_d
 inoremap <C-Down> <Esc>:m .+1<CR>gi
 inoremap <C-Up> <Esc>:m .-2<CR>gi
 
-" switch tabs
-nnoremap <TAB> :tabn<CR>
-nnoremap <S-TAB> :tabp<CR>
+" move through buffers
+nnoremap <tab> :bn<CR>
+nnoremap <s-tab> :bp<CR>
+
+" tab navigation
+nnoremap gt gt
+nnoremap gt :tabNext<CR>
+nnoremap gT :tabprevious<CR>
 
 " move through tab splits
 nnoremap <C-h> <C-w>h
@@ -69,22 +72,31 @@ nnoremap <silent> <cr> :let searchTerm = '\v<'.expand("<cword>").'>' <bar> let @
 nnoremap i :noh<CR>i
 nnoremap a :noh<CR>a
 
-nnoremap <Enter> <Enter>
-
-vnoremap <Enter> <Enter>
-xnoremap <Enter> <Enter>
+" ???????????
+" nnoremap <Enter> <Enter>
+" xnoremap <Enter> <Enter>
 
 " prompt to replace highlighted text one by one with y/n
 nnoremap <Leader>f :%s///gc<Left><Left><Left><Left>
 
 " LSP mappings:
-nnoremap <Leader>gr :LspReference<CR>
-nnoremap <Leader>gd :LspDefinition<CR>
-nnoremap <Leader>gdc :LspDeclaration<CR>
-nnoremap <Leader>h :LspHover<CR>
+" nnoremap <Leader>gr :LspReference<CR>
+" nnoremap <Leader>gd :LspDefinition<CR>
+" nnoremap <Leader>gdc :LspDeclaration<CR>
+" nnoremap <Leader>h :LspHover<CR>
+" nnoremap <Leader>gf gf<CR>
+" nnoremap <Leader>gt :LspTypeDefinition<CR>
+
+" TODO: assign gf to something more common
+nnoremap gf :%s<Left> 
+
+" asyncomplete tab completion
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 
 " move left a line of text in insert mode
 inoremap <S-TAB> <C-D>
+" move tab/untab blocks of selected text
 vnoremap <TAB> >gv
 vnoremap <S-TAB> <gv
 

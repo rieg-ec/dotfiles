@@ -1,27 +1,33 @@
 ## useful tmux shortcuts
 
-prefix: Ctrl-b
-prefix + : ~ enter commands
+- <prefix>: Ctrl-b
+- <prefix> + : ~ enter commands
 
-- prefix + PgUp: navegar en la terminal desde una pagina mas arriba
-- prefix + [: navegar en la terminal
-- prefix + %: crear tab en la misma fila
-- prefix + ": crear tab en la misma columna
-- prefix + arrow key: navegar tabs
-- prefix + z: zoom (poner tab en terminal entera)
-- exit : close pane/window
-- Prefix + ALT+arrow: resize pane
+- <prefix> + PgUp ~ navegar en la terminal desde una pagina mas arriba
+- <prefix> + [ ~ navegar en la terminal
+- <prefix> + % ~ crear tab en la misma fila
+- <prefix> + " ~ crear tab en la misma columna
+- <prefix> + arrow keys ~ navegar tabs
+- <prefix> + z ~ zoom (poner tab en terminal entera)
+- exit ~ close pane/window
+- <prefix> + ALT + arrow ~ resize pan
+- <prefix> + : ~ enter command mode
 
 **copy/paste**:
 
-1. Ctrl-z ~ zoom pane
-2. hold shift and select with mouse
-3. copy
-4. paste
+- <perfix> + z ~ zoom pane
+- <prefix> + [ ~ copy mode
+- hold shift and select with mouse (copy mode)
+
+
+### tabs/panes/windows:
+- <prefix> + s ~ show all sessions
+- <prefix> + {/} ~ move window left/right
+- <prefix> + ! ~ convert pane into separate window (not that useful if i can zoom tho)
 
 ## Plugins
 
 ### vim-resurrection:
 
-- prefix + ctrl-s ~ save session
-- prefix + ctrl -r ~ restore saved session
+- <prefix> + Ctrl-s ~ save session
+- <prefix> + Ctrl-r ~ restore saved session

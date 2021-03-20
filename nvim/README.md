@@ -13,6 +13,7 @@
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
 - p ~ paste (from system clipboard, visual/normal mode)
 - <C-o>p ~ paste (from system clipboard, insert mode)
+- <Ctrl-R> + \+ ~ paste in command mode
 
 ### navigation:
 
@@ -22,8 +23,8 @@
 - G ~ go bottom
 - gg ~ go top
 - { ~ navigate blocks of text
-- gf ~ go to filepath on new buffer
-- <C-o> go to previous buffer
+- <Leader>gf ~ go to file under cursor
+- <C-6> ~ switch between last file and current file
 
 - * ~ highlight word under cursor
 - <Enter> highlight word under cursor (normal mode)
@@ -75,12 +76,18 @@
 - <TAB> ~ next tab (normal mode)
 - <S-TAB> ~ previous tab (normal mode)
 
-- :tab <tabname> ~ create new tab inside nvim
+- :tab <file> ~ create new tab inside nvim
 - :tab split ~ duplicate current tab
-- :split ~ create vertical split
+- :vsplit ~ create vertical split
 - :hsplit ~ create horizontal split
-- <C-h/j/k/l> ~ switch tabs
+- <C-h/j/k/l> ~ move to other windows
 - <A-left/right> ~ resize tabs horizontally
+
+
+### buffers:
+- :bw ~ buffer wipeout
+- <Tab> ~ go to next buffer
+- <S-Tab> ~ go to previous buffer
 
 ### shortcuts and macros management
 - @: ~ repeat last ex command
@@ -124,6 +131,7 @@ Needed at reinstallation:
 - setup lsp and figure out wtf with lua support
 - setup autocompletion for used languages
 - find a way to toggle diagnostics
+- fold/unfold easily (requires integration to lsp i guess)
 - setup vim-plug installation in install.sh
 - auto source config files
 
