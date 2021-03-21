@@ -1,3 +1,28 @@
+
+# Setup:
+
+## Clipboard support
+---
+
+- Ubuntu:
+    ```
+    sudo apt install xsel
+    ```
+## vim-plug
+
+- linux:
+    ```
+    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    ```
+
+### Install plugins
+
+- within vim:
+    ```
+    :PlugInstall
+    ```
+
 # Useful nvim shortcuts:
 
 ### save/exit files:
@@ -32,6 +57,7 @@
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
 - :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
 - <Leader>f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
+- \`\` ~ go back to last cursor position after done with replacing
 - <C-r> ~ enter text and replace with y/n one by one 
 
 - :DiffSaved ~ see changes from last saved
@@ -51,9 +77,13 @@
 
 -  < & > ~ shift left/right
 
+- cc ~ change line
+- r ~ replace word under cursor
+
 ### text & formatting:
 - ~  ~ swap case
 - r + <char> ~ swap char under cursor by <char> (normal)
+- :Format ~ format current buffer
 
 ### Modes:
 
@@ -88,6 +118,9 @@
 - :bw ~ buffer wipeout
 - <Tab> ~ go to next buffer
 - <S-Tab> ~ go to previous buffer
+- to change buffer without saving current one, :set hidden
+
+- <Leader>z ~ zoom current split
 
 ### shortcuts and macros management
 - @: ~ repeat last ex command
@@ -97,7 +130,6 @@
 - vim-plug
 
 # plugins shortcuts:
-
 
 ### Codi:
 - :Codi ~ start codi
@@ -111,16 +143,18 @@
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
 
-### lsp-nvim (all in normal mode)
-- LspInstall ~ install language server for current filetype
-- LspDocumentDiagnostics ~ diagnostics
-- LspDocumentFormat ~ format
-- <Leader>h ~ hover information (press again to jump to definition window)
-- <Leader><gr/gd/gdc> :Lsp<Reference/Definition/Declaration>
+### CoC:
+- <Leader>gd ~ jump to definition
+- <Leader>gr ~ get reference
+- <Leader>h ~ show docs?
+- <Leader>gdc ~ jump to declaration
+- <Leader>gi ~ jump to implementation
+- <Leader>gD ~ jump to type definition
+- <Leader>r ~ rename
+- :Format ~ format entire file
 
-Needed at reinstallation:
-- install plugins
-- install language servers (lsp github instructions)
+### coc-snippets:
+- <C-e> ~ expand snippet or jump to next placeholder
 
 ### command history:
 
@@ -128,17 +162,13 @@ Needed at reinstallation:
 
 
 ### TODO:
-- setup lsp and figure out wtf with lua support
-- setup autocompletion for used languages
-- find a way to toggle diagnostics
 - fold/unfold easily (requires integration to lsp i guess)
-- setup vim-plug installation in install.sh
+- setup vim-plug installation in install.sh + coc extensions
 - auto source config files
+- make backspace not move line after deleting last character
 
 plugins:
 - ranger (search for files and preview them)?
 - colorizer
 - file icons (nerd fonts)
 - move blocks of selected code (and auto indent)
-
-

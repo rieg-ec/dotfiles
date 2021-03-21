@@ -1,34 +1,26 @@
-" LSP config (the mappings used in the default file don't quite work right)
-" nnoremap <Leader> gd <cmd>lua vim.lsp.buf.definition()<CR>
-" nnoremap <Leader> gD <cmd>lua vim.lsp.buf.declaration()<CR>
-" nnoremap <Leader> gr <cmd>lua vim.lsp.buf.references()<CR>
-" nnoremap <Leader> gi <cmd>lua vim.lsp.buf.implementation()<CR>
-" nnoremap <Leader> h <cmd>lua vim.lsp.buf.hover()<CR>
-" nnoremap <Leader> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-" auto-format
-autocmd BufWritePre *.js lua vim.lsp.buf.formatting_sync(nil, 100)
-autocmd BufWritePre *.jsx lua vim.lsp.buf.formatting_sync(nil, 100)
-autocmd BufWritePre *.py lua vim.lsp.buf.formatting_sync(nil, 100)
-
-
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <pslug>(lsp-workspace-symbol-search)
-   nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> <leader>rn <plug>(lsp-rename)
-    nmap <buffer> K <plug>(lsp-hover)
+    nmap <Leader>gd <plug>(lsp-definition)
+    nmap <Leader>gi <plug>(lsp-implementation)
+    nmap <Leader>gr <plug>(lsp-references)
+    nmap <Leader>h <plug>(lsp-hover)
+    nmap <Leader>gD <plug>(lsp-declaration)
+    nmap <Leader>gs <plug>(lsp-document-symbol-search)
+    nmap <Leader>gS <plug>(lsp-workspace-symbol-search)
+    nmap <Leader>gt <plug>(lsp-type-definition)
+    nmap <leader>rn <plug>(lsp-rename)
 
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.rs,*.go,*py,*.js call execute('LspDocumentFormatSync')
     
     " refer to doc to add more commands
 endfunction
+
+set foldmethod=expr
+  \ foldexpr=lsp#ui#vim#folding#foldexpr()
+  \ foldtext=lsp#ui#vim#folding#foldtext()
 
 augroup lsp_install
     au!

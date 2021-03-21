@@ -18,23 +18,19 @@ call plug#begin('~/.config/nvim/plugged')
 
     " real time debugging with codi
     Plug 'metakirby5/codi.vim'     " TODO cling in cpp
-    
-    " Plug 'neovim/nvim-lspconfig' 
- 
-    Plug 'prabirshrestha/vim-lsp'
-    Plug 'mattn/vim-lsp-settings'
 
-    " auto completion with compe
-    Plug 'hrsh7th/nvim-compe'
-
-    " async autocompletion
-    " Plug 'prabirshrestha/asyncomplete.vim'
-    " Plug 'prabirshrestha/asyncomplete-lsp.vim'
-    
-    " bottom line info prettier
+   " bottom line info prettier
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
-    " see buffers in bottom line
-    Plug 'bling/vim-bufferline'
+    
+    " CoC completion
+    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+    " zoom in and out of windows
+    Plug 'dhruvasagar/vim-zoom'
+
+    " snippets with coc
+    Plug 'honza/vim-snippets'
+
 
 call plug#end()
