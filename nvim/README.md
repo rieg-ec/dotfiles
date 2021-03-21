@@ -32,27 +32,29 @@
 - F8 ~ write and save
 - :w ~ save
 - :q ~ quit
-~ :wqa ~ write quit all
+- :wqa ~ write quit all
+
+- - :DiffSaved ~ see changes from last saved
 
 ### copy/paste:
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
 - p ~ paste (from system clipboard, visual/normal mode)
 - <C-o>p ~ paste (from system clipboard, insert mode)
-- <Ctrl-R> + \+ ~ paste in command mode
+- <C-v>v ~ paste (from system clipboard, insert mode) 
+- <Ctrl-R> + \+ ~ paste in ex mode
 
 ### navigation:
-
 - /<text> ~ highlight <text>
 - :noh ~ reset highlighed text
-- n-N ~ navigate highlighted text
-- G ~ go bottom
-- gg ~ go top
+- n ~ jump next highlight
+- N ~ jump next highlight
+- g ~ go bottom of file
+- gg ~ go top of file
 - { ~ navigate blocks of text
 - <Leader>gf ~ go to file under cursor
 - <C-6> ~ switch between last file and current file
 
 - * ~ highlight word under cursor
-- <Enter> highlight word under cursor (normal mode)
 
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
 - :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
@@ -60,12 +62,10 @@
 - \`\` ~ go back to last cursor position after done with replacing
 - <C-r> ~ enter text and replace with y/n one by one 
 
-- :DiffSaved ~ see changes from last saved
-
 ### rollback changes:
 
 - u ~ revert in normal mode
-- <C+r> revert the change
+- <C+r> revert the revert
 
 ### selection:
 
