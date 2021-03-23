@@ -32,5 +32,4 @@ call plug#begin('~/.config/nvim/plugged')
     " snippets with coc
     Plug 'honza/vim-snippets'
 
-
 call plug#end()

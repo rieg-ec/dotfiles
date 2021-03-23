@@ -22,6 +22,8 @@
     ```
     :PlugInstall
     ```
+- CoC will install all extensions not already installed upon opening vim, but coc-clangd needs clangd binaries: `:CocCommand clangd.install`
+
 
 # Useful nvim shortcuts:
 
@@ -33,6 +35,7 @@
 - :w ~ save
 - :q ~ quit
 - :wqa ~ write quit all
+
 
 - - :DiffSaved ~ see changes from last saved
 
@@ -138,6 +141,7 @@
 - q ~ close nerdtree
 - <C-t> ~ toggle nerdtree
 - <C-f> ~ find current file on nerdtree
+- m ~ display action menu for current node
 
 ## vim-commentary:
 - gc ~ comment line/block (visual mode)

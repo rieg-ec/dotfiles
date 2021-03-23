@@ -20,6 +20,8 @@ syntax on                   " syntax highlighting
 let mapleader = ";"
 let lsp_diagnostics_enabled = 1
 
+let NERDTreeShowHidden = 1 " for dotfiles
+
 autocmd WinEnter * setlocal cursorline
 autocmd WinLeave * setlocal nocursorline
 

@@ -30,6 +30,7 @@ vmap        <PageDown>            <Esc><PageDown>
 vmap        <Home>                <Esc><Home>
 vmap        <End>                 <Esc><End>
 
+
 " exchange cut for deletion
 nnoremap d "_d
 vnoremap d "_d
@@ -99,8 +100,12 @@ nmap <Leader>h :call <SID>show_documentation()<CR>
 """"""""""""""""""""""""""""""""""""""
 
 " CoC snippets
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-e> <Plug>(coc-snippets-expand-jump)
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" shift-tab un-tabs text if no pumvisible
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-D>" 
+inoremap <silent><expr> <C-space> coc#refresh()
+imap <C-e> <Plug>(coc-snippets-expand)
+
 " Use <C-j> for select text for visual placeholder of snippet.
 vmap <C-j> <Plug>(coc-snippets-select)
 " Use <C-j> for jump to next placeholder, it's default of coc.nvim
@@ -131,12 +136,6 @@ nnoremap <Leader>gf gf<CR>
 
 " TODO: assign gf to something more common
 nnoremap gf :%s<Left> 
-
-"tab completion (nvim-compe)
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-D>"
-
-inoremap <silent><expr> <C-space> coc#refresh()
 
 " move tab/untab blocks of selected text
 vnoremap <TAB> >gv
