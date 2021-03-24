@@ -75,11 +75,12 @@ nnoremap i :noh<CR>i
 nnoremap a :noh<CR>a
 
 " ???????????
-" nnoremap <Enter> <Enter>
-" xnoremap <Enter> <Enter>
+nnoremap <Enter> <Enter>
+xnoremap <Enter> <Enter>
 
 " highlight visual selection pressing enter
-xnoremap <silent> <cr> "*y:silent! let searchTerm = '\V'.substitute(escape(@*, '\/'), "\n", '\\n', "g") <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<CR>
+xnoremap <silent> <cr> "*y:silent! let searchTerm = '\V'.substitute(escape(@*, '\/'), "\n", '\\n', "g") <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<cr>
+nnoremap <silent> <cr> :let searchTerm = '\v<'.expand("<cword>").'>' <bar> let @/ = searchTerm <bar> echo '/'.@/ <bar> call histadd("search", searchTerm) <bar> set hls<cr>
 
 " prompt to replace highlighted text one by one with y/n
 nnoremap <Leader>f :%s///gc<Left><Left><Left><Left>
@@ -105,6 +106,8 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-D>" 
 inoremap <silent><expr> <C-space> coc#refresh()
 imap <C-e> <Plug>(coc-snippets-expand)
+" dont know why but this works with S and LS snippets
+" imap <C-e> <C-g>e 
 
 " Use <C-j> for select text for visual placeholder of snippet.
 vmap <C-j> <Plug>(coc-snippets-select)

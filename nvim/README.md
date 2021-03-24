@@ -158,7 +158,8 @@
 - :Format ~ format entire file
 
 ### coc-snippets:
-- <C-e> ~ expand snippet or jump to next placeholder
+- <C-e> ~ expand snippets from coc-snippets
+- <C-g>e ~ expand snippet or jump to next placeholder
 
 ### command history:
 
