@@ -16,7 +16,14 @@ set -o errexit    # exit when command fails
 #==============
 dotfiles_dir=~/dotfiles
 log_file=~/install_progress_log.txt
-USER=rieg
+USER=root
+
+apt-get -y install npm nodejs
+if type -p npm > /dev/null && type -p nodejs > /dev/null; then
+    echo "nodejs and npm Installed" >> $log_file
+else
+    echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
+fi
 
 # ====================== neovim config ======================
 apt install -y neovim # TODO: is installing from source better for lua support?
@@ -34,11 +41,7 @@ fi
 
 mkdir -p ~/.config
 
-ln -sf $dotfiles_dir/nvim/ ~/.config/nvim/
-
-file ~/.config/nvim
-cat ~/.config/nvim/init.vim
-exit 1
+ln -sf $dotfiles_dir/nvim ~/.config/nvim
 
 sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -49,14 +52,13 @@ else
     echo "plug-vim FAILED TO INSTALL!!"
 fi
 
-
-nvim -c ':PlugInstall' && nvim -c ':CocInstall' 
-
+# nvim -c ':PlugInstall' > /dev/null 2>&1 TODO
+# nvim -c ':CocInstall' > /dev/null 2>&1
 # ==========================================================
 
 
 # ====================== tmux config ======================
-apt-get -y install tmux
+apt install -y tmux
 
 if type -p tmux > /dev/null; then
     echo "tmux Installed" >> $log_file
@@ -68,6 +70,7 @@ rm -rf ~/.tmux > /dev/null 2>&1
 rm -rf ~/.tmux.conf > /dev/null 2>&1
 
 ln -sf $dotfiles_dir/tmux/.tmux.conf ~/.tmux.conf
+
 # =========================================================
 
 
@@ -76,17 +79,8 @@ rm -rf ~/.bashrc > /dev/null 2>&1
 ln -sf $dotfiles_dir/bash/.bashrc ~/.bashrc
 # =========================================================
 
-apt-get -y install npm
-if type -p npm > /dev/null; then
-    echo "npm Installed" >> $log_file
-else
-    echo "npm FAILED TO INSTALL!!!" >> $log_file
-fi
-
-
 #============= Docker & docker-compose =============#
-apt-get remove docker docker-engine docker.io containerd runc >> $log_file
-apt-get install \
+apt install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -98,8 +92,9 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/
 echo \
   "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-apt-get update
-apt-get install -y docker-ce docker-ce-cli containerd.io >> $log_file
+
+apt update
+apt install -y docker-ce docker-ce-cli containerd.io >> $log_file
 
 if type -p docker > /dev/null; then
     echo "docker Installed" >> $log_file
