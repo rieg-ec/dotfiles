@@ -25,6 +25,10 @@ else
     echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
 fi
 
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+exit 0
+
 # ====================== neovim config ======================
 apt install -y neovim # TODO: is installing from source better for lua support?
 apt install -y xsel # for neovim selection engine
@@ -52,8 +56,7 @@ else
     echo "plug-vim FAILED TO INSTALL!!"
 fi
 
-# nvim -c ':PlugInstall' > /dev/null 2>&1 TODO
-# nvim -c ':CocInstall' > /dev/null 2>&1
+# TODO: do i need to run PlugInstall or not?
 # ==========================================================
 
 
