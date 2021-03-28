@@ -35,6 +35,9 @@ vmap        <End>                 <Esc><End>
 nnoremap d "_d
 vnoremap d "_d
 
+nnoremap { } 
+nnoremap } {
+
 " paste in insert mode
 inoremap <C-v> <Left><C-o>p
 
@@ -106,8 +109,6 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-D>" 
 inoremap <silent><expr> <C-space> coc#refresh()
 imap <C-e> <Plug>(coc-snippets-expand)
-" dont know why but this works with S and LS snippets
-" imap <C-e> <C-g>e 
 
 " Use <C-j> for select text for visual placeholder of snippet.
 vmap <C-j> <Plug>(coc-snippets-select)
