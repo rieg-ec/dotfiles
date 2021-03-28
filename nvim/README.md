@@ -164,16 +164,3 @@
 ### command history:
 
 - q: ~ show commmmand history
-
-
-### TODO:
-- fold/unfold easily (requires integration to lsp i guess)
-- setup vim-plug installation in install.sh + coc extensions
-- auto source config files
-- make backspace not move line after deleting last character
-
-plugins:
-- ranger (search for files and preview them)?
-- colorizer
-- file icons (nerd fonts)
-- move blocks of selected code (and auto indent)
