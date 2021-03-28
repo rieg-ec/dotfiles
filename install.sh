@@ -1,29 +1,127 @@
-
-
-# nvim:
-# install nvim
-# install vim-plug
-# install nerdtree icons (pending: install nerdtree plugin)
-# 
-# install plugins
-
-# tmux:
-
-# install plugin manager:
-# git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-###### CoC extensions for neovim ######
 #!/usr/bin/bash
-
 set -o nounset    # error when referencing undefined variable
 set -o errexit    # exit when command fails
 
-# Install extensions
-mkdir -p ~/.config/coc/extensions
-cd ~/.config/coc/extensions
-if [ ! -f package.json ]
-then
-  echo '{"dependencies":{}}'> package.json
+#### Full setup for desktop computers
+
+# TODO: git, 
+# Steps:
+#   1. install/setup neovim
+#   2. install/setup tmux
+#   3. setup bash
+#   4. install useful stuff (npm, docker, docker-compose)
+
+#==============
+# Variables
+#==============
+dotfiles_dir=~/dotfiles
+log_file=~/install_progress_log.txt
+USER=rieg
+
+# ====================== neovim config ======================
+apt install -y neovim # TODO: is installing from source better for lua support?
+apt install -y xsel # for neovim selection engine
+
+if type -p nvim > /dev/null; then
+    echo "neovim Installed" >> $log_file
+else
+    echo "neovim FAILED TO INSTALL!!!" >> $log_file
 fi
-# Change extension names to the extensions you need
-npm install coc-snippets coc-python coc-tsserver coc-html coc-css coc-json coc-yaml --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod
+
+if [ -d ~/.config/nvim ]; then
+    rm -rf ~/.config/nvim > /dev/null 2>&1
+fi
+
+mkdir -p ~/.config
+
+ln -sf $dotfiles_dir/nvim/ ~/.config/nvim/
+
+file ~/.config/nvim
+cat ~/.config/nvim/init.vim
+exit 1
+
+sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+if [ -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
+    echo "plug-vim installed"
+else
+    echo "plug-vim FAILED TO INSTALL!!"
+fi
+
+
+nvim -c ':PlugInstall' && nvim -c ':CocInstall' 
+
+# ==========================================================
+
+
+# ====================== tmux config ======================
+apt-get -y install tmux
+
+if type -p tmux > /dev/null; then
+    echo "tmux Installed" >> $log_file
+else
+    echo "tmux FAILED TO INSTALL!!!" >> $log_file
+fi  
+
+rm -rf ~/.tmux > /dev/null 2>&1
+rm -rf ~/.tmux.conf > /dev/null 2>&1
+
+ln -sf $dotfiles_dir/tmux/.tmux.conf ~/.tmux.conf
+# =========================================================
+
+
+# ====================== bash config ======================
+rm -rf ~/.bashrc > /dev/null 2>&1
+ln -sf $dotfiles_dir/bash/.bashrc ~/.bashrc
+# =========================================================
+
+apt-get -y install npm
+if type -p npm > /dev/null; then
+    echo "npm Installed" >> $log_file
+else
+    echo "npm FAILED TO INSTALL!!!" >> $log_file
+fi
+
+
+#============= Docker & docker-compose =============#
+apt-get remove docker docker-engine docker.io containerd runc >> $log_file
+apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release >> $log_file
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io >> $log_file
+
+if type -p docker > /dev/null; then
+    echo "docker Installed" >> $log_file
+else
+    echo "docker FAILED TO INSTALL!!!" >> $log_file
+fi
+
+# add user to docker group to avoid asking for root privileges on each command
+usermod -aG docker $USER >> $log_file
+
+compose_version=1.28.6
+curl -L \
+    "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-$(uname -s)-$(uname -m)" -o \
+    /usr/local/bin/docker-compose >> $log_file
+
+chmod +x /usr/local/bin/docker-compose
+
+#===================================================#
+
+#==============
+# Give the user a summary of what has been installed
+#==============
+echo -e "\n====== Summary ======\n"
+cat $log_file
+rm $log_file
