@@ -4,7 +4,7 @@ set -o errexit    # exit when command fails
 
 #### Full setup for desktop computers
 
-# TODO: git, 
+# TODO: git, .gitconfig? , make separate installations for vps/light and full desktop
 # Steps:
 #   1. install/setup neovim
 #   2. install/setup tmux
@@ -24,10 +24,6 @@ if type -p npm > /dev/null && type -p nodejs > /dev/null; then
 else
     echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
 fi
-
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
-exit 0
 
 # ====================== neovim config ======================
 apt install -y neovim # TODO: is installing from source better for lua support?
@@ -116,6 +112,10 @@ curl -L \
 chmod +x /usr/local/bin/docker-compose
 
 #===================================================#
+
+# TODO: setup fzf and Rg and those things to make terminal better and comes with vim plugins
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
 
 #==============
 # Give the user a summary of what has been installed
