@@ -18,13 +18,16 @@ dotfiles_dir=~/dotfiles
 log_file=~/install_progress_log.txt
 USER=root
 
-apt-get -y install npm nodejs
-if type -p npm > /dev/null && type -p nodejs > /dev/null; then
-    echo "nodejs and npm Installed" >> $log_file
-else
-    echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
-fi
+headless=false # headless instalations will be more light, having just the minimum
 
+if [ "$headless" = false ]; then
+    apt-get -y install npm nodejs
+    if type -p npm > /dev/null && type -p nodejs > /dev/null; then
+        echo "nodejs and npm Installed" >> $log_file
+    else
+        echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
+    fi
+fi
 # ====================== neovim config ======================
 apt install -y neovim # TODO: is installing from source better for lua support?
 apt install -y xsel # for neovim selection engine
@@ -79,38 +82,40 @@ ln -sf $dotfiles_dir/bash/.bashrc ~/.bashrc
 # =========================================================
 
 #============= Docker & docker-compose =============#
-apt install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release >> $log_file
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+if [ "$headless" = false ]; then
+    apt install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg \
+        lsb-release >> $log_file
 
-echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-apt update
-apt install -y docker-ce docker-ce-cli containerd.io >> $log_file
+    echo \
+      "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-if type -p docker > /dev/null; then
-    echo "docker Installed" >> $log_file
-else
-    echo "docker FAILED TO INSTALL!!!" >> $log_file
+    apt update
+    apt install -y docker-ce docker-ce-cli containerd.io >> $log_file
+
+    if type -p docker > /dev/null; then
+        echo "docker Installed" >> $log_file
+    else
+        echo "docker FAILED TO INSTALL!!!" >> $log_file
+    fi
+
+    # add user to docker group to avoid asking for root privileges on each command
+    usermod -aG docker $USER >> $log_file
+
+    compose_version=1.28.6
+    curl -L \
+        "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-$(uname -s)-$(uname -m)" -o \
+        /usr/local/bin/docker-compose >> $log_file
+
+    chmod +x /usr/local/bin/docker-compose
 fi
-
-# add user to docker group to avoid asking for root privileges on each command
-usermod -aG docker $USER >> $log_file
-
-compose_version=1.28.6
-curl -L \
-    "https://github.com/docker/compose/releases/download/$compose_version/docker-compose-$(uname -s)-$(uname -m)" -o \
-    /usr/local/bin/docker-compose >> $log_file
-
-chmod +x /usr/local/bin/docker-compose
-
 #===================================================#
 
 # TODO: setup fzf and Rg and those things to make terminal better and comes with vim plugins
