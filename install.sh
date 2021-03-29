@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-set -o nounset    # error when referencing undefined variable
 set -o errexit    # exit when command fails
 
 #### Full setup for desktop computers
@@ -18,9 +17,9 @@ dotfiles_dir=~/dotfiles
 log_file=~/install_progress_log.txt
 USER=root
 
-headless=false # headless instalations will be more light, having just the minimum
+source ./env.sh
 
-if [ "$headless" = false ]; then
+if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
     apt-get -y install npm nodejs
     if type -p npm > /dev/null && type -p nodejs > /dev/null; then
         echo "nodejs and npm Installed" >> $log_file
@@ -50,9 +49,9 @@ sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 if [ -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
-    echo "plug-vim installed"
+    echo "plug-vim installed" >> $log_file
 else
-    echo "plug-vim FAILED TO INSTALL!!"
+    echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
 fi
 
 # TODO: do i need to run PlugInstall or not?
@@ -83,13 +82,13 @@ ln -sf $dotfiles_dir/bash/.bashrc ~/.bashrc
 
 #============= Docker & docker-compose =============#
 
-if [ "$headless" = false ]; then
+if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
     apt install -y \
         apt-transport-https \
         ca-certificates \
         curl \
         gnupg \
-        lsb-release >> $log_file
+        lsb-release
 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
@@ -98,7 +97,7 @@ if [ "$headless" = false ]; then
       $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     apt update
-    apt install -y docker-ce docker-ce-cli containerd.io >> $log_file
+    apt install -y docker-ce docker-ce-cli containerd.io 
 
     if type -p docker > /dev/null; then
         echo "docker Installed" >> $log_file
@@ -115,12 +114,24 @@ if [ "$headless" = false ]; then
         /usr/local/bin/docker-compose >> $log_file
 
     chmod +x /usr/local/bin/docker-compose
+
+    if type -p docker-compose > /dev/null; then
+        echo "docker-compose installed" >> $log_file
+    else
+        echo "docker-compose FAILED TO INSTALL!!!" >> $log_file
+    fi
 fi
 #===================================================#
 
 # TODO: setup fzf and Rg and those things to make terminal better and comes with vim plugins
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
+~/.fzf/install > /dev/null
+
+if test -n fzf > /dev/null 2>&1; then
+    echo "fzf installed" >> $log_file
+else
+    echo "fzf FAILED TO INSTALL!!!" >> $log_file
+fi
 
 #==============
 # Give the user a summary of what has been installed
