@@ -29,6 +29,8 @@ autocmd WinLeave * setlocal nocursorline
 set completeopt=menuone,noselect
 let g:airline#extensions#tabline#enabled = 1 " airline tabs
 
+autocmd BufRead,BufNewFile  *.txt,*.md setlocal wrap linebreak
+
 " show differences between file in disk and current version
 function! s:DiffWithSaved()
   let filetype=&ft
