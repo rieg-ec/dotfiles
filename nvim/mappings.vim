@@ -35,8 +35,10 @@ vmap        <End>                 <Esc><End>
 nnoremap d "_d
 vnoremap d "_d
 
-nnoremap { } 
+nnoremap { }
 nnoremap } {
+
+nnoremap <Leader>/ :BLines<CR>
 
 " paste in insert mode
 inoremap <C-v> <Left><C-o>p

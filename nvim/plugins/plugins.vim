@@ -1,4 +1,4 @@
-call plug#begin('~/.config/nvim/plugged')
+call plug#begin()
 
     Plug 'ncm2/ncm2'
     Plug 'ncm2/ncm2-bufword'
@@ -36,5 +36,9 @@ call plug#begin('~/.config/nvim/plugged')
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
+
+    " show vim marks right next to line number
+    Plug 'kshenoy/vim-signature'
 
 call plug#end()

@@ -42,12 +42,16 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - <Ctrl-S> + v ~ paste in ex mode
 
 ### navigation:
-- /<text> ~ highlight <text>
+- / ~ highlight <text>
+- <Leader>/ ~ fzf text in current buffer
 - :noh ~ reset highlighed text
 - n ~ jump next highlight
 - N ~ jump next highlight
 - g ~ go bottom of file
 - gg ~ go top of file
+- "n"gg ~ go to line "n"
+- ma ~ create mark "a"
+- \`a ~ go to mark "a"
 - { ~ navigate blocks of text
 - <Leader>gf ~ go to file under cursor
 - <C-6> ~ switch between last file and current file
@@ -59,6 +63,10 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - <Leader>f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
 - \`\` ~ go back to last cursor position after done with replacing
 - <C-r> ~ enter text and replace with y/n one by one 
+
+- zz ~ bring current line to middle of window 
+- <Ctrl-e> ~ scroll window instead of cursor (useful for scrolling past end of file)
+- <Ctrl-y> ~ scroll window instead of cursor
 
 ### rollback changes:
 
@@ -156,5 +164,19 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - <C-e> ~ expand snippets from coc-snippets
 - <C-g>e ~ expand snippet or jump to next placeholder
 
-### command history:
+### command history
 - q: ~ show commmmand history
+
+
+### FZF
+- :Files ~ search all files 
+- :GFiles ~ search files in version control with preview window
+- :GFiles? ~ search files not staged for commit + its state (modified, untracked, deleted files)
+- :Colors ~ change colorschemes
+- :Lines ~ text search over lines in opened buffers
+- :BLines ~ text search over current buffer
+- :History ~ show recently opened buffers
+- :Commits ~ show commit history with diffs
+- :BCommits ~ git commits for current buffer
+- :Mappings ~ show normal mode mappings
+- :Filetypes ~ change filetype of current buffer
