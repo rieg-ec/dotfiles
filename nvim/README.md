@@ -1,27 +1,22 @@
-
 # Setup:
 
-## Clipboard support
----
+Run `./install.sh` (it will make a full installation, unless specified by env variables in `./env.sh`).
+
+## Resources:
+
+### Clipboard support
 
 - Ubuntu:
-    ```
-    sudo apt install xsel
-    ```
-## vim-plug
+    `sudo apt install xsel`
+### vim-plug
 
-- linux:
-    ```
-    sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    ```
+- linux: `sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \ 
+            https://raw.  githubusercontent.com/junegunn/vim-plug/master/plug.vim'`
 
 ### Install plugins
 
-- within vim:
-    ```
-    :PlugInstall
-    ```
+- within vim: `:PlugInstall`
+
 - CoC will install all extensions not already installed upon opening vim, but coc-clangd needs clangd binaries: `:CocCommand clangd.install`
 
 
@@ -37,14 +32,14 @@
 - :wqa ~ write quit all
 
 
-- - :DiffSaved ~ see changes from last saved
+- :DiffSaved ~ see changes from last saved
 
 ### copy/paste:
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
 - p ~ paste (from system clipboard, visual/normal mode)
 - <C-o>p ~ paste (from system clipboard, insert mode)
 - <C-v>v ~ paste (from system clipboard, insert mode) 
-- <Ctrl-R> + \+ ~ paste in ex mode
+- <Ctrl-S> + v ~ paste in ex mode
 
 ### navigation:
 - /<text> ~ highlight <text>
@@ -78,7 +73,7 @@
 - x ~ delete text
 - <C-v> + <S-arrow> ~ select text vertically
 
--  < & > ~ shift left/right
+- < & > ~ shift left/right
 
 - cc ~ change line
 - r ~ replace word under cursor
@@ -132,18 +127,18 @@
 ### plugin manager:
 - vim-plug
 
-# plugins shortcuts:
+## plugins shortcuts:
 
 ### Codi:
 - :Codi ~ start codi
 
-## NERDTree:
+### NERDTree:
 - q ~ close nerdtree
 - <C-t> ~ toggle nerdtree
 - <C-f> ~ find current file on nerdtree
 - m ~ display action menu for current node
 
-## vim-commentary:
+### vim-commentary:
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
 
@@ -162,5 +157,4 @@
 - <C-g>e ~ expand snippet or jump to next placeholder
 
 ### command history:
-
 - q: ~ show commmmand history

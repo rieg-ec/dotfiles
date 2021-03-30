@@ -32,4 +32,7 @@ call plug#begin('~/.config/nvim/plugged')
     " snippets with coc
     Plug 'honza/vim-snippets'
 
+    " markdown visualization
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
+
 call plug#end()
