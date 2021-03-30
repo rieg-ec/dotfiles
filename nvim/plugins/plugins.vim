@@ -35,4 +35,6 @@ call plug#begin('~/.config/nvim/plugged')
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+
 call plug#end()
