@@ -3,7 +3,7 @@ set -o errexit    # exit when command fails
 
 #### Full setup for desktop computers
 
-# TODO: git, .gitconfig? , make separate installations for vps/light and full desktop
+# TODO: git, .gitconfig? 
 # Steps:
 #   1. install/setup neovim
 #   2. install/setup tmux
@@ -27,6 +27,7 @@ if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
         echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
     fi
 fi
+
 # ====================== neovim config ======================
 apt install -y neovim # TODO: is installing from source better for lua support?
 apt install -y xsel # for neovim selection engine
@@ -132,6 +133,16 @@ if test -n fzf > /dev/null 2>&1; then
 else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
+
+wget -P /tmp/ripgrep https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb
+dpkg -i /tmp/ripgrep/ripgrep_12.1.1_amd64.deb
+
+if test -n rg > /dev/null 2>&1; then
+    echo "rg installed" >> $log_file
+else
+    echo "rg FAILED TO INSTALL!!!" >> $log_file
+fi
+
 
 #==============
 # Give the user a summary of what has been installed
