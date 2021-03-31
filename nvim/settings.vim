@@ -14,6 +14,7 @@ set wildmode=longest,list   " get bash-like tab completions
 set nowrap                  " long lines as just one line
 set smarttab                " detect if i have 2-4 spaces as tab
 set cursorline              " highlight complete line under cursor
+set numberwidth=2           " line number column space
 filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
 
