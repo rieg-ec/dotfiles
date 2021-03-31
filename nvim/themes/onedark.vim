@@ -19,4 +19,5 @@ colorscheme onedark
 if (has("termguicolors"))
     set termguicolors
     hi LineNr ctermbg=NONE guibg=NONE
+    highlight Search guibg=LightBlue ctermbg=Blue ctermfg=Red
 endif
