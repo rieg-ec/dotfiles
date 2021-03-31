@@ -41,4 +41,7 @@ call plug#begin()
     " show vim marks right next to line number
     Plug 'kshenoy/vim-signature'
 
+    " git integration
+    Plug 'airblade/vim-gitgutter'
+
 call plug#end()
