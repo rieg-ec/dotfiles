@@ -96,13 +96,17 @@ nnoremap * <Cmd>let @/='\<'.expand('<cword>').'\>'<bar>set hlsearch<CR>
 " rename a word
 nnoremap r ciw
 
-"""""  CoC Code navigation  """""""""
+" make arrow keys ignore completion windows:
+inoremap <expr> <up> pumvisible() ? '<c-e><up>' : '<up>'
+inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
+
+"""""  CoC Code navigation  """""""
 nmap <Leader>gd <Plug>(coc-definition)
 nmap <Leader>gdc <Plug>(coc-declaration)
 nmap <Leader>gD <Plug>(coc-type-definition)
 nmap <Leader>gi <Plug>(coc-implementation)
 nmap <Leader>gr <Plug>(coc-references)
-nmap <Leader>h :call <SID>show_documentation()<CR>
+nmap <Leader>h :call Show_documentation()<CR>
 """"""""""""""""""""""""""""""""""""""
 
 " CoC snippets

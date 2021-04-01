@@ -84,7 +84,8 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - < & > ~ shift left/right
 
 - cc ~ change line
-- r ~ replace word under cursor
+- r ~ replace word under cursor (normal mode)
+- o ~ insert text under cursorline (normal mode)
 
 ### text & formatting:
 - ~  ~ swap case
