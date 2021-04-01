@@ -101,4 +101,4 @@ nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Do default action for next item.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_global_extensions = ['coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html', 'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css', 'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh', 'coc-yaml', 'coc-docker']
+let g:coc_global_extensions = ['coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html', 'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css', 'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh', 'coc-yaml', 'coc-docker', 'coc-python']
