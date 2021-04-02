@@ -15,7 +15,6 @@ set -o errexit    # exit when command fails
 #==============
 dotfiles_dir=~/dotfiles
 log_file=~/install_progress_log.txt
-USER=root
 
 source ./env.sh
 
