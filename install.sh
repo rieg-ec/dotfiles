@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-set -o errexit    # exit when command fails
 
 #### Full setup for desktop computers
 
@@ -13,13 +12,20 @@ set -o errexit    # exit when command fails
 #==============
 # Variables
 #==============
-dotfiles_dir=~/dotfiles
-log_file=~/install_progress_log.txt
-
 source ./env.sh
 
+if [ "$USER" != "root" ]; then
+    HOME=/home/$USER
+fi
+
+dotfiles_dir=$(pwd)
+log_file=$HOME/install_progress_log.txt
+
+. /etc/lsb-release # source release
+
 if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
-    apt-get -y install npm nodejs
+    echo "installing node..."
+    apt install -y npm nodejs
     if type -p npm > /dev/null && type -p nodejs > /dev/null; then
         echo "nodejs and npm Installed" >> $log_file
     else
@@ -28,6 +34,7 @@ if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
 fi
 
 # ====================== neovim config ======================
+echo "installing xsel and neovim..."
 apt install -y neovim # TODO: is installing from source better for lua support?
 apt install -y xsel # for neovim selection engine
 
@@ -37,18 +44,18 @@ else
     echo "neovim FAILED TO INSTALL!!!" >> $log_file
 fi
 
-if [ -d ~/.config/nvim ]; then
-    rm -rf ~/.config/nvim > /dev/null 2>&1
+if [ -d $HOME/.config/nvim ]; then
+    rm -rf $HOME/.config/nvim > /dev/null 2>&1
 fi
 
-mkdir -p ~/.config
+mkdir -p $HOME/.config
 
-ln -sf $dotfiles_dir/nvim ~/.config/nvim
+ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
 
-sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-if [ -f ~/.local/share/nvim/site/autoload/plug.vim ]; then
+if [ -f $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
     echo "plug-vim installed" >> $log_file
 else
     echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
@@ -59,6 +66,7 @@ fi
 
 
 # ====================== tmux config ======================
+echo "installing tmux..."
 apt install -y tmux
 
 if type -p tmux > /dev/null; then
@@ -67,22 +75,23 @@ else
     echo "tmux FAILED TO INSTALL!!!" >> $log_file
 fi  
 
-rm -rf ~/.tmux > /dev/null 2>&1
-rm -rf ~/.tmux.conf > /dev/null 2>&1
+rm -rf $HOME/.tmux > /dev/null 2>&1
+rm -rf $HOME/.tmux.conf > /dev/null 2>&1
 
-ln -sf $dotfiles_dir/tmux/.tmux.conf ~/.tmux.conf
+ln -sf $dotfiles_dir/tmux/.tmux.conf $HOME/.tmux.conf
 
 # =========================================================
 
 
 # ====================== bash config ======================
-rm -rf ~/.bashrc > /dev/null 2>&1
-ln -sf $dotfiles_dir/bash/.bashrc ~/.bashrc
+rm -rf $HOME/.bashrc > /dev/null 2>&1
+ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
 # =========================================================
 
 #============= Docker & docker-compose =============#
 
 if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
+    echo "installing docker and docker-compose..."
     apt install -y \
         apt-transport-https \
         ca-certificates \
@@ -123,18 +132,8 @@ if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
 fi
 #===================================================#
 
-# TODO: setup fzf and Rg and those things to make terminal better and comes with vim plugins
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install > /dev/null
-
-if test -n fzf > /dev/null 2>&1; then
-    echo "fzf installed" >> $log_file
-else
-    echo "fzf FAILED TO INSTALL!!!" >> $log_file
-fi
-
-wget -P /tmp/ripgrep https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb
-dpkg -i /tmp/ripgrep/ripgrep_12.1.1_amd64.deb
+# TODO: install ripgrep with apt
+apt install -y ripgrep
 
 if test -n rg > /dev/null 2>&1; then
     echo "rg installed" >> $log_file
@@ -142,6 +141,20 @@ else
     echo "rg FAILED TO INSTALL!!!" >> $log_file
 fi
 
+if [ "$DISTRIB_RELEASE" > 19.04 ]; then
+    echo "installing fzf trough apt..."
+    apt install -y fzf
+else
+    echo "installing fzf trough git..."
+    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.fzf
+    $HOME/.fzf/install > /dev/null
+fi
+
+if test -n fzf > /dev/null 2>&1; then
+    echo "fzf installed" >> $log_file
+else
+    echo "fzf FAILED TO INSTALL!!!" >> $log_file
+fi
 
 #==============
 # Give the user a summary of what has been installed
