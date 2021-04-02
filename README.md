@@ -11,9 +11,9 @@
 2. `./install.sh`
 
 ### TODO:
-- fold/unfold easily (requires integration to lsp i guess)
+- fold/unfold easily 
 - make backspace not move line after deleting last character
-- maybe switch terminal? what does things like zsh or fish give me over bash?
+- maybe switch to zsh
 
 plugins:
 - ranger (search for files and preview them)?
