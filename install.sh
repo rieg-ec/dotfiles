@@ -21,13 +21,15 @@ fi
 dotfiles_dir=$(pwd)
 log_file=$HOME/install_progress_log.txt
 
+apt install -y lsb-release
+
 . /etc/lsb-release # source release
 
 if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
     echo "installing node..."
     apt install -y npm nodejs
     if type -p npm > /dev/null && type -p nodejs > /dev/null; then
-        echo "nodejs and npm Installed" >> $log_file
+        echo "nodejs $(node --version) and npm $(npm --version) Installed" >> $log_file
     else
         echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
     fi
@@ -38,15 +40,16 @@ echo "installing xsel and neovim..."
 
 apt install -y xsel # for neovim selection engine
 
-if [ "$DISTRIB_RELEASE" < 19.04 ]; then
+if python -c "exit(0 if float($DISTRIB_RELEASE) > 19.04 else 1)"; then
     apt install -y software-properties-common
     add-apt-repository ppa:neovim-ppa/stable
+    echo "updated nvim repo"
 fi
 
 apt update && apt install -y neovim
 
 if type -p nvim > /dev/null; then
-    echo "neovim Installed" >> $log_file
+    echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
     
     if [ -d $HOME/.config/nvim ]; then
         rm -rf $HOME/.config/nvim > /dev/null 2>&1
@@ -121,7 +124,7 @@ if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
     apt install -y docker-ce docker-ce-cli containerd.io 
 
     if type -p docker > /dev/null; then
-        echo "docker Installed" >> $log_file
+        echo "$(docker --version) Installed" >> $log_file
     else
         echo "docker FAILED TO INSTALL!!!" >> $log_file
     fi
@@ -137,7 +140,7 @@ if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
     chmod +x /usr/local/bin/docker-compose
 
     if type -p docker-compose > /dev/null; then
-        echo "docker-compose installed" >> $log_file
+        echo "$(docker-compose --version) installed" >> $log_file
     else
         echo "docker-compose FAILED TO INSTALL!!!" >> $log_file
     fi
@@ -148,7 +151,7 @@ fi
 apt install -y ripgrep
 
 if test -n rg > /dev/null 2>&1; then
-    echo "rg installed" >> $log_file
+    echo "rg $(rg --version | grep 'ripgrep') installed" >> $log_file
 else
     echo "rg FAILED TO INSTALL!!!" >> $log_file
 fi
@@ -163,7 +166,7 @@ else
 fi
 
 if test -n fzf > /dev/null 2>&1; then
-    echo "fzf installed" >> $log_file
+    echo "fzf $(fzf --version) installed" >> $log_file
 else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
