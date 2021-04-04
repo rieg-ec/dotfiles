@@ -35,30 +35,41 @@ fi
 
 # ====================== neovim config ======================
 echo "installing xsel and neovim..."
-apt install -y neovim # TODO: is installing from source better for lua support?
+
 apt install -y xsel # for neovim selection engine
+
+if [ "$DISTRIB_RELEASE" < 19.04 ]; then
+    apt install -y software-properties-common
+    add-apt-repository ppa:neovim-ppa/stable
+fi
+
+apt update && apt install -y neovim
 
 if type -p nvim > /dev/null; then
     echo "neovim Installed" >> $log_file
-else
-    echo "neovim FAILED TO INSTALL!!!" >> $log_file
-fi
+    
+    if [ -d $HOME/.config/nvim ]; then
+        rm -rf $HOME/.config/nvim > /dev/null 2>&1
+    fi
 
-if [ -d $HOME/.config/nvim ]; then
-    rm -rf $HOME/.config/nvim > /dev/null 2>&1
-fi
+    mkdir -p $HOME/.config
 
-mkdir -p $HOME/.config
+    ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
 
-ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
-
-sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+    sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
-if [ -f $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
-    echo "plug-vim installed" >> $log_file
+    if [ -f $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
+        echo "plug-vim installed" >> $log_file
+        echo "installing plugins..."
+        nvim --headless +PlugInstall +qa
+        echo "plugins installed" >> $log_file
+    else
+        echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
+    fi
+
 else
-    echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
+    echo "neovim FAILED TO INSTALL!!!" >> $log_file
 fi
 
 # TODO: do i need to run PlugInstall or not?
@@ -71,14 +82,15 @@ apt install -y tmux
 
 if type -p tmux > /dev/null; then
     echo "tmux Installed" >> $log_file
+    
+    rm -rf $HOME/.tmux > /dev/null 2>&1
+    rm -rf $HOME/.tmux.conf > /dev/null 2>&1
+    
+    ln -sf $dotfiles_dir/tmux/.tmux.conf $HOME/.tmux.conf
+
 else
     echo "tmux FAILED TO INSTALL!!!" >> $log_file
 fi  
-
-rm -rf $HOME/.tmux > /dev/null 2>&1
-rm -rf $HOME/.tmux.conf > /dev/null 2>&1
-
-ln -sf $dotfiles_dir/tmux/.tmux.conf $HOME/.tmux.conf
 
 # =========================================================
 
