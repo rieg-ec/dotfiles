@@ -40,7 +40,7 @@ echo "installing xsel and neovim..."
 
 apt install -y xsel # for neovim selection engine
 
-if [ $(python3 -c "print(0 if float($DISTRIB_RELEASE) > 19.04 else 1)") ]; then
+if [ $(python3 -c "print(1 if float($DISTRIB_RELEASE) < 19.04 else 0)") ]; then
     apt install -y software-properties-common
     add-apt-repository ppa:neovim-ppa/stable
 fi
@@ -146,8 +146,7 @@ if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
 fi
 #===================================================#
 
-# TODO: install ripgrep with apt
-apt install -y ripgrep
+apt install -y ripgrep # TODO: test for amd or arm arch to install ripgrep from source
 
 if test -n rg > /dev/null 2>&1; then
     echo "rg $(rg --version | grep 'ripgrep') installed" >> $log_file
@@ -155,13 +154,13 @@ else
     echo "rg FAILED TO INSTALL!!!" >> $log_file
 fi
 
-if [ "$DISTRIB_RELEASE" > 19.04 ]; then
-    echo "installing fzf trough apt..."
-    apt install -y fzf
-else
+if [ $(python3 -c "print(1 if float($DISTRIB_RELEASE) < 19.04 else 0)") ]; then
     echo "installing fzf trough git..."
     git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.fzf
     $HOME/.fzf/install > /dev/null
+else
+    echo "installing fzf trough apt..."
+    apt install -y fzf
 fi
 
 if test -n fzf > /dev/null 2>&1; then
