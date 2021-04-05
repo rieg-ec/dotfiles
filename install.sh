@@ -40,10 +40,9 @@ echo "installing xsel and neovim..."
 
 apt install -y xsel # for neovim selection engine
 
-if python -c "exit(0 if float($DISTRIB_RELEASE) > 19.04 else 1)"; then
+if [ $(python3 -c "print(0 if float($DISTRIB_RELEASE) > 19.04 else 1)") ]; then
     apt install -y software-properties-common
     add-apt-repository ppa:neovim-ppa/stable
-    echo "updated nvim repo"
 fi
 
 apt update && apt install -y neovim
