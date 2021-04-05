@@ -25,9 +25,11 @@ apt install -y lsb-release
 
 . /etc/lsb-release # source release
 
-if [ "$minimal" != true ] && [ "$install_node" != false ] ; then
+# ====================== nodejs and npm ======================
+if [ "$minimal" == false ] && [ "$install_node" == true ] ; then
     echo "installing node..."
-    apt install -y npm nodejs
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+    apt install -y nodejs
     if type -p npm > /dev/null && type -p nodejs > /dev/null; then
         echo "nodejs $(node --version) and npm $(npm --version) Installed" >> $log_file
     else
