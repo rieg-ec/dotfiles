@@ -30,7 +30,7 @@ if [ "$minimal" == false ] && [ "$install_node" == true ] ; then
     echo "installing node..."
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
     apt install -y nodejs
-    if type -p npm > /dev/null && type -p nodejs > /dev/null; then
+    if type -p npm > /dev/null && type -p node > /dev/null; then
         echo "nodejs $(node --version) and npm $(npm --version) Installed" >> $log_file
     else
         echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
