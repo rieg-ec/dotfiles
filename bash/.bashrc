@@ -132,4 +132,4 @@ unset __conda_setup
 
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-
+export TERM=screen-256color
