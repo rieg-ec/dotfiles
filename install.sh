@@ -25,8 +25,18 @@ apt install -y lsb-release
 
 . /etc/lsb-release # source release
 
+# ====================== bash config ======================
+rm -rf $HOME/.bashrc > /dev/null 2>&1
+ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
+# =========================================================
+
+# =========================== python packages ===========================
+apt install -y language-pack-en
+apt install -y python3 python3-pip && pip3 install --upgrade flake8 autopep8 jedi
+# =======================================================================
+
 # ====================== nodejs and npm ======================
-if [ "$minimal" == false ] && [ "$install_node" == true ] ; then
+if [ "$install_node" == true ] ; then
     echo "installing node..."
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
     apt install -y nodejs
@@ -36,6 +46,7 @@ if [ "$minimal" == false ] && [ "$install_node" == true ] ; then
         echo "npm and nodejs FAILED TO INSTALL!!!" >> $log_file
     fi
 fi
+# =======================================================================
 
 # ====================== neovim config ======================
 echo "installing xsel and neovim..."
@@ -68,6 +79,11 @@ if type -p nvim > /dev/null; then
         echo "installing plugins..."
         nvim --headless +PlugInstall +qa
         echo "plugins installed" >> $log_file
+        if [ "$install_node" == true ]; then
+            echo "installing coc plugins..."
+            nvim --headless +CocInstall +qa
+            echo "coc plugins installed" >> $log_file
+        fi
     else
         echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
     fi
@@ -99,14 +115,9 @@ fi
 # =========================================================
 
 
-# ====================== bash config ======================
-rm -rf $HOME/.bashrc > /dev/null 2>&1
-ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
-# =========================================================
-
 #============= Docker & docker-compose =============#
 
-if [ "$minimal" != true ] && [ "$install_docker" != false ]; then
+if [ "$install_docker" != false ]; then
     echo "installing docker and docker-compose..."
     apt install -y \
         apt-transport-https \
