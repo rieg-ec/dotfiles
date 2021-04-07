@@ -8,7 +8,8 @@
         "yaml",
         "json",
         "python",
-        "cpp"
+        "cpp",
+        "vue"
     ],
     "snippets.extends": {
         "cpp": [
@@ -27,5 +28,12 @@
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.venvPath": "venv",
-    "signature.enable": false
+    "signature.enable": false,
+    "vetur.format.options.tabSize": 2,
+    "vetur.completion.autoImport": true,
+    "vetur.format.options.useTabs": true,
+    "vetur.languageFeatures.updateImportOnFileMove": true,
+    "vetur.format.enable": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true
 }
