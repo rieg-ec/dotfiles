@@ -40,6 +40,9 @@ nnoremap } {
 
 nnoremap <Leader>/ :BLines<CR>
 
+nmap <C-End> <C-l>
+nmap <C-Home> <C-h>
+
 " paste in insert mode
 inoremap <C-v> <Left><C-o>p
 
@@ -115,6 +118,15 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-D>" 
 inoremap <silent><expr> <C-space> coc#refresh()
 imap <C-e> <Plug>(coc-snippets-expand)
+" inoremap <Leader>s 
+nnoremap <leader>a <Plug>(coc-codeaction-selected)
+
+nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <nowait><expr> <C-j> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <nowait><expr> <C-k> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 
 " Use <C-j> for select text for visual placeholder of snippet.
 vmap <C-j> <Plug>(coc-snippets-select)

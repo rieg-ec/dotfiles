@@ -133,3 +133,8 @@ unset __conda_setup
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 export TERM=screen-256color
+
+
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
+export LC_ALL=en_US.UTF-8
