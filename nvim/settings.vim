@@ -23,12 +23,18 @@ let lsp_diagnostics_enabled = 1
 
 let NERDTreeShowHidden = 1 " for dotfiles
 
+
+let g:airline#extensions#tabline#enabled = 1 " Use the airline tabline (replacement for buftabline)
+
 autocmd WinEnter * setlocal cursorline
 autocmd WinLeave * setlocal nocursorline
 
+" remove preview window when autocomplete done
+autocmd CompleteDone * pclose
+" set completeopt-=preview
+
 " enable preview window (compe requirement)
 set completeopt=menuone,noselect
-let g:airline#extensions#tabline#enabled = 1 " airline tabs
 
 autocmd BufRead,BufNewFile  *.txt,*.md setlocal wrap linebreak
 
