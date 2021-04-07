@@ -34,6 +34,6 @@
     "vetur.format.options.useTabs": true,
     "vetur.languageFeatures.updateImportOnFileMove": true,
     "vetur.format.enable": true,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
     "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true
 }
