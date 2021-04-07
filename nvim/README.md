@@ -133,6 +133,10 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - @: ~ repeat last ex command
 - @@ ~ repeat last macro
 
+
+### Extras
+- set nuw=x ~ change line number column spacing
+
 ### plugin manager:
 - vim-plug
 
