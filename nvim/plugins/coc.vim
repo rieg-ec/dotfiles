@@ -75,7 +75,11 @@ command! -nargs=0 Format :call CocAction('format')
 " " Do default action for next item.
 " nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_global_extensions = ['coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html', 'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css', 'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh', 'coc-yaml', 'coc-docker', 'coc-python']
+let g:coc_global_extensions = [
+      \ 'coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html',
+      \   'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
+      \  'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh',
+      \  'coc-yaml', 'coc-docker', 'coc-python', 'coc-eslint', 'coc-prettier']
 
 function Show_documentation()
   if (index(['vim','help'], &filetype) >= 0)

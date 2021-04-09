@@ -22,6 +22,8 @@
         "UltiSnips",
         "~/.config/nvim/utils/snips"
     ],
+    "eslint.autoFixOnSave": true,
+    "eslint.format.enable": true,
     "clangd.path": "/home/rieg/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": false,
