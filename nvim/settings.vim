@@ -16,6 +16,8 @@ set signcolumn=number       " have line number and marks in same column
 
 if has('nvim-0.5')
   set signcolumn=number
+else
+  set signcolumn=yes
 endif
 
 let mapleader = ";"
