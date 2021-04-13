@@ -14,6 +14,10 @@ filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
 set signcolumn=number       " have line number and marks in same column
 
+if has('nvim-0.5')
+  set signcolumn=number
+endif
+
 let mapleader = ";"
 let lsp_diagnostics_enabled = 1
 
