@@ -62,6 +62,14 @@ nmap <Leader>z <C-w>m
 nnoremap gt :tabnext<CR>
 nnoremap gT :tabprevious<CR>
 
+" get file
+nnoremap <Leader>gf gf<CR> 
+nnoremap gf :%s<Left>
+
+" move tab/untab blocks of selected text
+vnoremap <TAB> >gv
+vnoremap <S-TAB> <gv
+
 " move through tab splits
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
@@ -74,9 +82,7 @@ nnoremap <A-Right> <C-w>>
 
 " indent blocks without loosing selection
 vnoremap < <gv
-
 vnoremap > >gv
-
 
 " disable highlight when entering insert mode
 nnoremap i :noh<CR>i
@@ -103,15 +109,14 @@ nnoremap r ciw
 inoremap <expr> <up> pumvisible() ? '<c-e><up>' : '<up>'
 inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
 
-"""""  CoC Code navigation  """""""
+"""""  CoC """""""
+" code navigation
 nmap <Leader>gd <Plug>(coc-definition)
 nmap <Leader>gdc <Plug>(coc-declaration)
 nmap <Leader>gD <Plug>(coc-type-definition)
 nmap <Leader>gi <Plug>(coc-implementation)
 nmap <Leader>gr <Plug>(coc-references)
 nmap <Leader>h :call Show_documentation()<CR>
-""""""""""""""""""""""""""""""""""""""
-
 " CoC snippets
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " shift-tab un-tabs text if no pumvisible
@@ -152,16 +157,6 @@ let g:coc_snippet_prev = '<c-k>'
 " nnoremap <Leader>h <cmd>lua vim.lsp.buf.hover()<CR>
 " nnoremap <Leader><C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 
-" get file
-nnoremap <Leader>gf gf<CR> 
-
-
-" TODO: assign gf to something more common
-nnoremap gf :%s<Left> 
-
-" move tab/untab blocks of selected text
-vnoremap <TAB> >gv
-vnoremap <S-TAB> <gv
 
 "NERDTree
 nnoremap <C-t> :NERDTreeToggle<CR>
