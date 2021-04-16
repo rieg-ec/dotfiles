@@ -12,6 +12,7 @@ set smarttab                " detect if i have 2-4 spaces as tab
 set numberwidth=2           " line number column space
 filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
+set noshowmode
 
 if has('nvim-0.5')
   set signcolumn=number
@@ -24,6 +25,7 @@ let lsp_diagnostics_enabled = 1
 
 let NERDTreeShowHidden = 1 " for dotfiles
 
+let g:polyglot_disabled = ['vue']
 
 let g:airline#extensions#tabline#enabled = 1 " Use the airline tabline (replacement for buftabline)
 
