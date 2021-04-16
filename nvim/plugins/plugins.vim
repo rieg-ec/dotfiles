@@ -6,9 +6,7 @@ call plug#begin()
     Plug 'ncm2/ncm2-path'
     
     " syntax highlighting
-    " Plug 'sheerun/vim-polyglot' TODO: fix slowness on vue projects or use
-    " treesitter
-    " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
     " File Explorer
     Plug 'scrooloose/NERDTree'
