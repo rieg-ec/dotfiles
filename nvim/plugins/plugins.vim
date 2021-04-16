@@ -1,10 +1,15 @@
 call plug#begin()
 
+    " basic completion
     Plug 'ncm2/ncm2'
     Plug 'ncm2/ncm2-bufword'
     Plug 'ncm2/ncm2-path'
-    " Better Syntax Support
-    Plug 'sheerun/vim-polyglot'
+    
+    " syntax highlighting
+    " Plug 'sheerun/vim-polyglot' TODO: fix slowness on vue projects or use
+    " treesitter
+    " Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+
     " File Explorer
     Plug 'scrooloose/NERDTree'
     " Auto pairs for '(' '[' '{'
@@ -43,5 +48,7 @@ call plug#begin()
 
     " git integration
     " Plug 'airblade/vim-gitgutter'
+    
+    Plug 'puremourning/vimspector'
 
 call plug#end()

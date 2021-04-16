@@ -192,7 +192,7 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - :Lines ~ text search over lines in opened buffers
 - :BLines ~ text search over current buffer
 - :History ~ show recently opened buffers
-- :Commits ~ show commit history with diffs
+- :Commits ~ show commit history with diffs -> <S-up/down> to explore
 - :BCommits ~ git commits for current buffer
 - :Mappings ~ show normal mode mappings
 - :Filetypes ~ change filetype of current buffer
