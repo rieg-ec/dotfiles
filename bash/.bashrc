@@ -57,8 +57,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-alias python3=python3.6
-
 export GUROBI_HOME="/opt/gurobi902/linux64"
 export PATH="${PATH}:${GUROBI_HOME}/bin"
 export LD_LIBRARY_PATH="/opt/gurobi902/linux64/lib"
