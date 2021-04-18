@@ -21,6 +21,8 @@ fi
 dotfiles_dir=$(pwd)
 log_file=$HOME/install_progress_log.txt
 
+apt update
+
 apt install -y lsb-release
 
 . /etc/lsb-release # source release
@@ -32,7 +34,8 @@ ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
 
 # =========================== python packages ===========================
 apt install -y language-pack-en
-apt install -y python3 python3-pip && pip3 install --upgrade flake8 autopep8 jedi
+apt install -y python3 python3-pip --fix-missing
+pip3 install flake8 autopep8 jedi pynvim
 # =======================================================================
 
 # ====================== nodejs and npm ======================
@@ -53,12 +56,11 @@ echo "installing xsel and neovim..."
 
 apt install -y xsel # for neovim selection engine
 
-if [ $(python3 -c "print(1 if float($DISTRIB_RELEASE) < 19.04 else 0)") ]; then
-    apt install -y software-properties-common
-    add-apt-repository ppa:neovim-ppa/stable
-fi
+sh -c 'curl -fLo /opt/nvim.tar.gz https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz'
+mkdir /opt/nvim && tar -xf /opt/nvim.tar.gz -C /opt/nvim --strip-components 1 && rm /opt/nvim.tar.gz
+ln -s /opt/nvim/bin/nvim /usr/bin/nvim
 
-apt update && apt install -y neovim
+apt install -y g++ # treesitter dependency
 
 if type -p nvim > /dev/null; then
     echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
