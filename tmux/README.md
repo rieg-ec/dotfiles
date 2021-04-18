@@ -13,14 +13,18 @@
 - <prefix> + ALT + arrow ~ resize pan
 - <prefix> + : ~ enter command mode
 
+- <prefix> + c ~ create new tab
+- <prefix> + n/p ~ cycle tabs
+- <prefix> + x + y ~ close current tab
+
 **copy/paste**:
 
 - <prefix> + z ~ zoom pane
 - <prefix> + [ ~ copy mode
 - hold shift and select with mouse (copy mode)
 
-
 ### tabs/panes/windows:
+
 - <prefix> + s ~ show all sessions
 - <prefix> + {/} ~ move window left/right
 - <prefix> + ! ~ convert pane into separate window (not that useful if i can zoom tho)
