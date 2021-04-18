@@ -10,3 +10,4 @@ source $HOME/.config/nvim/plugins/fzf.vim
 source $HOME/.config/nvim/plugins/airline.vim
 source $HOME/.config/nvim/plugins/vimspector.vim
 source $HOME/.config/nvim/plugins/treesitter.vim
+source $HOME/.config/nvim/plugins/codi.vim
