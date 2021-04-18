@@ -17,6 +17,8 @@
 - <prefix> + n/p ~ cycle tabs
 - <prefix> + x + y ~ close current tab
 
+- <prefix> + s ~ opened windows tree (hit ENTER to go to window under cursor)
+
 **copy/paste**:
 
 - <prefix> + z ~ zoom pane
