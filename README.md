@@ -12,10 +12,10 @@ _disclaimer: README files within directories are personal notes to save the shor
 
 ### TODO:
 
+- add split resizing for horizontal splits with <ALT-Arrow>
 - set up treesitter language installations in ./install.sh
   (:TSInstall cpp python javascript html css vue typescript c bash go graphql json lua vim php ruby toml yaml)
 
-- learn to use/setup nvim-treesitter
 - learn to use/setup vimspector
 - fold/unfold easily
 - make backspace not move line after deleting last character
