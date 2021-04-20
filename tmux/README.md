@@ -19,6 +19,8 @@
 
 - <prefix> + s ~ opened windows tree (hit ENTER to go to window under cursor)
 
+- <prefix> + ] + / ~ copy mode + text search
+
 **copy/paste**:
 
 - <prefix> + z ~ zoom pane
