@@ -129,8 +129,8 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - <Tab> ~ go to next buffer
 - <S-Tab> ~ go to previous buffer
 - to change buffer without saving current one, :set hidden
-
 - <Leader>z ~ zoom current split
+- <Leader>c ~ close buffer and keep tab split
 
 ### shortcuts and macros management
 

@@ -30,6 +30,7 @@ vmap        <PageDown>            <Esc><PageDown>
 vmap        <Home>                <Esc><Home>
 vmap        <End>                 <Esc><End>
 
+nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 
 " exchange cut for deletion
 nnoremap d "_d
@@ -79,6 +80,8 @@ nnoremap <C-l> <C-w>l
 " resize tab splits
 nnoremap <A-Left> <C-w><
 nnoremap <A-Right> <C-w>>
+nnoremap <M-Down> :resize +1<CR>
+nnoremap <M-Up> :resize -1<CR>
 
 " indent blocks without loosing selection
 vnoremap < <gv
