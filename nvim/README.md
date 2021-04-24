@@ -62,7 +62,6 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
 - <Leader>f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
 - \`\` ~ go back to last cursor position after done with replacing
-- <C-r> ~ enter text and replace with y/n one by one
 
 - zz ~ bring current line to middle of window
 - <Ctrl-e> ~ scroll window instead of cursor (useful for scrolling past end of file)
@@ -86,6 +85,7 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - cc ~ change line
 - r ~ replace word under cursor (normal mode)
 - o ~ insert text under cursorline (normal mode)
+- s ~ replace replace and insert
 
 ### text & formatting:
 
