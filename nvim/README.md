@@ -1,19 +1,4 @@
-# Setup:
-
-Run `./install.sh` (it will make a full installation, unless specified by env variables in `./env.sh`).
-
-## Resources:
-
-### Clipboard support
-
-- Ubuntu:
-  `sudo apt install xsel`
-
-### vim-plug
-
-- linux: `sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \ https://raw. githubusercontent.com/junegunn/vim-plug/master/plug.vim'`
-
-### Install plugins
+## Install plugins
 
 - within vim: `:PlugInstall`
 
@@ -23,13 +8,8 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 
 ### save/exit files:
 
-- ZZ ~ write current file and quit
-- ZQ ~ exit without saving
-- F8 ~ write and save
 - :w ~ save
 - :q ~ quit
-- :wqa ~ write quit all
-
 - :DiffSaved ~ see changes from last saved
 
 ### copy/paste:
