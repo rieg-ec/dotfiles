@@ -59,12 +59,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-export GUROBI_HOME="/opt/gurobi902/linux64"
-export PATH="${PATH}:${GUROBI_HOME}/bin"
-export LD_LIBRARY_PATH="/opt/gurobi902/linux64/lib"
-
-export PATH=$PATH:$HOME/.config/composer/vendor/bin
-
 force_color_prompt=yes
 color_prompt=yes
 
@@ -78,16 +72,6 @@ else
  PS1='$USER@\h:\w $(parse_git_branch)\$ '
 fi
 
-# unset color_prompt force_color_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -115,20 +99,6 @@ fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/rieg/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/rieg/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/rieg/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/rieg/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 export VISUAL=nvim
 export EDITOR="$VISUAL"
