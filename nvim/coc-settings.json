@@ -1,40 +1,33 @@
 {
-    "coc.preferences.formatOnSaveFiletypes": [
-        "css",
-        "markdown",
-        "javascript",
-        "graphql",
-        "yaml",
-        "json",
-        "python",
-        "cpp",
-        "vue"
-    ],
-    "snippets.extends": {
-        "cpp": [
-            "c"
-        ],
-        "typescript": [
-            "javascript"
-        ]
-    },
-    "snippets.ultisnips.directories": [
-        "UltiSnips",
-        "~/.config/nvim/utils/snips"
-    ],
-    "eslint.autoFixOnSave": true,
-    "eslint.format.enable": true,
-    "clangd.path": "/home/rieg/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.venvPath": "venv",
-    "signature.enable": false,
-    "vetur.format.options.tabSize": 2,
-    "vetur.completion.autoImport": true,
-    "vetur.format.options.useTabs": true,
-    "vetur.languageFeatures.updateImportOnFileMove": true,
-    "vetur.format.enable": true,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true
+  "coc.preferences.formatOnSaveFiletypes": [
+    "css",
+    "markdown",
+    "javascript",
+    "graphql",
+    "yaml",
+    "json",
+    "python",
+    "cpp",
+    "vue"
+  ],
+  "snippets.extends": {
+    "cpp": ["c"],
+    "typescript": ["javascript"]
+  },
+  "snippets.ultisnips.directories": ["UltiSnips", "~/.config/nvim/utils/snips"],
+  "eslint.autoFixOnSave": true,
+  "eslint.format.enable": true,
+  "clangd.path": "/usr/local/opt/llvm/bin/clangd",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.venvPath": "venv",
+  "signature.enable": false,
+  "vetur.format.options.tabSize": 2,
+  "vetur.completion.autoImport": true,
+  "vetur.format.options.useTabs": true,
+  "vetur.languageFeatures.updateImportOnFileMove": true,
+  "vetur.format.enable": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true
 }
