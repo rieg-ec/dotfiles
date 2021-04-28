@@ -41,6 +41,8 @@ brew install --HEAD tree-sitter
 brew install --HEAD luajit
 brew install --HEAD neovim
 
+brewr install llvm # coc.clangd languange server dependency
+
 if type -p nvim > /dev/null; then
     echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
     
