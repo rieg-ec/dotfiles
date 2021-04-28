@@ -3,8 +3,6 @@
 #==============
 # Variables
 #==============
-source ./env.sh
-
 brew install bash && chsh -s /opt/homebrew/bin/bash
 
 dotfiles_dir=$(pwd)
