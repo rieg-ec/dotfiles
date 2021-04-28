@@ -2,6 +2,8 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+USER=rieg
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -71,9 +73,9 @@ parse_git_branch() {
 }
 
 if [ "$color_prompt" = yes ]; then
- PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$ '
+ PS1='\[\033[01;32m\]$USER@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\] $(parse_git_branch)\[\033[00m\]\$ '
 else
- PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w $(parse_git_branch)\$ '
+ PS1='$USER@\h:\w $(parse_git_branch)\$ '
 fi
 
 # unset color_prompt force_color_prompt
@@ -132,7 +134,16 @@ export VISUAL=nvim
 export EDITOR="$VISUAL"
 export TERM=screen-256color
 
-
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 export LC_ALL=en_US.UTF-8
+
+PATH=/opt/homebrew/bin:$PATH
+alias brew="arch -arm64 /opt/homebrew/bin/brew"
+alias brewr="arch -x86_64 /usr/local/bin/brew $@"
+
+alias bash="/opt/homebrew/bin/bash"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
