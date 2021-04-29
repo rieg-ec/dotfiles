@@ -113,6 +113,8 @@ else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
 
+sh ~/$dotfiles_dir/.macos
+
 # #==============
 # # Give the user a summary of what has been installed
 # #==============
