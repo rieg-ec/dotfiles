@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+
+#==============
+# apps
+#==============
+brew install alt-tab
+
 #==============
 # Variables
 #==============

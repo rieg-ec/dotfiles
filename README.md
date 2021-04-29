@@ -10,3 +10,4 @@ setup:
 setup manually:
 
 1. install docker desktop
+2. install karabiner-elements && `rm ~/.config/karabiner/karabiner.json && ln -s ~/<dotfiles_repo>/karabiner.json ~/.config/karabiner/karabiner.json`
