@@ -35,7 +35,9 @@
 - { ~ navigate blocks of text
 - <Leader>gf ~ go to file under cursor
 - <C-6> ~ switch between last file and current file
-
+- e ~ jump to next word (normal mode)
+- ^ ~ jump to end of line
+- $ ~ jump to beginning of line
 - - ~ highlight word under cursor
 
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>

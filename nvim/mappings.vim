@@ -39,6 +39,9 @@ vnoremap d "_d
 nnoremap { }
 nnoremap } {
 
+nnoremap $ ^
+nnoremap ^ $
+
 nnoremap <Leader>/ :BLines<CR>
 
 nmap <C-End> <C-l>
