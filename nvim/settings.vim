@@ -13,6 +13,7 @@ set numberwidth=2           " line number column space
 filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
 set noshowmode
+set mouse=a                 " mouse support
 
 if has('nvim-0.5')
   set signcolumn=number
