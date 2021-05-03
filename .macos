@@ -69,4 +69,4 @@ defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 defaults write com.apple.menuextra.battery ShowPercent YES
 
 defaults write com.apple.notificationcenterui bannerTime -int 2
-
+defaults write com.apple.Dock workspaces-auto-swoosh -bool YES
