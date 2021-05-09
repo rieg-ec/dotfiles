@@ -23,12 +23,22 @@
   "python.linting.flake8Enabled": true,
   "python.venvPath": "venv",
   "signature.enable": false,
+  "vetur.format.enable": true,
   "vetur.format.options.tabSize": 2,
   "vetur.completion.autoImport": true,
   "vetur.format.options.useTabs": true,
   "vetur.languageFeatures.updateImportOnFileMove": true,
-  "vetur.format.enable": true,
+  "vetur.format.defaultFormatter.ts": "prettier",
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.css": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "singleQuote": true
+    }
+  },
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "javascript.preferences.quoteStyle": "single"
 }
