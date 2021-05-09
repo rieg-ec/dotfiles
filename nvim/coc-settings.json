@@ -24,9 +24,7 @@
   "python.venvPath": "venv",
   "signature.enable": false,
   "vetur.format.enable": true,
-  "vetur.format.options.tabSize": 2,
   "vetur.completion.autoImport": true,
-  "vetur.format.options.useTabs": true,
   "vetur.languageFeatures.updateImportOnFileMove": true,
   "vetur.format.defaultFormatter.ts": "prettier",
   "vetur.format.defaultFormatter.html": "prettier",
@@ -34,7 +32,8 @@
   "vetur.format.defaultFormatter.js": "prettier",
   "vetur.format.defaultFormatterOptions": {
     "prettier": {
-      "singleQuote": true
+      "singleQuote": true,
+      "tabSize": 2
     }
   },
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
