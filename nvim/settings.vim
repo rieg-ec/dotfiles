@@ -5,6 +5,7 @@ set showmatch               " show matching brackets.
 set ignorecase              " case insensitive matching
 set hlsearch                " highlight search results
 set autoindent              " indent a new line the same amount as the line just typed
+set smartindent
 set number                  " add line numbers
 set wildmode=longest,list   " get bash-like tab completions
 set nowrap                  " long lines as just one line
@@ -25,8 +26,31 @@ let mapleader = ";"
 let lsp_diagnostics_enabled = 1
 
 let NERDTreeShowHidden = 1 " for dotfiles
+let g:MyNERDTreeIgnore = ['^__init__.py', '^__pycache__']
+let g:NERDTreeIgnore = MyNERDTreeIgnore
 
-let g:polyglot_disabled = ['vue']
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+  \ 'Modified'  :'✹',
+  \ 'Staged'    :'✚',
+  \ 'Untracked' :'✭',
+  \ 'Renamed'   :'➜',
+  \ 'Unmerged'  :'═',
+  \ 'Deleted'   :'✖',
+  \ 'Dirty'     :'✗',
+  \ 'Ignored'   :'☒',
+  \ 'Clean'     :'✔︎',
+  \ 'Unknown'   :'?',
+  \ }
+
+function! s:myNERDTreeUnignoreAll()
+  let g:MyNERDTreeIgnore=[] | call NERDTreeRender()
+endfunction
+com! MyNERDTreeUnignoreAll call s:MyNERDTreeUnignoreAll()
+
+function! s:myNERDTreeIgnoreAll()
+  let g:NERDTreeIgnore=MyNERDTreeIgnore | call NERDTreeRender()
+endfunction
+com! MyNERDTreeIgnoreAll call s:myNERDTreeIgnoreAll()
 
 let g:airline#extensions#tabline#enabled = 1 " Use the airline tabline (replacement for buftabline)
 
@@ -79,7 +103,7 @@ autocmd Filetype *.json setlocal ts=2 sw=2 expandtab
 autocmd Filetype *.vue setlocal ts=2 sw=2 expandtab
 
 " for js/coffee/jade files, 4 spaces
-autocmd Filetype *.python setlocal ts=4 sw=4 sts=0 expandtab
+autocmd Filetype *.python smartindent setlocal ts=4 sw=4 sts=0 expandtab
 autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=0 expandtab
 
 " show differences between file in disk and current version
