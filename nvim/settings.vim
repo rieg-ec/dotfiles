@@ -30,7 +30,7 @@ let g:MyNERDTreeIgnore = ['^__init__.py', '^__pycache__']
 let g:NERDTreeIgnore = MyNERDTreeIgnore
 
 let g:NERDTreeGitStatusIndicatorMapCustom = {
-  \ 'Modified'    :'✚',
+  \ 'Modified'  :'✚',
   \ 'Untracked' :'✭',
   \ 'Renamed'   :'➜',
   \ 'Deleted'   :'✖',
