@@ -61,46 +61,48 @@ fi
 # =======================================================================
 
 # ====================== neovim config ======================
-echo "installing xsel and neovim..."
+if [ "$install_nvim" == true ] ; then
+    echo "installing xsel and neovim..."
 
-apt install -y xsel # for neovim selection engine
+    apt install -y xsel # for neovim selection engine
 
-sh -c 'curl -fLo /opt/nvim.tar.gz https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz'
-mkdir /opt/nvim && tar -xf /opt/nvim.tar.gz -C /opt/nvim --strip-components 1 && rm /opt/nvim.tar.gz
-ln -s /opt/nvim/bin/nvim /usr/bin/nvim
+    sh -c 'curl -fLo /opt/nvim.tar.gz https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz'
+    mkdir /opt/nvim && tar -xf /opt/nvim.tar.gz -C /opt/nvim --strip-components 1 && rm /opt/nvim.tar.gz
+    ln -s /opt/nvim/bin/nvim /usr/bin/nvim
 
-apt install -y g++ # treesitter dependency
+    apt install -y g++ # treesitter dependency
 
-if type -p nvim > /dev/null; then
-    echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
-    
-    if [ -d $HOME/.config/nvim ]; then
-        rm -rf $HOME/.config/nvim > /dev/null 2>&1
-    fi
-
-    mkdir -p $HOME/.config
-
-    ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
-
-    sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-
-    if [ -f $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
-        echo "plug-vim installed" >> $log_file
-        echo "installing plugins..."
-        nvim --headless +PlugInstall +qa
-        echo "plugins installed" >> $log_file
-        if [ "$install_node" == true ]; then
-            echo "installing coc plugins..."
-            nvim --headless +CocInstall +qa
-            echo "coc plugins installed" >> $log_file
+    if type -p nvim > /dev/null; then
+        echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
+        
+        if [ -d $HOME/.config/nvim ]; then
+            rm -rf $HOME/.config/nvim > /dev/null 2>&1
         fi
-    else
-        echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
-    fi
 
-else
-    echo "neovim FAILED TO INSTALL!!!" >> $log_file
+        mkdir -p $HOME/.config
+
+        ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
+
+        sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+           https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+        if [ -f $HOME/.local/share/nvim/site/autoload/plug.vim ]; then
+            echo "plug-vim installed" >> $log_file
+            echo "installing plugins..."
+            nvim --headless +PlugInstall +qa
+            echo "plugins installed" >> $log_file
+            if [ "$install_node" == true ]; then
+                echo "installing coc plugins..."
+                nvim --headless +CocInstall +qa
+                echo "coc plugins installed" >> $log_file
+            fi
+        else
+            echo "plug-vim FAILED TO INSTALL!!" >> $log_file    
+        fi
+
+    else
+        echo "neovim FAILED TO INSTALL!!!" >> $log_file
+    fi
 fi
 
 # TODO: do i need to run PlugInstall or not?
@@ -128,7 +130,7 @@ fi
 
 #============= Docker & docker-compose =============#
 
-if [ "$install_docker" != false ]; then
+if [ "$install_docker" == true ]; then
     echo "installing docker and docker-compose..."
     apt install -y \
         apt-transport-https \
