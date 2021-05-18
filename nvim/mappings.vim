@@ -25,10 +25,10 @@ vmap        <Left>                <Esc>
 vmap        <Right>               <Esc><Right>
 vmap        <Up>                  <Esc><Up>
 vmap        <Down>                <Esc><Down>
-vmap        <PageUp>              <Esc><PageUp>
-vmap        <PageDown>            <Esc><PageDown>
-vmap        <Home>                <Esc><Home>
-vmap        <End>                 <Esc><End>
+" vmap        <PageUp>              <Esc><PageUp>
+" vmap        <PageDown>            <Esc><PageDown>
+" vmap        <Home>                <Esc><Home>
+" vmap        <End>                 <Esc><End>
 
 nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 
