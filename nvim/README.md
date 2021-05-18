@@ -64,7 +64,7 @@
 
 - < & > ~ shift left/right
 
-- cc ~ change line
+- cc ~ remove line + insert mode (normal mode)
 - r ~ replace word under cursor (normal mode)
 - o ~ insert text under cursorline (normal mode)
 - s ~ replace replace and insert
