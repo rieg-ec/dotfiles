@@ -109,11 +109,12 @@ brew install fzf
 
 if test -n fzf > /dev/null 2>&1; then
     echo "fzf $(fzf --version) installed" >> $log_file
+    $(brew --prefix)/opt/fzf/install
 else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
 
-sh ~/$dotfiles_dir/.macos
+sh $dotfiles_dir/.macos
 
 # #==============
 # # Give the user a summary of what has been installed
