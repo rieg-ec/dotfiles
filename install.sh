@@ -28,21 +28,30 @@ apt install -y lsb-release
 . /etc/lsb-release # source release
 
 # ====================== bash config ======================
-rm -rf $HOME/.bashrc > /dev/null 2>&1
+rm  $HOME/.bashrc > /dev/null 2>&1
+rm $HOME/.bash_profile > /dev/null 2>&1  
 ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
+ln -sf $dotfiles_dir/bash/.bash_profile $HOME/.bash_profile
 # =========================================================
 
 # =========================== python packages ===========================
 apt install -y language-pack-en
 apt install -y python3 python3-pip --fix-missing
 pip3 install flake8 autopep8 jedi pynvim
+echo "installed python packages" >> $log_file
 # =======================================================================
 
 # ====================== nodejs and npm ======================
 if [ "$install_node" == true ] ; then
+    echo "installing nvm..."
+    NVM_DOWNLOAD_LINK=https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh
+    curl -o- NVM_DOWNLOAD_LINK | bash
+    echi "installed nvm" >> $log_file
+
     echo "installing node..."
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-    apt install -y nodejs
+    nvm install v15
+    nvm cache clear
+
     if type -p npm > /dev/null && type -p node > /dev/null; then
         echo "nodejs $(node --version) and npm $(npm --version) Installed" >> $log_file
     else
