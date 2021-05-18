@@ -10,6 +10,8 @@ call plug#begin()
 
     " File Explorer
     Plug 'scrooloose/NERDTree'
+    Plug 'Xuyuanp/nerdtree-git-plugin'
+
     " Auto pairs for '(' '[' '{'
     Plug 'jiangmiao/auto-pairs'
     " theme
@@ -45,7 +47,7 @@ call plug#begin()
     Plug 'kshenoy/vim-signature'
 
     " git integration
-    " Plug 'airblade/vim-gitgutter'
+    Plug 'airblade/vim-gitgutter'
     
     Plug 'puremourning/vimspector'
 

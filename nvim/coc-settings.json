@@ -1,40 +1,45 @@
 {
-    "coc.preferences.formatOnSaveFiletypes": [
-        "css",
-        "markdown",
-        "javascript",
-        "graphql",
-        "yaml",
-        "json",
-        "python",
-        "cpp",
-        "vue"
-    ],
-    "snippets.extends": {
-        "cpp": [
-            "c"
-        ],
-        "typescript": [
-            "javascript"
-        ]
-    },
-    "snippets.ultisnips.directories": [
-        "UltiSnips",
-        "~/.config/nvim/utils/snips"
-    ],
-    "eslint.autoFixOnSave": true,
-    "eslint.format.enable": true,
-    "clangd.path": "/home/rieg/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.venvPath": "venv",
-    "signature.enable": false,
-    "vetur.format.options.tabSize": 2,
-    "vetur.completion.autoImport": true,
-    "vetur.format.options.useTabs": true,
-    "vetur.languageFeatures.updateImportOnFileMove": true,
-    "vetur.format.enable": true,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
-    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true
+  "coc.preferences.formatOnSaveFiletypes": [
+    "css",
+    "markdown",
+    "javascript",
+    "graphql",
+    "yaml",
+    "json",
+    "python",
+    "cpp",
+    "vue"
+  ],
+  "snippets.extends": {
+    "cpp": ["c"],
+    "typescript": ["javascript"]
+  },
+  "snippets.ultisnips.directories": ["UltiSnips", "~/.config/nvim/utils/snips"],
+  "eslint.autoFixOnSave": true,
+  "eslint.format.enable": true,
+  "clangd.path": "",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.formatting.provider": "autopep8",
+  "python.venvPath": "venv",
+  "python.jediEnabled": false,
+  "signature.enable": false,
+  "vetur.format.enable": true,
+  "vetur.completion.autoImport": true,
+  "vetur.languageFeatures.updateImportOnFileMove": true,
+  "vetur.format.defaultFormatter.ts": "prettier",
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.css": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "singleQuote": true,
+      "tabSize": 2
+    }
+  },
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
+  "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
+  "prettier.singleQuote": true,
+  "javascript.preferences.quoteStyle": "single"
 }

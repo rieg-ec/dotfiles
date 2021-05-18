@@ -1,19 +1,4 @@
-# Setup:
-
-Run `./install.sh` (it will make a full installation, unless specified by env variables in `./env.sh`).
-
-## Resources:
-
-### Clipboard support
-
-- Ubuntu:
-  `sudo apt install xsel`
-
-### vim-plug
-
-- linux: `sh -c 'curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \ https://raw. githubusercontent.com/junegunn/vim-plug/master/plug.vim'`
-
-### Install plugins
+## Install plugins
 
 - within vim: `:PlugInstall`
 
@@ -23,13 +8,8 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 
 ### save/exit files:
 
-- ZZ ~ write current file and quit
-- ZQ ~ exit without saving
-- F8 ~ write and save
 - :w ~ save
 - :q ~ quit
-- :wqa ~ write quit all
-
 - :DiffSaved ~ see changes from last saved
 
 ### copy/paste:
@@ -55,7 +35,9 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 - { ~ navigate blocks of text
 - <Leader>gf ~ go to file under cursor
 - <C-6> ~ switch between last file and current file
-
+- e ~ jump to next word (normal mode)
+- ^ ~ jump to end of line
+- $ ~ jump to beginning of line
 - - ~ highlight word under cursor
 
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
@@ -82,7 +64,7 @@ Run `./install.sh` (it will make a full installation, unless specified by env va
 
 - < & > ~ shift left/right
 
-- cc ~ change line
+- cc ~ remove line + insert mode (normal mode)
 - r ~ replace word under cursor (normal mode)
 - o ~ insert text under cursorline (normal mode)
 - s ~ replace replace and insert
