@@ -4,17 +4,18 @@ set nocompatible            " disable compatibility to old-time vi
 set showmatch               " show matching brackets.
 set ignorecase              " case insensitive matching
 set hlsearch                " highlight search results
-set autoindent              " indent a new line the same amount as the line just typed
-set smartindent
 set number                  " add line numbers
 set wildmode=longest,list   " get bash-like tab completions
 set nowrap                  " long lines as just one line
 set smarttab                " detect if i have 2-4 spaces as tab
+set smartindent
+set autoindent
 set numberwidth=2           " line number column space
 filetype plugin indent on   " allows auto-indenting depending on file type
 syntax on                   " syntax highlighting
 set noshowmode
 set mouse=a                 " mouse support
+set expandtab
 
 if has('nvim-0.5')
   set signcolumn=number
@@ -65,10 +66,6 @@ set completeopt=menuone,noselect
 autocmd BufRead,BufNewFile  *.txt,*.md setlocal wrap linebreak
 
 " by default, the indent is 2 spaces. 
-set expandtab
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
 
 " " status line:
 " set laststatus=2
@@ -93,16 +90,17 @@ set tabstop=2
 " https://www.tdaly.co.uk/projects/vim-statusline-generator/
 
 " for html/rb files, 2 spaces
-autocmd Filetype *.ruby setlocal ts=2 sw=2 expandtab
-autocmd Filetype *.javascript setlocal ts=2 sw=2 expandtab
-autocmd Filetype *.html setlocal ts=2 sw=2 expandtab
-autocmd Filetype *.css setlocal ts=2 sw=2 expandtab
-autocmd Filetype *.json setlocal ts=2 sw=2 expandtab
-autocmd Filetype *.vue setlocal ts=2 sw=2 expandtab
+autocmd Filetype *.ruby setlocal ts=2 sw=2 sts=2
+autocmd Filetype javascript setlocal ts=2 sw=2
+autocmd Filetype *.html setlocal ts=2 sw=2 sts=2
+autocmd Filetype *.css setlocal ts=2 sw=2 sts=2 
+autocmd Filetype *.json setlocal ts=2 sw=2 sts=2
+autocmd Filetype *.vue setlocal ts=2 sw=2 sts=2
 
 " for js/coffee/jade files, 4 spaces
-autocmd Filetype *.python smartindent setlocal ts=4 sw=4 sts=0 expandtab
-autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=0 expandtab
+autocmd Filetype python setlocal ts=4 sw=4 sts=4 sts=4
+
+autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4 sts=2
 
 " show differences between file in disk and current version
 function! s:DiffWithSaved()
