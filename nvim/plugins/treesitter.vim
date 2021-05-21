@@ -6,7 +6,7 @@ require'nvim-treesitter.configs'.setup {
     disable = { "go", "rust" },  -- list of language that will be disabled
   },
   indent = {
-    enable = true
+    enable = false
   }
 }
 EOF
