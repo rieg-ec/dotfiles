@@ -15,6 +15,7 @@
 ### copy/paste:
 
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
+- yy ~ copy entire line
 - p ~ paste (from system clipboard, visual/normal mode)
 - <C-o>p ~ paste (from system clipboard, insert mode)
 - <C-v>v ~ paste (from system clipboard, insert mode)
