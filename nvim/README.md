@@ -12,14 +12,19 @@
 - :q ~ quit
 - :DiffSaved ~ see changes from last saved
 
+### recording
+
+- q<register> ~ start recording in register
+- q ~ stop recording
+
 ### copy/paste:
 
+- :reg ~ show registers
+- yiw | bvey ~ yank word under cursor
+- viwp | bvep ~ replace word under cursor with yanked word
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
 - yy ~ copy entire line
 - p ~ paste (from system clipboard, visual/normal mode)
-- <C-o>p ~ paste (from system clipboard, insert mode)
-- <C-v>v ~ paste (from system clipboard, insert mode)
-- <Ctrl-S> + v ~ paste in ex mode
 
 ### navigation:
 
@@ -28,9 +33,8 @@
 - :noh ~ reset highlighed text
 - n ~ jump next highlight
 - N ~ jump next highlight
-- g ~ go bottom of file
+- G ~ go bottom of file
 - gg ~ go top of file
-- "n"gg ~ go to line "n"
 - ma ~ create mark "a"
 - \`a ~ go to mark "a"
 - { ~ navigate blocks of text
@@ -39,7 +43,7 @@
 - e ~ jump to next word (normal mode)
 - ^ ~ jump to end of line
 - $ ~ jump to beginning of line
-- - ~ highlight word under cursor
+- <Shift-v> ~ select line
 
 - :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
 - :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
@@ -60,6 +64,7 @@
 - S-up/down/left/right/PgUp/PgDown/home/end ~ select text
 - d ~ delete text and copy deleted text to so clipboard
 - dd ~ delete line
+- D ~ delete line and insert empty line
 - x ~ delete text
 - <C-v> + <S-arrow> ~ select text vertically
 
