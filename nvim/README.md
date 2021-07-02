@@ -62,16 +62,14 @@
 ### selection:
 
 - S-up/down/left/right/PgUp/PgDown/home/end ~ select text
-- d ~ delete text and copy deleted text to so clipboard
 - dd ~ delete line
-- D ~ delete line and insert empty line
+- D ~ delete text from cursor to right
 - x ~ delete text
 - <C-v> + <S-arrow> ~ select text vertically
-
 - < & > ~ shift left/right
-
 - cc ~ remove line + insert mode (normal mode)
 - r ~ replace word under cursor (normal mode)
+- diw ~ remove word under cursor
 - o ~ insert text under cursorline (normal mode)
 - s ~ replace replace and insert
 
