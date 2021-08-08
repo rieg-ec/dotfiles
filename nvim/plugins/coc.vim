@@ -79,7 +79,7 @@ let g:coc_global_extensions = [
       \ 'coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html',
       \   'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
       \  'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh',
-      \  'coc-yaml', 'coc-docker', 'coc-python', 'coc-eslint', 'coc-prettier']
+      \  'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph']
 
 function Show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
