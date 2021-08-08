@@ -26,6 +26,11 @@ pip3 install flake8 autopep8 jedi pynvim
 echo "installed python packages" >> $log_file
 # # =======================================================================
 
+
+# # =========================== ruby packages ===========================
+gem install solargraph
+# # =====================================================================
+
 # # ====================== nodejs and npm ======================
 echo "installing node..."
 NVM_DOWNLOAD_LINK=https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh
