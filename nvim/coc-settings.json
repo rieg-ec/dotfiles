@@ -1,15 +1,5 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": [
-    "css",
-    "markdown",
-    "javascript",
-    "graphql",
-    "yaml",
-    "json",
-    "python",
-    "cpp",
-    "vue"
-  ],
+  "coc.preferences.formatOnSaveFiletypes": ["*"],
   "snippets.extends": {
     "cpp": ["c"],
     "typescript": ["javascript"]
@@ -18,12 +8,13 @@
   "eslint.autoFixOnSave": true,
   "eslint.format.enable": true,
   "clangd.path": "/usr/local/opt/llvm/bin/clangd",
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
+  "pyright.enable": true,
+  "pyright.organizeimports.provider": "isort",
   "python.formatting.provider": "autopep8",
-  "python.venvPath": "venv",
-  "python.jediEnabled": false,
+  "python.formatting.autopep8Path": "/opt/homebrew/bin/autopep8",
+  "python.sortImports.path": "/opt/homebrew/bin/isort",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
   "signature.enable": false,
   "vetur.format.enable": true,
   "vetur.completion.autoImport": true,
@@ -41,5 +32,9 @@
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
   "prettier.singleQuote": true,
-  "javascript.preferences.quoteStyle": "single"
+  "javascript.preferences.quoteStyle": "single",
+  "solargraph.autoformat": true,
+  "solargraph.formatting": true,
+  "solargraph.diagnostics": true,
+  "solargraph.hover": true
 }
