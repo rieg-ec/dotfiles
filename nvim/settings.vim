@@ -89,6 +89,8 @@ autocmd BufRead,BufNewFile  *.txt,*.md setlocal wrap linebreak
 " set statusline+=%{strlen(&fenc)?&fenc:'none'}
 " https://www.tdaly.co.uk/projects/vim-statusline-generator/
 
+set ts=2 sw=2 sts=2
+
 " for html/rb files, 2 spaces
 autocmd Filetype *.ruby setlocal ts=2 sw=2 sts=2
 autocmd Filetype javascript setlocal ts=2 sw=2
@@ -98,9 +100,12 @@ autocmd Filetype *.json setlocal ts=2 sw=2 sts=2
 autocmd Filetype *.vue setlocal ts=2 sw=2 sts=2
 
 " for js/coffee/jade files, 4 spaces
-autocmd Filetype python setlocal ts=4 sw=4 sts=4 sts=4
 
-autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4 sts=2
+autocmd Filetype *.cpp setlocal ts=2 sw=2 sts=2
+
+autocmd Filetype python setlocal ts=4 sw=4 sts=4
+autocmd FileType python let b:coc_root_patterns = ['.git', '.env', 'venv', '.venv', 'setup.cfg', 'setup.py', 'pyproject.toml', 'pyrightconfig.json']
+
 
 " show differences between file in disk and current version
 function! s:DiffWithSaved()
@@ -111,6 +116,9 @@ function! s:DiffWithSaved()
   exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
 endfunction
 com! DiffSaved call s:DiffWithSaved()
+
+let g:loaded_matchit = 1
+
 
 " function! StatuslineMode()
 "   let l:mode=mode()
