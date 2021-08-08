@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 
-
-#==============
-# apps
-#==============
-brew install alt-tab
-
 #==============
 # Variables
 #==============
-brew install bash && chsh -s /opt/homebrew/bin/bash
-
 dotfiles_dir=$(pwd)
 log_file=$HOME/install_progress_log.txt
 
@@ -19,35 +11,32 @@ rm  $HOME/.bashrc > /dev/null 2>&1
 rm $HOME/.bash_profile > /dev/null 2>&1  
 ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
 ln -sf $dotfiles_dir/bash/.bash_profile $HOME/.bash_profile
-# =========================================================
 
-# # =========================== python packages ===========================
+[ -s "$HOME/.bashrc" ] && \. "$HOME/.bashrc"
+
+# ===========================================================
+
+# # =========================== python packages =============
 pip3 install flake8 autopep8 jedi pynvim
 echo "installed python packages" >> $log_file
-# # =======================================================================
+# # =========================================================
 
 
-# # =========================== ruby packages ===========================
-gem install solargraph
-# # =====================================================================
+# # =========================== ruby packages ===============
+sudo gem install solargraph
+# # =========================================================
 
-# # ====================== nodejs and npm ======================
+# # ====================== nodejs and npm ===================
 echo "installing node..."
-NVM_DOWNLOAD_LINK=https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh
-curl -o- NVM_DOWNLOAD_LINK | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 nvm install v15
 nvm cache clear
 echo "node $(node --version) installed" >> $log_file
-# # =======================================================================
+# # =========================================================
 
-# # ====================== neovim config ======================
-brew install --HEAD tree-sitter
-brew install --HEAD luajit
-brew install --HEAD neovim
-
-brewr install llvm # coc.clangd languange server dependency
-
+# # ====================== neovim config ====================
 if type -p nvim > /dev/null; then
     echo "neovim $(nvim --version | grep 'NVIM v') Installed" >> $log_file
     
@@ -77,14 +66,10 @@ else
     echo "neovim FAILED TO INSTALL!!!" >> $log_file
 fi
 
-# # ==========================================================
+# # =========================================================
 
 
 # # ====================== tmux config ======================
-echo "installing tmux..."
-
-brew install tmux
-
 if type -p tmux > /dev/null; then
     echo "tmux Installed" >> $log_file
     
@@ -96,18 +81,14 @@ else
     echo "tmux FAILED TO INSTALL!!!" >> $log_file
 fi  
 
-# # =========================================================
-
-brew install ripgrep # TODO: test for amd or arm arch to install ripgrep from source
-
+# # ================== ripgrep ===============================
 if type -n rg > /dev/null 2>&1; then
     echo "rg $(rg --version | grep 'ripgrep') installed" >> $log_file
 else
     echo "rg FAILED TO INSTALL!!!" >> $log_file
 fi
 
-brew install fzf
-
+# # ================== fzf ===================================
 if test -n fzf > /dev/null 2>&1; then
     echo "fzf $(fzf --version) installed" >> $log_file
     $(brew --prefix)/opt/fzf/install
