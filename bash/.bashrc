@@ -98,9 +98,21 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 export LC_ALL=en_US.UTF-8
 
-PATH=/opt/homebrew/bin:$PATH
-alias brew="arch -arm64 /opt/homebrew/bin/brew"
-alias brewr="arch -x86_64 /usr/local/bin/brew $@"
+# arm64 homebrew path
+export "PATH=/opt/homebrew/bin:$PATH"
+
+# x86 homebrew path
+export "PATH=/usr/local/bin:$PATH"
+
+alias abrew="/opt/homebrew/bin/brew"
+alias ibrew="arch -x86_64 /usr/local/bin/brew"
+
+# Catches errors related to the wrong Homebrew directly being picked up
+# (e.g. `ruby-build`)
+brew () {
+  echo "use abrew or ibrew specifically" >&2
+  return 1
+}
 
 alias bash="/opt/homebrew/bin/bash"
 
@@ -108,8 +120,22 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# python
+export PATH="/Users/rieg/Library/Python/3.8/bin:$PATH"
+
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export PATH="$HOME/.poetry/bin:$PATH"
+
+# rbenv
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init - bash)"
+
+# openssl
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"

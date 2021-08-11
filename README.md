@@ -13,6 +13,7 @@ _disclaimer: README files within directories are personal notes to save the shor
 - add split resizing for horizontal splits with <ALT-Arrow>
 - set up treesitter language installations in ./install.sh
   (:TSInstall cpp python javascript html css vue typescript c bash go graphql json lua vim php ruby toml yaml)
+- setup isort pyright
 
 - learn to use/setup vimspector
 - fold/unfold easily
@@ -23,3 +24,15 @@ plugins:
 
 - file icons (nerd fonts)
 - move blocks of selected code (and auto indent)
+
+## how to make rbenv work:
+
+clone rbenv and ruby-build from git:
+
+https://github.com/rbenv/rbenv
+https://github.com/rbenv/ruby-build
+
+brew uninstall openssl && rm -rf /opt/homebrew/opt/openssl@1.1
+brew install openssl
+
+`RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install x.x.x`
