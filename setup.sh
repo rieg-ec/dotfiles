@@ -17,7 +17,7 @@ ln -sf $dotfiles_dir/bash/.bash_profile $HOME/.bash_profile
 # ===========================================================
 
 # # =========================== python packages =============
-pip3 install flake8 autopep8 jedi pynvim
+sudo pip3 install flake8 autopep8 jedi pynvim
 echo "installed python packages" >> $log_file
 # # =========================================================
 
