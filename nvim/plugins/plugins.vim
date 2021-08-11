@@ -51,7 +51,7 @@ call plug#begin()
     
     Plug 'puremourning/vimspector'
 
-    " Plug 'andymass/vim-matchup'
+    Plug 'andymass/vim-matchup'
 
 
 call plug#end()
