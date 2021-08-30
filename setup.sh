@@ -14,6 +14,11 @@ ln -sf $dotfiles_dir/bash/.bash_profile $HOME/.bash_profile
 
 [ -s "$HOME/.bashrc" ] && \. "$HOME/.bashrc"
 
+# global .gitignore
+
+ln -sd $dotfiles_dir/.gitignore.global $HOME/.gitignore
+git config --global core.excludesfile ~/.gitignore
+
 # ===========================================================
 
 # # =========================== python packages =============
@@ -24,6 +29,8 @@ echo "installed python packages" >> $log_file
 
 # # =========================== ruby packages ===============
 sudo gem install solargraph
+sudo gem install htmlbeautifier
+sudo gem install rubocop
 # # =========================================================
 
 # # ====================== nodejs and npm ===================
@@ -74,6 +81,10 @@ if type -p tmux > /dev/null; then
     echo "tmux Installed" >> $log_file
     
     rm -rf $HOME/.tmux.conf > /dev/null 2>&1
+    rm -rf $HOME/.tmux > /dev/null 2>&1
+
+    mkdir -p $HOME/.tmux/plugins
+    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
     
     ln -sf $dotfiles_dir/tmux/.tmux.conf $HOME/.tmux.conf
 
