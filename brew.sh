@@ -20,5 +20,7 @@ brew install fzf
 
 brew cleanup
 
+brew install --cask ngrok
+
 
 
