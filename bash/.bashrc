@@ -120,6 +120,14 @@ alias bash="/opt/homebrew/bin/bash"
 alias rac='rubocop --auto-correct'
 alias racr='rubocop --auto-correct --require rubocop-rails'
 
+git_racr() {
+  for line in $(git status -s -uno); do
+    if [ $line != 'M' ] && [ $line != 'A' ] && [ $line != 'D' ] && [ "$line" == *.rb ]; then
+      racr $line
+    fi
+  done
+}
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
