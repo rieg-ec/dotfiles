@@ -122,7 +122,7 @@ alias racr='rubocop --auto-correct --require rubocop-rails'
 
 git_racr() {
   for line in $(git status -s -uno); do
-    if [ $line != 'M' ] && [ $line != 'A' ] && [ $line != 'D' ] && [ "$line" == *.rb ]; then
+    if [ $line != 'M' ] && [ $line != 'A' ] && [ $line != 'D' ] && [[ $line == *.rb ]]; then
       racr $line
     fi
   done
