@@ -117,8 +117,8 @@ brew () {
 alias bash="/opt/homebrew/bin/bash"
 
 # RUBOCOP
-alias rac='rubocop --auto-correct'
-alias racr='rubocop --auto-correct --require rubocop-rails'
+alias rac='rubocop --auto-correct-all'
+alias racr='rubocop --auto-correct-all --require rubocop-rails'
 
 git_racr() {
   for line in $(git status -s -uno); do
