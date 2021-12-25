@@ -4,7 +4,7 @@ set nowritebackup
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=300
+set updatetime=100
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -78,7 +78,7 @@ command! -nargs=0 Format :call CocAction('format')
 let g:coc_global_extensions = [
       \ 'coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html',
       \   'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
-      \  'coc-vetur', 'coc-tailwindcss', 'coc-sql', 'coc-sh',
+      \  'coc-tailwindcss', 'coc-sql', 'coc-sh',
       \  'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph']
 
 function Show_documentation()
