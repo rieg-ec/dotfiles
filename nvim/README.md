@@ -2,16 +2,6 @@
 
 - within vim: `:PlugInstall`
 
-- CoC will install all extensions not already installed upon opening vim, but coc-clangd needs clangd binaries: `:CocCommand clangd.install`
-
-# Useful nvim shortcuts:
-
-### save/exit files:
-
-- :w ~ save
-- :q ~ quit
-- :DiffSaved ~ see changes from last saved
-
 ### recording
 
 - q<register> ~ start recording in register
@@ -25,6 +15,7 @@
 - y ~ copy to system clipboard (visual mode, or selecting in insert mode)
 - yy ~ copy entire line
 - p ~ paste (from system clipboard, visual/normal mode)
+- % ~ select entire scope (visual mode)
 
 ### navigation:
 
@@ -53,6 +44,8 @@
 - zz ~ bring current line to middle of window
 - <Ctrl-e> ~ scroll window instead of cursor (useful for scrolling past end of file)
 - <Ctrl-y> ~ scroll window instead of cursor
+
+- o ~ insert mode into next line (normal mode)
 
 ### rollback changes:
 
@@ -149,7 +142,7 @@
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
 
-### CoC:
+### LSP:
 
 - <Leader>gd ~ jump to definition
 - <Leader>gr ~ get reference
@@ -160,31 +153,10 @@
 - <Leader>r ~ rename
 - :Format ~ format entire file
 
-### coc-snippets:
-
-- <C-e> ~ expand snippets from coc-snippets
-- <C-g>e ~ expand snippet or jump to next placeholder
-
-### command history
-
-- q: ~ show commmmand history
-
 ### FZF
 
-- :Files ~ search all files
-- :GFiles ~ search files in version control with preview window
-- :GFiles? ~ search files not staged for commit + its state (modified, untracked, deleted files)
-- :Colors ~ change colorschemes
-- :Lines ~ text search over lines in opened buffers
-- :BLines ~ text search over current buffer
-- :History ~ show recently opened buffers
-- :Commits ~ show commit history with diffs -> <S-up/down> to explore
-- :BCommits ~ git commits for current buffer
-- :Mappings ~ show normal mode mappings
-- :Filetypes ~ change filetype of current buffer
+- <S-up/down> ~ scroll preview window
 
-### VimSpector debugger
+### Telescope
 
-to install vimspector debuggers for specific language:\_ `VimspectorInstall <tab>`
-
--
+- "Telescope commands" ~ show a list of user commands 

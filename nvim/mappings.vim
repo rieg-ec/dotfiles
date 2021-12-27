@@ -36,8 +36,13 @@ nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 nnoremap d "_d
 vnoremap d "_d
 
+" make x not override clipboard
+noremap x "_x
+
 nnoremap { }
 nnoremap } {
+vnoremap { }
+vnoremap } {
 
 nnoremap $ ^
 nnoremap ^ $

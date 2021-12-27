@@ -16,8 +16,6 @@ call plug#begin()
     Plug 'scrooloose/NERDTree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
 
-    " Auto pairs for '(' '[' '{'
-    Plug 'jiangmiao/auto-pairs'
     " theme
     Plug 'joshdick/onedark.vim'
     Plug 'numToStr/Comment.nvim'
@@ -27,6 +25,8 @@ call plug#begin()
     Plug 'vim-airline/vim-airline-themes'
 
     Plug 'goolord/alpha-nvim' 
+
+    Plug 'jiangmiao/auto-pairs'
     
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
@@ -35,8 +35,6 @@ call plug#begin()
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
     Plug 'kyazdani42/nvim-web-devicons'
-    Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim'
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
@@ -52,7 +50,7 @@ call plug#begin()
     Plug 'neovim/nvim-lspconfig'
     Plug 'williamboman/nvim-lsp-installer'
 
+
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'p00f/nvim-ts-rainbow'
-    Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 call plug#end()
