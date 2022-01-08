@@ -35,6 +35,7 @@ nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 " exchange cut for deletion
 nnoremap d "_d
 vnoremap d "_d
+nnoremap x "_x
 
 nnoremap { }
 nnoremap } {
@@ -167,3 +168,7 @@ let g:coc_snippet_prev = '<c-k>'
 "NERDTree
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
+
+"FZF
+nnoremap ff <cmd>FZF<CR>
+nnoremap fg <cmd>Rg<CR>
