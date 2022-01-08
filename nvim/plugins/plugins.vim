@@ -52,6 +52,11 @@ call plug#begin()
     Plug 'puremourning/vimspector'
 
     Plug 'andymass/vim-matchup'
+    
+    Plug 'github/copilot.vim'
 
+    Plug 'segeljakt/vim-silicon'
+
+    Plug 'vim-ruby/vim-ruby'
 
 call plug#end()
