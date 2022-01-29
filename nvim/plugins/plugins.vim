@@ -1,13 +1,9 @@
 call plug#begin()
-
     " basic completion
     Plug 'ncm2/ncm2'
     Plug 'ncm2/ncm2-bufword'
     Plug 'ncm2/ncm2-path'
     
-    " syntax highlighting
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
     " File Explorer
     Plug 'scrooloose/NERDTree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -21,21 +17,12 @@ call plug#begin()
     " Plug 'vwxyutarooo/nerdtree-devicons-syntax'   TODO
     Plug 'tpope/vim-commentary'    " comment lines and blocks of text
 
-    " real time debugging with codi
-    Plug 'metakirby5/codi.vim'     " TODO cling in cpp
-
    " bottom line info prettier
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     
-    " CoC completion
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
-
-    " snippets with coc
-    Plug 'honza/vim-snippets'
 
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
@@ -49,8 +36,6 @@ call plug#begin()
     " git integration
     Plug 'airblade/vim-gitgutter'
     
-    Plug 'puremourning/vimspector'
-
     Plug 'andymass/vim-matchup'
     
     Plug 'github/copilot.vim'
