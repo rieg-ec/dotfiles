@@ -26,8 +26,11 @@ call plug#begin()
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
 
-    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
     " markdown visualization
+    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
+
+    Plug 'posva/vim-vue'
+
 
     Plug 'kyazdani42/nvim-web-devicons'
 
