@@ -21,6 +21,7 @@
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
   "prettier.singleQuote": true,
+  "prettier.printWidth": 100,
   "javascript.preferences.quoteStyle": "single",
   "solargraph.autoformat": true,
   "solargraph.formatting": true,
