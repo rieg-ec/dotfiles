@@ -97,12 +97,12 @@ inoremap <silent><expr> <C-space> coc#refresh()
 " inoremap <Leader>s 
 nnoremap <leader>a <Plug>(coc-codeaction-selected)
 
-nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-nnoremap <expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <nowait><expr> <C-j> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <nowait><expr> <C-k> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>MoveBlockDown"
-vnoremap <nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>MoveBlockUp"
+" nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+" nnoremap <expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+inoremap <nowait><expr> <C-j> pumvisible() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+" vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>MoveBlockDown"
+" vnoremap <nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>MoveBlockUp"
 
 vmap <C-j> <Plug>MoveBlockDown
 vmap <C-k> <Plug>MoveBlockUp
