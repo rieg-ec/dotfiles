@@ -40,10 +40,19 @@ call plug#begin()
     Plug 'lewis6991/gitsigns.nvim'
     Plug 'tpope/vim-fugitive'
 
+    Plug 'github/copilot.vim'
+
+    Plug 'vim-ruby/vim-ruby'
+
+    Plug 'segeljakt/vim-silicon'
+
     Plug 'andymass/vim-matchup'
 
     Plug 'matze/vim-move'
 
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     Plug 'p00f/nvim-ts-rainbow'
+
+    Plug 'yuezk/vim-js'
+    Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()
