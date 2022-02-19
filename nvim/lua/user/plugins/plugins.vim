@@ -4,9 +4,6 @@ call plug#begin()
     Plug 'SirVer/ultisnips'
     Plug 'honza/vim-snippets'
 
-    " LSP
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
     " File Explorer
     Plug 'preservim/nerdtree'
     Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -26,13 +23,6 @@ call plug#begin()
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
 
-    " markdown visualization
-    Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
-
-    Plug 'posva/vim-vue'
-
-
-    Plug 'kyazdani42/nvim-web-devicons'
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
@@ -40,19 +30,7 @@ call plug#begin()
     Plug 'lewis6991/gitsigns.nvim'
     Plug 'tpope/vim-fugitive'
 
-    Plug 'github/copilot.vim'
-
-    Plug 'vim-ruby/vim-ruby'
-
-    Plug 'segeljakt/vim-silicon'
-
     Plug 'andymass/vim-matchup'
 
     Plug 'matze/vim-move'
-
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-    Plug 'p00f/nvim-ts-rainbow'
-
-    Plug 'yuezk/vim-js'
-    Plug 'maxmellon/vim-jsx-pretty'
 call plug#end()

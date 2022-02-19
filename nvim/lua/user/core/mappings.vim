@@ -81,11 +81,6 @@ nnoremap <C-f> :NERDTreeFind<CR>
 nnoremap ff <cmd>Files<CR>
 nnoremap fg <cmd>Rg<CR>
 
-" COC
-nmap <Leader>gd <Plug>(coc-definition)
-nmap <Leader>gdc <Plug>(coc-declaration)
-nmap <Leader>gD <Plug>(coc-type-definition)
-nmap <Leader>gi <Plug>(coc-implementation)
 " make arrow keys ignore completion windows:
 inoremap <expr> <up> pumvisible() ? '<c-e><up>' : '<up>'
 inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
@@ -93,24 +88,7 @@ inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
 imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>" 
 imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-t>" 
 
-inoremap <silent><expr> <C-space> coc#refresh()
-" inoremap <Leader>s 
-nnoremap <leader>a <Plug>(coc-codeaction-selected)
-
-" nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-" nnoremap <expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-inoremap <nowait><expr> <C-j> pumvisible() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-" vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>MoveBlockDown"
-" vnoremap <nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>MoveBlockUp"
-
 vmap <C-j> <Plug>MoveBlockDown
 vmap <C-k> <Plug>MoveBlockUp
 
-inoremap <silent><expr> <CR>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand',''])\<CR>" :
-      \ "\<CR>" 
-
-let g:coc_snippet_next = '<tab>'
-let g:UltiSnipsExpandTrigger = '<nop>'
+inoremap <silent><expr> <CR> EnterSelect()
