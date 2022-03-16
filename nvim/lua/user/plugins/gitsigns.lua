@@ -26,7 +26,7 @@ require('gitsigns').setup {
     relative_time = false
   },
   sign_priority = 6,
-  update_debounce = 100,
+  update_debounce = 300,
   status_formatter = nil, -- Use default
   max_file_length = 40000,
   preview_config = {
