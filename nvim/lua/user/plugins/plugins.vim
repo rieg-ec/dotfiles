@@ -29,7 +29,7 @@ call plug#begin()
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
-    Plug 'posva/vim-vue'
+    " Plug 'posva/vim-vue'
 
 
     Plug 'kyazdani42/nvim-web-devicons'
@@ -43,6 +43,7 @@ call plug#begin()
     Plug 'github/copilot.vim'
 
     Plug 'vim-ruby/vim-ruby'
+    Plug 'tpope/vim-rails'
 
     Plug 'segeljakt/vim-silicon'
 
@@ -55,4 +56,6 @@ call plug#begin()
 
     Plug 'yuezk/vim-js'
     Plug 'maxmellon/vim-jsx-pretty'
+
+    Plug 'rieg-ec/coc-tailwindcss', {'do': 'yarn install --frozen-lockfile && yarn build'}
 call plug#end()

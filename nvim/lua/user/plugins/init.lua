@@ -11,9 +11,9 @@ require 'user.plugins.gitsigns'
 vim.g.move_map_keys = 0
 
 vim.g.coc_global_extensions = {
-   'coc-json', 'coc-pyright', 'coc-tsserver', 'coc-html',
+  'coc-pyright', 'coc-tsserver', 'coc-html',
      'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
-    'coc-tailwindcss', 'coc-sql', 'coc-sh',
+    'coc-sql', 'coc-sh',
     'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph'
 }
 
@@ -49,3 +49,15 @@ vim.api.nvim_command([[
   autocmd CursorHold * silent call CocActionAsync('highlight')
 ]])
 
+
+vim.cmd([[
+  augroup CocNvim
+    autocmd BufWritePost *.js,*.vue,*.ts call CocAction('runCommand', 'eslint.executeAutofix') | sleep 100m
+    autocmd BufWritePost *.vue,*.html,*.erb call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses') | sleep 100m
+  augroup END
+]])
+
+-- to debug coc extensions
+-- vim.api.nvim_command([[
+--   set runtimepath^=~/cs/coc-tailwindcss
+-- ]])
