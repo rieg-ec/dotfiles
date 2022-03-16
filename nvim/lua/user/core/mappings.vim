@@ -107,10 +107,27 @@ inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" :
 vmap <C-j> <Plug>MoveBlockDown
 vmap <C-k> <Plug>MoveBlockUp
 
-inoremap <silent><expr> <CR>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand',''])\<CR>" :
-      \ "\<CR>" 
+" inoremap <silent><expr> <CR>
+"       \ pumvisible() ? coc#_select_confirm() :
+"       \ coc#expandable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand',''])\<CR>" :
+"       \ "\<CR>" 
+
+function! EnterSelect()
+    " if the popup is visible and an option is not selected
+    if pumvisible() && complete_info()["selected"] == -1
+        return "\<C-y>\<CR>"
+
+    " if the pum is visible and an option is selected
+    elseif pumvisible()
+        return coc#_select_confirm()
+
+    " if the pum is not visible
+    else
+        return "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+    endif
+endfunction
+
+inoremap <silent><expr> <cr> EnterSelect()
 
 let g:coc_snippet_next = '<tab>'
 let g:UltiSnipsExpandTrigger = '<nop>'
