@@ -162,3 +162,5 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
 [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
 #### END FIG ENV VARIABLES ####
 . "$HOME/.cargo/env"
+
+eval "$(nodenv init -)"
