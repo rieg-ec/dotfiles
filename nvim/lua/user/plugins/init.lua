@@ -50,12 +50,12 @@ vim.api.nvim_command([[
 ]])
 
 
-vim.cmd([[
-  augroup CocNvim
-    autocmd BufWritePost *.js,*.vue,*.ts call CocAction('runCommand', 'eslint.executeAutofix') | sleep 100m
-    autocmd BufWritePost *.vue,*.html,*.erb call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses') | sleep 100m
-  augroup END
-]])
+-- vim.cmd([[
+--   augroup CocNvim
+--     autocmd BufWritePre *.vue call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses') | sleep 100m
+--     autocmd BufWritePre *.vue call CocAction('runCommand', 'eslint.executeAutofix') | sleep 100m
+--   augroup END
+-- ]])
 
 -- to debug coc extensions
 -- vim.api.nvim_command([[
