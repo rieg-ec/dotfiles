@@ -57,9 +57,8 @@ vim.cmd([[
 	autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4
 	autocmd Filetype python setlocal ts=4 sw=4 sts=4
 
-  autocmd BufWritePre *.html :%s/\s\+$//e
-  autocmd BufWritePre *.erb :%s/\s\+$//e
-	augroup END
+  autocmd BufWritePre * :%s/\s\+$//e
+  augroup END
 ]])
 
 for k, v in pairs(options) do
