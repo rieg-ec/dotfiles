@@ -58,4 +58,8 @@ call plug#begin()
     Plug 'maxmellon/vim-jsx-pretty'
 
     Plug 'rieg-ec/coc-tailwindcss', {'do': 'yarn install --frozen-lockfile && yarn build'}
+
+    Plug 'nvim-telescope/telescope.nvim'
+    Plug 'nvim-lua/popup.nvim'
+    Plug 'sudormrfbin/cheatsheet.nvim'
 call plug#end()

@@ -1,0 +1,23 @@
+## mappings
+navigate to file under cursor        | <Leader>gf
+coc-definition                       | :<Leader>gd
+coc-declaration                      | :<Leader>gdc
+coc-implementation                   | :<Leader>gi
+
+## FZF
+grep        | fg
+fzf         | ff
+
+## gitsigns @git
+Stage hunk                               | :Gitsigns stage_hunk
+Stage buffer                             | :Gitsigns stage_buffer
+Stage range                              | :'<,'>Gitsigns stage_hunk
+Undo stage hunk                          | :Gitsigns undo_stage_hunk
+Reset hunk                               | :Gitsigns reset_hunk
+Preview hunk                             | :Gitsigns preview_hunk
+Reset buffer                             | :Gitsigns reset_buffer
+Diff current buffer                      | :Gitsigns diffthis
+
+
+## fugitive @git
+
