@@ -54,9 +54,12 @@ vim.cmd([[
 	autocmd Filetype *.css setlocal ts=2 sw=2 sts=2 
 	autocmd Filetype *.json setlocal ts=2 sw=2 sts=2
 	autocmd Filetype *.vue setlocal ts=2 sw=2 sts=2
-	autocmd Filetype *.cpp setlocal ts=2 sw=2 sts=2
+	autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4
 	autocmd Filetype python setlocal ts=4 sw=4 sts=4
-	augroup END 
+
+  autocmd BufWritePre *.html :%s/\s\+$//e
+  autocmd BufWritePre *.erb :%s/\s\+$//e
+	augroup END
 ]])
 
 for k, v in pairs(options) do
