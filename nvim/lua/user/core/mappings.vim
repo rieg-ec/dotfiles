@@ -7,6 +7,7 @@ vnoremap d "_d
 
 " make x not override clipboard
 nnoremap x "_x
+nnoremap s "_s
 
 " rename a word
 nnoremap r ciw
