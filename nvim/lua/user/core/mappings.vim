@@ -131,4 +131,5 @@ endfunction
 inoremap <silent><expr> <cr> EnterSelect()
 
 let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_next = '<S-tab>'
 let g:UltiSnipsExpandTrigger = '<nop>'
