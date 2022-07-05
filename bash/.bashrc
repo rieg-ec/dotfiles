@@ -1,8 +1,3 @@
-
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the start of this file.
-[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
-#### END FIG ENV VARIABLES ####
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -133,22 +128,28 @@ git_racr() {
   done
 }
 
+
+# C++
+alias c14="g++ -std=c++14"
+alias c17="g++ -std=c++17"
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # python
 export PATH="/Users/rieg/Library/Python/3.8/bin:$PATH"
+export PYTHONPATH="/opt/homebrew/bin/python3"
+alias python=python3
+
+alias use_intel="arch -x86_64 /bin/bash"
+alias use_arm="arch -arm /bin/bash"
 
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export PATH="$HOME/.poetry/bin:$PATH"
-
-# rbenv
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init - bash)"
 
 # openssl
 export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
@@ -157,10 +158,28 @@ export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
 
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the end of this file.
-[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
-#### END FIG ENV VARIABLES ####
+# nvim
+export PATH="$HOME/nvim/bin:$PATH"
+
 . "$HOME/.cargo/env"
 
 eval "$(nodenv init -)"
+
+eval "$(pyenv init -)"
+export PATH="$HOME/.pyenv/bin:$PATH"
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init - bash)"
+
+source ~/.bash-git-completion.bash
+
+# GIT aliases
+alias gria="git rebase -i --autosquash"
+alias gri="git rebase -i"
+alias gs="git status"
+alias gl="git log"
+alias gcf="git commit --fixup"
+alias gca="git commit --amend"
+alias grc="git rebase --continue"
+alias gpfl="git push --force-with-lease"
+#######
