@@ -7,6 +7,8 @@ require 'user.plugins.treesitter'
 require('Comment').setup()
 require 'user.plugins.gitsigns'
 
+require 'user.plugins.cheatsheet'
+
 -- vim-move
 vim.g.move_map_keys = 0
 
@@ -42,6 +44,10 @@ vim.cmd([[
     \ call fzf#vim#grep(
     \   'rg --column --line-number --color=always --smart-case -- '.shellescape(<q-args>), 2,
     \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+
+  autocmd FileType js UltiSnipsAddFiletypes javascript
+  " autocmd FileType jsx UltiSnipsAddFiletypes javascriptreact.javascript.javascript-react.javascript_react
+  " autocmd FileType jsx UltiSnipsAddFiletypes typescriptreact.javascript.typescript.javascriptreact.javascript-react.javascript_react
 ]])
 
 -- COC

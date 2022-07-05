@@ -5,18 +5,17 @@
   "diagnostic.hintSign": "",
   "diagnostic.checkCurrentLine": true,
   "coc.preferences.formatOnSaveFiletypes": [
-    "rb",
-    "python",
+    "ruby",
+    "css",
     "json",
     "go",
     "c",
     "cpp",
     "yaml",
     "sh",
+    "markdown",
     "html",
-    "javascript",
-    "html",
-    "html.erb"
+    "python"
   ],
   "coc.preferences.extensionUpdateCheck": "never",
   "snippets.extends": {
@@ -26,15 +25,16 @@
     "css": ["vue"],
     "rails": ["rb"]
   },
-  "html.filetypes": ["html", "handlebars", "htmldjango", "blade", "erb"],
+  "html.filetypes": ["html", "handlebars", "htmldjango", "blade", "erb", "vue"],
   "json.format.enable": true,
   "yaml.format.enable": true,
   "yaml.format.singleQuote": false,
-  "python.linting.enabled": true,
+  "pyright.enable": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "/Users/rieg/.pyenv/shims/black",
+  "python.pythonPath": "/Users/rieg/.pyenv/shims/python3",
   "clangd.path": "/opt/homebrew/opt/llvm/bin/clangd",
-  "python.linting.flake8Enabled": true,
-  "python.formatting.provider": "autopep8",
-  "python.venvPath": "venv",
+  "clangd.arguments": ["--background-index", "--completion-style=detailed"],
   "signature.enable": false,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
   "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
@@ -52,13 +52,12 @@
   "tailwindCSS.headwind.classRegex": {
     "reason": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)",
     "elm": "\\bclass\\s*\\\"([_a-zA-Z0-9\\s\\-\\:\\/]+)\\\"",
-    "html": "\\bclass\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\']",
+    "html": "\\bclass\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\.\\:\\/]+)[\\\"\\']",
     "css": "\\B@apply\\s+([_a-zA-Z0-9\\s\\-\\:\\/]+);",
     "javascript": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)",
     "javascriptreact": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)",
     "typescript": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)",
-    "typescriptreact": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)",
-    "eruby": "\\bclass\\s*:\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\']"
+    "typescriptreact": "(?:\\bclassName\\s*=\\s*[\\\"\\']([_a-zA-Z0-9\\s\\-\\:\\/]+)[\\\"\\'])|(?:\\btw\\s*`([_a-zA-Z0-9\\s\\-\\:\\/]*)`)"
   },
   "tailwindCSS.headwind.defaultSortOrder": [
     "container",

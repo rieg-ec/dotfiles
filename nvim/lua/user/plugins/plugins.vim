@@ -19,18 +19,15 @@ call plug#begin()
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
 
-    Plug 'goolord/alpha-nvim' 
+    Plug 'goolord/alpha-nvim'
 
     Plug 'jiangmiao/auto-pairs'
- 
+
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
 
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
-
-    " Plug 'posva/vim-vue'
-
 
     Plug 'kyazdani42/nvim-web-devicons'
 
@@ -52,12 +49,12 @@ call plug#begin()
     Plug 'matze/vim-move'
 
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-    Plug 'p00f/nvim-ts-rainbow'
+    " Plug 'p00f/nvim-ts-rainbow'
 
     Plug 'yuezk/vim-js'
     Plug 'maxmellon/vim-jsx-pretty'
 
-    Plug 'rieg-ec/coc-tailwindcss', {'do': 'yarn install --frozen-lockfile && yarn build'}
+    Plug 'rieg-ec/coc-tailwindcss', {'do': 'yarn install --frozen-lockfile && yarn build > /tmp/log.txt'}
 
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'nvim-lua/popup.nvim'
