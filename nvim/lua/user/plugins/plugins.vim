@@ -2,7 +2,7 @@ call plug#begin()
     Plug 'nvim-lua/plenary.nvim'
 
     Plug 'SirVer/ultisnips'
-    Plug 'honza/vim-snippets'
+    Plug 'rieg-ec/vim-snippets'
 
     " LSP
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
