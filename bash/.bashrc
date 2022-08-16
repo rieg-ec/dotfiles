@@ -98,24 +98,6 @@ export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
 export LC_ALL=en_US.UTF-8
 
-# arm64 homebrew path
-export "PATH=/opt/homebrew/bin:$PATH"
-
-# x86 homebrew path
-export "PATH=/usr/local/bin:$PATH"
-
-alias abrew="/opt/homebrew/bin/brew"
-alias ibrew="arch -x86_64 /usr/local/bin/brew"
-
-# Catches errors related to the wrong Homebrew directly being picked up
-# (e.g. `ruby-build`)
-brew () {
-  echo "use abrew or ibrew specifically" >&2
-  return 1
-}
-
-alias bash="/opt/homebrew/bin/bash"
-
 # RUBOCOP
 alias rac='rubocop --auto-correct-all'
 alias racr='rubocop --auto-correct-all --require rubocop-rails'
@@ -128,7 +110,6 @@ git_racr() {
   done
 }
 
-
 # C++
 alias c14="g++ -std=c++14"
 alias c17="g++ -std=c++17"
@@ -137,26 +118,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# python
-export PATH="/Users/rieg/Library/Python/3.8/bin:$PATH"
-export PYTHONPATH="/opt/homebrew/bin/python3"
-alias python=python3
 
-alias use_intel="arch -x86_64 /bin/bash"
-alias use_arm="arch -arm /bin/bash"
-
-export PATH="/usr/local/opt/llvm/bin:$PATH"
-
-export LDFLAGS="-L/usr/local/opt/llvm/lib"
-export CPPFLAGS="-I/usr/local/opt/llvm/include"
 export PATH="$HOME/.poetry/bin:$PATH"
-
-# openssl
-export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
 
 # nvim
 export PATH="$HOME/nvim/bin:$PATH"
@@ -181,5 +144,6 @@ alias gl="git log"
 alias gcf="git commit --fixup"
 alias gca="git commit --amend"
 alias grc="git rebase --continue"
-alias gpfl="git push --force-with-lease"
-#######
+alias gpfl="git push --force-with-lease origin"
+alias gd="git diff"
+alias ga="git add"

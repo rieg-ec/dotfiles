@@ -1,0 +1,39 @@
+# arm64 homebrew path
+export "PATH=/opt/homebrew/bin:$PATH"
+
+# x86 homebrew path
+export "PATH=/usr/local/bin:$PATH"
+
+alias abrew="/opt/homebrew/bin/brew"
+alias ibrew="arch -x86_64 /usr/local/bin/brew"
+
+
+# Catches errors related to the wrong Homebrew directly being picked up
+# (e.g. `ruby-build`)
+brew () {
+  echo "use abrew or ibrew specifically" >&2
+  return 1
+}
+
+alias bash="/opt/homebrew/bin/bash"
+
+# python
+export PATH="/Users/rieg/Library/Python/3.8/bin:$PATH"
+export PYTHONPATH="/opt/homebrew/bin/python3"
+alias python=python3
+
+alias use_intel="arch -x86_64 /bin/bash"
+alias use_arm="arch -arm /bin/bash"
+
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"
+
+# openssl
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
+
