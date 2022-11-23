@@ -21,3 +21,10 @@ Diff current buffer                      | :Gitsigns diffthis
 
 ## fugitive @git
 
+## visual
+Append to end of selected lines  | $A
+Merge current line with the previous line  | J
+
+
+## Others
+Source neovim file | :source $MYVIMRC
