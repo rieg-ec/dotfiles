@@ -112,7 +112,11 @@ git_racr() {
 
 # C++
 alias c14="g++ -std=c++14"
-alias c17="g++ -std=c++17"
+
+c17() {
+  g++ -std=c++17 "$1";
+  ./a.out < "$2";
+}
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -127,6 +131,7 @@ export PATH="$HOME/nvim/bin:$PATH"
 . "$HOME/.cargo/env"
 
 eval "$(nodenv init -)"
+export PATH="$HOME/.nodenv/bin:$PATH"
 
 eval "$(pyenv init -)"
 export PATH="$HOME/.pyenv/bin:$PATH"

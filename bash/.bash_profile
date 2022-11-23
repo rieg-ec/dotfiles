@@ -3,8 +3,7 @@ if [ -f /etc/profile ]; then
     source /etc/profile
 fi
 
-source $HOME/.bashrc
 source $HOME/.bashrc_macOS
-
+source $HOME/.bashrc
 
 . "$HOME/.cargo/env"
