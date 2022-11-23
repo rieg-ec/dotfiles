@@ -9,6 +9,9 @@ vnoremap d "_d
 nnoremap x "_x
 nnoremap s "_s
 
+" make S-c not override clipboard
+nnoremap <S-c> "_<S-c>
+
 " rename a word
 nnoremap r ciw
 
@@ -20,10 +23,15 @@ vnoremap } {
 nnoremap <C-j> 100<C-d>
 nnoremap <C-k> 100<C-u>
 
-nnoremap $ ^
-nnoremap ^ $
-vnoremap $ ^
-vnoremap ^ $
+nnoremap <S-b> ^
+nnoremap <S-e> $
+vnoremap <S-b> ^
+vnoremap <S-e> $h
+" go to end of line in insert mode
+inoremap <C-e> <Esc>A
+" go to beginning of line in insert mode
+" needs to press <b> twice due to tmux capturing the first press
+inoremap <C-a> <Esc>I
 
 nnoremap <Leader>/ :BLines<CR>
 
@@ -46,7 +54,7 @@ nnoremap gt :tabnext<CR>
 nnoremap gT :tabprevious<CR>
 
 " get file
-nnoremap <Leader>gf gf<CR> 
+nnoremap <Leader>gf gf<CR>
 
 " tab/untab blocks of selected text
 vnoremap <TAB> >gv
@@ -87,15 +95,16 @@ nmap <Leader>gd <Plug>(coc-definition)
 nmap <Leader>gdc <Plug>(coc-declaration)
 nmap <Leader>gD <Plug>(coc-type-definition)
 nmap <Leader>gi <Plug>(coc-implementation)
+nmap <Leader>F :call CocAction('format')<CR>
 " make arrow keys ignore completion windows:
 inoremap <expr> <up> pumvisible() ? '<c-e><up>' : '<up>'
 inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
 " shift-tab un-tabs text if no pumvisible
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>" 
-imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-t>" 
+imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
+imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-t>"
 
 inoremap <silent><expr> <C-space> coc#refresh()
-" inoremap <Leader>s 
+" inoremap <Leader>s
 nnoremap <leader>a <Plug>(coc-codeaction-selected)
 
 " nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
@@ -111,7 +120,7 @@ vmap <C-k> <Plug>MoveBlockUp
 " inoremap <silent><expr> <CR>
 "       \ pumvisible() ? coc#_select_confirm() :
 "       \ coc#expandable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand',''])\<CR>" :
-"       \ "\<CR>" 
+"       \ "\<CR>"
 
 function! EnterSelect()
     " if the popup is visible and an option is not selected
@@ -130,6 +139,49 @@ endfunction
 
 inoremap <silent><expr> <cr> EnterSelect()
 
-let g:coc_snippet_next = '<tab>'
+
+" function! ApplyExtraFormatters()
+"   if index(['vue', 'js', 'ts'], &filetype) >= 0
+"     execute "CocCommand prettier.formatFile"
+"   endif
+"
+"   if index(['vue', 'js', 'html', 'erb'], &filetype) >= 0
+"     execute "CocCommand tailwindCSS.headwind.sortTailwindClasses"
+"   endif
+" endfunction
+
+" nnoremap <silent><expr> <Leader>s ApplyExtraFormatters()
+
+" coc_prettier = function()
+"   vim.api.nvim_command([call CocAction('runCommand', 'prettier.formatFile')])
+" end
+"
+" coc_eslint = function()
+"   vim.api.nvim_command([call CocAction('runCommand', 'eslint.executeAutofix')])
+" end
+"
+" coc_tailwind = function()
+"   vim.api.nvim_command([call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses')])
+" end
+"
+" coc_format = function()
+"   print('hola')
+" end
+"
+" vim.api.nvim_buf_set_keymap(0, "n", "<Leader>s", ":lua coc_format()<CR>", { silent = true, noremap = true })
+"
+" vim.cmd('autocmd BufRead * lua setKeybinds()')
+"
+" vim.cmd([[
+"   augroup CocNvim
+"     autocmd BufRead * lua registerFormatters()
+"     " autocmd BufRead *.js,*.vue,*.ts call CocAction('runCommand', 'eslint.executeAutofix')
+"     " autocmd BufRead *.vue,*.html,*.erb call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses')
+"   augroup END
+" ]])
+"
 let g:coc_snippet_next = '<S-tab>'
 let g:UltiSnipsExpandTrigger = '<nop>'
+
+imap <C-n> <Plug>(copilot-next)
+imap <C-p> <Plug>(copilot-previous)
