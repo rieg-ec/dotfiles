@@ -87,16 +87,13 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 export TERM=screen-256color
 
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
-export LC_ALL=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 
 # RUBOCOP
 alias rac='rubocop --auto-correct-all'
@@ -152,3 +149,5 @@ alias grc="git rebase --continue"
 alias gpfl="git push --force-with-lease origin"
 alias gd="git diff"
 alias ga="git add"
+
+export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"

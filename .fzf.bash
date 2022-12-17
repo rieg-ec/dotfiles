@@ -12,5 +12,3 @@ fi
 # ------------
 source "/opt/homebrew/opt/fzf/shell/key-bindings.bash"
 
-export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
-
