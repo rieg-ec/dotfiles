@@ -18,6 +18,16 @@ Preview hunk                             | :Gitsigns preview_hunk
 Reset buffer                             | :Gitsigns reset_buffer
 Diff current buffer                      | :Gitsigns diffthis
 
+## CoC
+rename symbol                            | :<Leader>rn
+definition                               | :<Leader>gd
+type definition                          | :<Leader>gD
+declaration                              | :<Leader>gdc
+implementation                           | :<Leader>gi
+references                               | :<Leader>gr
+format                                   | :<Leader>F
+apply code action to cursor              | :<Leader>ac
+apply code action to whole buffer        | :<Leader>as
 
 ## fugitive @git
 
@@ -25,6 +35,10 @@ Diff current buffer                      | :Gitsigns diffthis
 Append to end of selected lines  | $A
 Merge current line with the previous line  | J
 
+## copilot
+Accept suggestion | <C-y>
+
 
 ## Others
 Source neovim file | :source $MYVIMRC
+Change keyboard layout | <c-space>
