@@ -29,6 +29,7 @@ local options = {
   ts = 2,
   sw = 2,
   sts = 2,
+  updatetime = 300,
 }
 
 vim.g.mapleader = ';'

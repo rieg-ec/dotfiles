@@ -90,48 +90,27 @@ nnoremap <C-f> :NERDTreeFind<CR>
 nnoremap ff <cmd>Files<CR>
 nnoremap fg <cmd>Rg<CR>
 
-" COC
-nmap <Leader>gd <Plug>(coc-definition)
-nmap <Leader>gdc <Plug>(coc-declaration)
-nmap <Leader>gD <Plug>(coc-type-definition)
-nmap <Leader>gi <Plug>(coc-implementation)
-nmap <Leader>F :call CocAction('format')<CR>
-" make arrow keys ignore completion windows:
-inoremap <expr> <up> pumvisible() ? '<c-e><up>' : '<up>'
-inoremap <expr> <down> pumvisible() ? '<c-e><down>' : '<down>'
-" shift-tab un-tabs text if no pumvisible
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<C-d>"
-imap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-t>"
+imap <expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) : "\<C-t>"
+imap <expr><S-TAB>
+      \ coc#pum#visible() ? coc#pum#prev(1) : "\<C-d>"
 
-inoremap <silent><expr> <C-space> coc#refresh()
-" inoremap <Leader>s
-nnoremap <leader>a <Plug>(coc-codeaction-selected)
-
-" nnoremap <expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-" nnoremap <expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 inoremap <nowait><expr> <C-j> pumvisible() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
 inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-" vnoremap <nowait><expr> <C-j> coc#float#has_scroll() ? coc#float#scroll(1) : "\<Plug>MoveBlockDown"
-" vnoremap <nowait><expr> <C-k> coc#float#has_scroll() ? coc#float#scroll(0) : "\<Plug>MoveBlockUp"
-
-vmap <C-j> <Plug>MoveBlockDown
-vmap <C-k> <Plug>MoveBlockUp
-
-" inoremap <silent><expr> <CR>
-"       \ pumvisible() ? coc#_select_confirm() :
-"       \ coc#expandable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand',''])\<CR>" :
-"       \ "\<CR>"
 
 function! EnterSelect()
     " if the popup is visible and an option is not selected
     if pumvisible() && complete_info()["selected"] == -1
         return "\<C-y>\<CR>"
+    elseif pumvisible() && complete_info()["selected"] == 0
+        return "\<C-y>"
 
     " if the pum is visible and an option is selected
-    elseif pumvisible()
-        return coc#_select_confirm()
-
-    " if the pum is not visible
+    elseif pumvisible() && coc#expandable()
+        if coc#expandable()
+          return "\<Plug>(coc-float-expand)"
+        else
+          return coc#pum#confirm()
     else
         return "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
     endif
@@ -139,49 +118,58 @@ endfunction
 
 inoremap <silent><expr> <cr> EnterSelect()
 
+" GoTo code navigation
+nmap <Leader>gd <Plug>(coc-definition)
+nmap <Leader>gD <Plug>(coc-type-definition)
+nmap <Leader>gdc <Plug>(coc-declaration)
+nmap <Leader>gi <Plug>(coc-implementation)
+nmap <Leader>gr <Plug>(coc-references)
+nmap <Leader>F :call CocActionAsync('format')<CR>
 
-" function! ApplyExtraFormatters()
-"   if index(['vue', 'js', 'ts'], &filetype) >= 0
-"     execute "CocCommand prettier.formatFile"
-"   endif
-"
-"   if index(['vue', 'js', 'html', 'erb'], &filetype) >= 0
-"     execute "CocCommand tailwindCSS.headwind.sortTailwindClasses"
-"   endif
-" endfunction
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
 
-" nnoremap <silent><expr> <Leader>s ApplyExtraFormatters()
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
 
-" coc_prettier = function()
-"   vim.api.nvim_command([call CocAction('runCommand', 'prettier.formatFile')])
-" end
-"
-" coc_eslint = function()
-"   vim.api.nvim_command([call CocAction('runCommand', 'eslint.executeAutofix')])
-" end
-"
-" coc_tailwind = function()
-"   vim.api.nvim_command([call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses')])
-" end
-"
-" coc_format = function()
-"   print('hola')
-" end
-"
-" vim.api.nvim_buf_set_keymap(0, "n", "<Leader>s", ":lua coc_format()<CR>", { silent = true, noremap = true })
-"
-" vim.cmd('autocmd BufRead * lua setKeybinds()')
-"
-" vim.cmd([[
-"   augroup CocNvim
-"     autocmd BufRead * lua registerFormatters()
-"     " autocmd BufRead *.js,*.vue,*.ts call CocAction('runCommand', 'eslint.executeAutofix')
-"     " autocmd BufRead *.vue,*.html,*.erb call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses')
-"   augroup END
-" ]])
-"
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap keys for applying code actions at the cursor position
+nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+" Remap keys for apply code actions affect whole buffer
+nmap <leader>as  <Plug>(coc-codeaction-source)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Add `:OR` command for organize imports of the current buffer
+command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+vmap <C-j> <Plug>MoveBlockDown
+vmap <C-k> <Plug>MoveBlockUp
+
+
 let g:coc_snippet_next = '<S-tab>'
 let g:UltiSnipsExpandTrigger = '<nop>'
 
 imap <C-n> <Plug>(copilot-next)
 imap <C-p> <Plug>(copilot-previous)
+imap <silent><script><expr> <C-y> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
