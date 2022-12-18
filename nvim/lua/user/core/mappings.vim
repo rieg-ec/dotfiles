@@ -81,7 +81,6 @@ nnoremap <silent> <cr> :let searchTerm = '\v<'.expand("<cword>").'>' <bar> let @
 " prompt to replace highlighted text one by one with y/n
 nnoremap <Leader>f :%s///gc<Left><Left><Left><Left>
 
-
 "NERDTree
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
@@ -98,25 +97,8 @@ imap <expr><S-TAB>
 inoremap <nowait><expr> <C-j> pumvisible() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
 inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
 
-function! EnterSelect()
-    " if the popup is visible and an option is not selected
-    if pumvisible() && complete_info()["selected"] == -1
-        return "\<C-y>\<CR>"
-    elseif pumvisible() && complete_info()["selected"] == 0
-        return "\<C-y>"
-
-    " if the pum is visible and an option is selected
-    elseif pumvisible() && coc#expandable()
-        if coc#expandable()
-          return "\<Plug>(coc-float-expand)"
-        else
-          return coc#pum#confirm()
-    else
-        return "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-    endif
-endfunction
-
-inoremap <silent><expr> <cr> EnterSelect()
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " GoTo code navigation
 nmap <Leader>gd <Plug>(coc-definition)

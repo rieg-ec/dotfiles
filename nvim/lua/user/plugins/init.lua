@@ -1,6 +1,8 @@
 -- require'nvim-web-devicons'.setup { default = true; }
 -- require'nvim-web-devicons'.get_icons()
 
+require 'user.plugins.onedark'
+require('onedark').load()
 require 'user.plugins.alpha'
 require 'user.plugins.treesitter'
 
@@ -8,6 +10,7 @@ require('Comment').setup()
 require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'
+require 'user.plugins.marks'
 
 -- vim-move
 vim.g.move_map_keys = 0

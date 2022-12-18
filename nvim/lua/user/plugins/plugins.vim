@@ -12,7 +12,7 @@ call plug#begin()
     Plug 'Xuyuanp/nerdtree-git-plugin'
 
     " theme
-    Plug 'joshdick/onedark.vim'
+    Plug 'navarasu/onedark.nvim'
     Plug 'numToStr/Comment.nvim'
 
     " bottom line info prettier
@@ -29,6 +29,8 @@ call plug#begin()
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
+    Plug 'chentoast/marks.nvim'
+
     Plug 'kyazdani42/nvim-web-devicons'
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -39,7 +41,6 @@ call plug#begin()
 
     Plug 'github/copilot.vim'
 
-    Plug 'vim-ruby/vim-ruby'
     Plug 'tpope/vim-rails'
 
     Plug 'segeljakt/vim-silicon'
