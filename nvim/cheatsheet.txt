@@ -42,3 +42,4 @@ Accept suggestion | <C-y>
 ## Others
 Source neovim file | :source $MYVIMRC
 Change keyboard layout | <c-space>
+Indent current line/block | =
