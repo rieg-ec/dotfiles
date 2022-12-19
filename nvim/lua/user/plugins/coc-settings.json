@@ -17,6 +17,8 @@
     "html",
     "python"
   ],
+  "suggest.enablePreselect": false,
+  "suggest.noselect": true,
   "coc.preferences.extensionUpdateCheck": "never",
   "snippets.extends": {
     "cpp": ["c"],
@@ -1836,5 +1838,6 @@
     "stroke-1",
     "stroke-2",
     "clear-left"
-  ]
+  ],
+  "snippets.ultisnips.pythonPrompt": false
 }
