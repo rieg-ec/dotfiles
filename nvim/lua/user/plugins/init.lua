@@ -16,7 +16,7 @@ require 'user.plugins.marks'
 vim.g.move_map_keys = 0
 
 vim.g.coc_global_extensions = {
-  'coc-pyright', 'coc-tsserver', 'coc-html',
+  'coc-pyright',  'coc-go', 'coc-tsserver', 'coc-html',
      'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
     'coc-sql', 'coc-sh',
     'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph'
