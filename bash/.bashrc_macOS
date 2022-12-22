@@ -42,3 +42,16 @@ export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
 # export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+function saveImagesAsJpg() {
+  defaults write com.apple.screencapture type jpg
+}
+
+function saveImagesAsPng() {
+  defaults write com.apple.screencapture type png
+}
+
+function useDefaultFormat() {
+  defaults write com.apple.screencapture type none
+}
+
