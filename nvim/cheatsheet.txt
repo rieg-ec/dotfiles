@@ -1,9 +1,3 @@
-## mappings
-navigate to file under cursor        | <Leader>gf
-coc-definition                       | :<Leader>gd
-coc-declaration                      | :<Leader>gdc
-coc-implementation                   | :<Leader>gi
-
 ## FZF
 grep        | fg
 fzf         | ff
@@ -19,15 +13,16 @@ Reset buffer                             | :Gitsigns reset_buffer
 Diff current buffer                      | :Gitsigns diffthis
 
 ## CoC
-rename symbol                            | :<Leader>rn
-definition                               | :<Leader>gd
-type definition                          | :<Leader>gD
-declaration                              | :<Leader>gdc
-implementation                           | :<Leader>gi
-references                               | :<Leader>gr
-format                                   | :<Leader>F
-apply code action to cursor              | :<Leader>ac
-apply code action to whole buffer        | :<Leader>as
+rename symbol                            | <Leader>rn
+definition                               | <Leader>gd
+type definition                          | <Leader>gD
+declaration                              | <Leader>gdc
+implementation                           | <Leader>gi
+references                               | <Leader>gr
+format                                   | <Leader>F
+apply code action to cursor              | <Leader>ac
+apply code action to whole buffer        | <Leader>as
+show documentation                       | K
 
 ## fugitive @git
 
