@@ -10,7 +10,6 @@ require('Comment').setup()
 require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'
-require 'user.plugins.marks'
 
 -- vim-move
 vim.g.move_map_keys = 0
@@ -58,15 +57,3 @@ vim.api.nvim_command([[
   autocmd CursorHold * silent call CocActionAsync('highlight')
 ]])
 
-
--- vim.cmd([[
---   augroup CocNvim
---     autocmd BufWritePre *.vue call CocAction('runCommand', 'tailwindCSS.headwind.sortTailwindClasses') | sleep 100m
---     autocmd BufWritePre *.vue call CocAction('runCommand', 'eslint.executeAutofix') | sleep 100m
---   augroup END
--- ]])
-
--- to debug coc extensions
--- vim.api.nvim_command([[
---   set runtimepath^=~/cs/coc-tailwindcss
--- ]])
