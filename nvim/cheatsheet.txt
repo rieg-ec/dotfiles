@@ -38,3 +38,6 @@ Accept suggestion | <C-y>
 Source neovim file | :source $MYVIMRC
 Change keyboard layout | <c-space>
 Indent current line/block | =
+
+## Tmux
+Split full window split | <c-b> :splitw -f<h/v>
