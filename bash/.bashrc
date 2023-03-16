@@ -136,7 +136,7 @@ export PATH="$HOME/.pyenv/bin:$PATH"
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init - bash)"
 
-source ~/.bash-git-completion.bash
+source ~/.bash-git-completion
 
 # GIT aliases
 alias gria="git rebase -i --autosquash"
