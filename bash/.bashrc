@@ -151,7 +151,7 @@ alias gpfl="git push --force-with-lease origin"
 alias gd="git diff"
 alias ga="git add"
 
-export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
+export FZF_DEFAULT_COMMAND="fdfind --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
