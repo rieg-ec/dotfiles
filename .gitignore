@@ -2,3 +2,4 @@ env.sh
 Dockerfile
 test.sh
 tmux-client*
+node_modules/
