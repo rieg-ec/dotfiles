@@ -151,6 +151,8 @@ alias gpfl="git push --force-with-lease origin"
 alias gd="git diff"
 alias ga="git add"
 
+alias copy="xclip -selection clipboard"
+
 export FZF_DEFAULT_COMMAND="fdfind --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
 
 # Generated for envman. Do not edit.
