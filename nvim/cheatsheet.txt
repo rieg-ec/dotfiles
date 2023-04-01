@@ -41,3 +41,4 @@ Indent current line/block | =
 
 ## Tmux
 Split full window split | <c-b> :splitw -f<h/v>
+Swap windows | <c-b> :swap-window -s 0 -t 1
