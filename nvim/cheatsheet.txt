@@ -42,3 +42,37 @@ Indent current line/block | =
 ## Tmux
 Split full window split | <c-b> :splitw -f<h/v>
 Swap windows | <c-b> :swap-window -s 0 -t 1
+
+## Git
+Git absorb | git absorb --and-rebase
+
+## Snippets
+Snippets | UltiSnipsEdit
+Ultisnips | UltiSnipsEdit
+
+## nvim
+Verbose | nvim -V
+
+## ChatGPT
+<C-Enter> [Both] | Submit
+<C-y> [Both] | Copy/Yank last answer
+<C-o> [Both] | Toggle settings window
+<Tab> [Both] | Cycle over windows
+<C-f> [Chat] | Cycle over modes (center, stick to right)
+<C-c> [Both] | Close chat window
+<C-u> [Chat] | Scroll up chat window
+<C-d> [Chat] | Scroll down chat window
+<C-k> [Chat] | Copy/Yank code from last answer
+<C-n> [Chat] | Start new session
+<C-d> [Chat] | Draft message (create without submitting to server)
+<C-r> [Chat] | Switch role (between user and assistant)
+<C-s> [Both] | Toggle system message window
+<C-i> [Edit Window] | Use response as input
+<C-d> [Edit Window] | View diff between left and right panes and use diff-mode commands
+
+## Iterm
+C-k | Clear line to the right of cursor location
+C-u | Clear line
+C-w | Clear word
+C-a | Move to beginning of line
+C-e | Move to end of line

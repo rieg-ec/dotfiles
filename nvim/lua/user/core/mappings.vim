@@ -1,3 +1,6 @@
+" save current buffer
+nnoremap <Leader>w :w<CR>
+
 " close current buffer
 nnoremap <silent> <Leader>c :bp<BAR>bd#<CR>
 

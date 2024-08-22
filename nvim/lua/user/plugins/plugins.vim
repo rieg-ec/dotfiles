@@ -48,14 +48,17 @@ call plug#begin()
     Plug 'matze/vim-move'
 
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-    " Plug 'p00f/nvim-ts-rainbow'
+    Plug 'p00f/nvim-ts-rainbow'
 
     Plug 'yuezk/vim-js'
     Plug 'maxmellon/vim-jsx-pretty'
 
-    Plug 'rieg-ec/coc-tailwindcss', {'do': 'yarn install --frozen-lockfile && yarn build > /tmp/log.txt'}
-
     Plug 'nvim-telescope/telescope.nvim'
     Plug 'nvim-lua/popup.nvim'
     Plug 'sudormrfbin/cheatsheet.nvim'
+
+    Plug 'jackMort/ChatGPT.nvim'
+    Plug 'MunifTanjim/nui.nvim'
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
 call plug#end()

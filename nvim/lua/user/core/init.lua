@@ -1,4 +1,4 @@
 require 'user.core.options'
--- require 'user.core.functions'
+require 'user.core.functions'
 
 vim.cmd('source ~/.config/nvim/lua/user/core/mappings.vim')

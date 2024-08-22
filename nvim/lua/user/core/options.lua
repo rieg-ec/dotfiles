@@ -43,6 +43,8 @@ vim.opt.whichwrap:append(">")
 vim.opt.whichwrap:append("[")
 vim.opt.whichwrap:append("]")
 
+vim.g.rust_recommended_style = false
+
 -- whether count these characters as part of the same word or not
 -- vim.opt.iskeyword:append("-")
 -- vim.opt.iskeyword:append("#")
@@ -55,6 +57,7 @@ vim.cmd([[
   autocmd Filetype *.json setlocal ts=2 sw=2 sts=2
   autocmd Filetype *.vue setlocal ts=2 sw=2 sts=2
   autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4
+  autocmd Filetype *.rs setlocal ts=2 sw=2 sts=2
   autocmd Filetype python setlocal ts=4 sw=4 sts=4
 
   autocmd BufWritePre * :%s/\s\+$//e

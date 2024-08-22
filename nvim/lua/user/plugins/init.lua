@@ -1,6 +1,8 @@
 -- require'nvim-web-devicons'.setup { default = true; }
 -- require'nvim-web-devicons'.get_icons()
 
+require('user.plugins.chatgpt')
+
 require 'user.plugins.onedark'
 require('onedark').load()
 require 'user.plugins.alpha'
@@ -11,13 +13,14 @@ require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'
 
+
 -- vim-move
 vim.g.move_map_keys = 0
 
 vim.g.coc_global_extensions = {
   'coc-pyright',  'coc-go', 'coc-tsserver', 'coc-html',
      'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
-    'coc-sql', 'coc-sh',
+    'coc-sql', 'coc-sh', 'coc-rust-analyzer',
     'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph'
 }
 
@@ -56,4 +59,3 @@ vim.cmd([[
 vim.api.nvim_command([[
   autocmd CursorHold * silent call CocActionAsync('highlight')
 ]])
-
