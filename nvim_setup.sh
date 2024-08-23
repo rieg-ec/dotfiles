@@ -11,6 +11,7 @@ if type -p nvim > /dev/null; then
     mkdir -p $HOME/.config
 
     ln -sf $dotfiles_dir/nvim $HOME/.config/nvim
+    ln -sf $dotfiles_dir/nvim/lua/user/plugins/coc-settings.json $HOME/.config/nvim/coc-settings.json
 
     sh -c 'curl -fLo $HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'

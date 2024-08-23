@@ -7,6 +7,7 @@ export "PATH=/usr/local/bin:$PATH"
 alias abrew="/opt/homebrew/bin/brew"
 alias ibrew="arch -x86_64 /usr/local/bin/brew"
 
+alias rosetta="arch -x86_64"
 
 # Catches errors related to the wrong Homebrew directly being picked up
 # (e.g. `ruby-build`)
@@ -29,17 +30,22 @@ export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 export LDFLAGS="-L/usr/local/opt/llvm/lib"
 export CPPFLAGS="-I/usr/local/opt/llvm/include"
+export CPATH="/opt/homebrew/include"
+export LIBRARY_PATH="/opt/homebrew/lib"
 
 # openssl
 export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
+# export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(abrew --prefix openssl@1.1)"
 
 
 # export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 # export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+
+export LDFLAGS="-L/usr/local/opt/ruby/lib"
+export CPPFLAGS="-I/usr/local/opt/ruby/include"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
@@ -55,3 +61,5 @@ function useDefaultFormat() {
   defaults write com.apple.screencapture type none
 }
 
+
+export PATH="/usr/local/opt:$PATH"

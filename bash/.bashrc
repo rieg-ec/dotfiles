@@ -128,14 +128,17 @@ alias n="nvim"
 
 . "$HOME/.cargo/env"
 
-eval "$(nodenv init -)"
 export PATH="$HOME/.nodenv/bin:$PATH"
+eval "$(nodenv init -)"
 
-eval "$(pyenv init -)"
 export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
 
+eval "$(rbenv init - --no-rehash bash)"
 export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init - bash)"
+
+export JAVA_HOME=$(/usr/libexec/java_home)
+export PATH=$JAVA_HOME/bin:$PATH
 
 source ~/.bash-git-completion
 
@@ -153,8 +156,73 @@ alias ga="git add"
 
 alias copy="xclip -selection clipboard"
 
-export FZF_DEFAULT_COMMAND="fdfind --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
+alias pid="ps -eo pid,args"
+
+export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_modules,build,tmp,plugged} --type f"
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
+eval "$(pyenv virtualenv-init -)"
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '$HOME/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '$HOME/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$HOME/Library/Android/sdk/platform-tools:$PATH
+
+function print_all_files() {
+  directory_path="$1"
+  find "$directory_path" -type f -exec bash -c 'echo -e "\n# {}\n$(cat {})"' \;
+}
+
+
+docker_wipe_container() {
+  local container_id="$1"
+
+  # Ensure a container ID was provided
+  if [ -z "$container_id" ]; then
+      echo "Please provide a Docker container ID."
+      return 1
+  fi
+
+  # Get associated volume names
+  local volumes=$(docker inspect --format '{{ range .Mounts }}{{ .Name }} {{ end }}' "$container_id")
+
+  # Stop the container
+  docker stop "$container_id"
+
+  # Remove the container
+  docker rm "$container_id"
+
+  # Remove associated volumes
+  for volume in $volumes; do
+      if [ ! -z "$volume" ]; then
+          docker volume rm "$volume"
+      fi
+  done
+
+  echo "Container and associated volumes have been removed."
+}
+
+docker_prune_all() {
+  docker system prune --volumes
+}
+
+
+dev_tunnel() {
+  cloudflared tunnel --config $HOME/.cloudflared/config-dev.yml run dev
+}
+
+grupalia_tunnel() {
+  cloudflared tunnel --config $HOME/.cloudflared/config-grupalia.yml run grupalia
+}
+
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(/opt/homebrew/bin/brew shellenv)"

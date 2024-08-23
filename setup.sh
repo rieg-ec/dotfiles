@@ -9,6 +9,8 @@ rm $HOME/.bash_profile > /dev/null 2>&1
 ln -sf $dotfiles_dir/bash/.bashrc $HOME/.bashrc
 ln -sf $dotfiles_dir/bash/.bash_profile $HOME/.bash_profile
 ln -sf $dotfiles_dir/bash/.bash-git-completion $HOME/.bash-git-completion
+ln -sf $dotfiles_dir/bash/.bashrc_macOS $HOME/.bashrc_macOS
+ln -sf $dotfiles_dir/.fzf.bash $HOME/.fzf.bash
 
 # source bashrc
 [ -s "$HOME/.bashrc" ] && \. "$HOME/.bashrc"
@@ -32,4 +34,4 @@ else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
 
-# sh $dotfiles_dir/.macos # optional, macOS only
+sh $dotfiles_dir/.macos # optional, macOS only
