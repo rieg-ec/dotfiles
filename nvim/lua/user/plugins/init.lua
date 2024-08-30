@@ -4,15 +4,16 @@
 require('user.plugins.chatgpt')
 
 require 'user.plugins.onedark'
-require('onedark').load()
+require 'onedark'.load()
 require 'user.plugins.alpha'
 require 'user.plugins.treesitter'
 
-require('Comment').setup()
+require 'Comment'.setup()
 require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'
 
+-- require 'user.plugins.gitlinker'
 
 -- vim-move
 vim.g.move_map_keys = 0

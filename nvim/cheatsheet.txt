@@ -52,6 +52,7 @@ Ultisnips | UltiSnipsEdit
 
 ## nvim
 Verbose | nvim -V
+Reload config | :source $MYVIMRC
 
 ## ChatGPT
 <C-Enter> [Both] | Submit

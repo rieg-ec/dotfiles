@@ -61,4 +61,7 @@ call plug#begin()
     Plug 'MunifTanjim/nui.nvim'
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
+
+    " create shareable urls to upstream repository
+    Plug 'tpope/vim-rhubarb'
 call plug#end()
