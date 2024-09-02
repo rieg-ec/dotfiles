@@ -33,8 +33,8 @@
   "yaml.format.singleQuote": false,
   "pyright.enable": true,
   "python.formatting.provider": "black",
-  "python.formatting.blackPath": "/Users/ramonecheverriagonzales/.pyenv/shims/black",
-  "python.pythonPath": "/Users/ramonecheverriagonzales/.pyenv/shims/python3",
+  "python.formatting.blackPath": "/Users/rieg/.pyenv/shims/black",
+  "python.pythonPath": "/Users/rieg/.pyenv/shims/python3",
   "clangd.path": "/opt/homebrew/opt/llvm/bin/clangd",
   "clangd.arguments": ["--background-index", "--completion-style=detailed"],
   "signature.enable": false,
@@ -50,7 +50,7 @@
   "solargraph.formatting": true,
   "solargraph.diagnostics": true,
   "solargraph.hover": true,
-  "solargraph.commandPath": "/Users/ramonecheverriagonzales/.rbenv/versions/3.1.3/bin/solargraph",
+  "solargraph.commandPath": "/Users/rieg/.rbenv/shims/solargraph",
   "solargraph.trace.server": "verbose",
   "snippets.ultisnips.pythonPrompt": false
 }

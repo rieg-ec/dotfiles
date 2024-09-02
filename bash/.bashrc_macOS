@@ -4,18 +4,12 @@ export "PATH=/opt/homebrew/bin:$PATH"
 # x86 homebrew path
 export "PATH=/usr/local/bin:$PATH"
 
-alias abrew="/opt/homebrew/bin/brew"
 alias ibrew="arch -x86_64 /usr/local/bin/brew"
 
 alias rosetta="arch -x86_64"
 
 # Catches errors related to the wrong Homebrew directly being picked up
 # (e.g. `ruby-build`)
-brew () {
-  echo "use abrew or ibrew specifically" >&2
-  return 1
-}
-
 alias bash="/opt/homebrew/bin/bash"
 
 # python

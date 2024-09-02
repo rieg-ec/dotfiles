@@ -64,4 +64,6 @@ call plug#begin()
 
     " create shareable urls to upstream repository
     Plug 'tpope/vim-rhubarb'
+
+    Plug 'HiPhish/rainbow-delimiters.nvim'
 call plug#end()

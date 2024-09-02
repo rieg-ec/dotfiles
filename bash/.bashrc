@@ -126,8 +126,6 @@ export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/nvim/bin:$PATH"
 alias n="nvim"
 
-. "$HOME/.cargo/env"
-
 export PATH="$HOME/.nodenv/bin:$PATH"
 eval "$(nodenv init -)"
 
@@ -226,3 +224,6 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+alias sed='gsed'

@@ -16,7 +16,7 @@ ln -sf $dotfiles_dir/.fzf.bash $HOME/.fzf.bash
 [ -s "$HOME/.bashrc" ] && \. "$HOME/.bashrc"
 
 # global .gitignore
-ln -sd $dotfiles_dir/.gitignore.global $HOME/.gitignore
+ln -sf $dotfiles_dir/.gitignore.global $HOME/.gitignore
 git config --global core.excludesfile ~/.gitignore
 
 # # ================== ripgrep ===============================
