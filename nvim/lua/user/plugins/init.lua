@@ -13,6 +13,8 @@ require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'
 
+require 'user.plugins.mrkdwn'
+
 -- require 'user.plugins.gitlinker'
 
 -- vim-move
@@ -22,7 +24,8 @@ vim.g.coc_global_extensions = {
   'coc-pyright',  'coc-go', 'coc-tsserver', 'coc-html',
      'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
     'coc-sql', 'coc-sh', 'coc-rust-analyzer',
-    'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier', 'coc-solargraph'
+    'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier',
+  'coc-solargraph', '@yaegassy/coc-volar', 'coc-kotlin'
 }
 
 vim.g.NERDTreeShowHidden = 1

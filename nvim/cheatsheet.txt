@@ -25,6 +25,12 @@ apply code action to whole buffer        | <Leader>as
 show documentation                       | K
 
 ## fugitive @git
+Browse commit history for current file     | :Git log -p -- %
+Browse commit history                      | :Git log
+See git blame for current file             | :Git blame
+
+## diffview @git
+Open diffview for current file             | :DiffviewOpen
 
 ## visual
 Append to end of selected lines  | $A
@@ -38,10 +44,12 @@ Accept suggestion | <C-y>
 Source neovim file | :source $MYVIMRC
 Change keyboard layout | <c-space>
 Indent current line/block | =
+Copy files to clipboard | :FZFCopy
 
 ## Tmux
 Split full window split | <c-b> :splitw -f<h/v>
 Swap windows | <c-b> :swap-window -s 0 -t 1
+Copy text vim-like | <c-b> [ -> Space -> Enter
 
 ## Git
 Git absorb | git absorb --and-rebase

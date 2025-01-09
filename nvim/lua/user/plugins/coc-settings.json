@@ -46,11 +46,17 @@
   "javascript.preferences.quoteStyle": "single",
   "eslint.autoFixOnSave": true,
   "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "html", "vue"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
   "solargraph.autoformat": true,
   "solargraph.formatting": true,
   "solargraph.diagnostics": true,
   "solargraph.hover": true,
   "solargraph.commandPath": "/Users/rieg/.rbenv/shims/solargraph",
   "solargraph.trace.server": "verbose",
-  "snippets.ultisnips.pythonPrompt": false
+  "snippets.ultisnips.pythonPrompt": false,
+  "volar.disableFormatting": true,
+  "eslint.trace.server": "verbose",
+  "volar.trace.server": "verbose",
+  "eslint.outputChannel": "eslint",
+  "volar.outputChannel": "volar"
 }

@@ -25,7 +25,7 @@ vim.cmd([[
 command! FZFCopy call fzf#run(fzf#wrap({
     \ 'source': 'rg --files',
     \ 'sink*': function('CopyFilesToClipboard'),
-    \ 'options': '+m --multi --header "Select multiple files with <tab>"'
+    \ 'options': '+m --multi --header "Select multiple files with \<tab\>"'
     \ }))
 ]])
 
