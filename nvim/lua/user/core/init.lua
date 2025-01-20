@@ -1,3 +1,4 @@
+require 'user.core.git-diff'
 require 'user.core.options'
 require 'user.core.functions'
 

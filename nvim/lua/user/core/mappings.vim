@@ -158,3 +158,6 @@ imap <C-n> <Plug>(copilot-next)
 imap <C-p> <Plug>(copilot-previous)
 imap <silent><script><expr> <C-y> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
+
+nnoremap ]c :lua get_next_commit('next')<CR>
+nnoremap [c :lua get_next_commit('prev')<CR>

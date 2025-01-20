@@ -28,4 +28,3 @@ command! FZFCopy call fzf#run(fzf#wrap({
     \ 'options': '+m --multi --header "Select multiple files with \<tab\>"'
     \ }))
 ]])
-

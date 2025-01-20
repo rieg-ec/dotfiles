@@ -29,7 +29,7 @@ call plug#begin()
     " markdown visualization
     Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npm install'  }
 
-    Plug 'kyazdani42/nvim-web-devicons'
+    Plug 'nvim-tree/nvim-web-devicons'
 
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
