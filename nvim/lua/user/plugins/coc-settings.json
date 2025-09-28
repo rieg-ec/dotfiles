@@ -44,7 +44,6 @@
   "prettier.printWidth": 100,
   "prettier.arrowParens": "avoid",
   "javascript.preferences.quoteStyle": "single",
-  "eslint.autoFixOnSave": true,
   "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "html", "vue"],
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
   "solargraph.autoformat": true,
@@ -58,5 +57,8 @@
   "eslint.trace.server": "verbose",
   "volar.trace.server": "verbose",
   "eslint.outputChannel": "eslint",
-  "volar.outputChannel": "volar"
+  "volar.outputChannel": "volar",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

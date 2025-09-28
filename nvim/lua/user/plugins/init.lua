@@ -123,6 +123,10 @@ vim.g.coc_user_config = {
   ["tsserver.log"] = "verbose"
 }
 
+vim.g.coc_filetype_map = {
+  ['rspec.ruby'] = 'ruby',
+}
+
 vim.api.nvim_create_autocmd({"BufNewFile", "BufRead", "BufEnter"}, {
   pattern = {"*.git/*", "fugitive://*", ".git/*"},
   callback = function()

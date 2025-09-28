@@ -35,6 +35,8 @@ Open diffview for current file             | :DiffviewOpen
 Open diffview for a commit hash            | :DiffviewOpen <commit>^!
 Open diffview for current file             | :DiffviewFileHistory %
 Next file in current diff commit           | <TAB>
+Next commit                                | ]c
+Prev commit                                | [c
 
 ## visual
 Append to end of selected lines  | $A
