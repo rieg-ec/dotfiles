@@ -75,13 +75,7 @@ require 'user.plugins.diffview'
 -- vim-move
 vim.g.move_map_keys = 0
 
-vim.g.coc_global_extensions = {
-  'coc-pyright',  'coc-go', 'coc-tsserver', 'coc-html',
-     'coc-vimlsp', 'coc-snippets', 'coc-clangd', 'coc-css',
-    'coc-sql', 'coc-sh', 'coc-rust-analyzer',
-    'coc-yaml', 'coc-docker', 'coc-eslint', 'coc-prettier',
-  'coc-solargraph', '@yaegassy/coc-volar', 'coc-kotlin'
-}
+-- coc_global_extensions removed - now using native LSP with Mason
 
 vim.g.NERDTreeShowHidden = 1
 vim.g.NERDTreeIgnore = { '^__init__.py', '^__pycache__' }
@@ -114,26 +108,5 @@ vim.cmd([[
   " autocmd FileType jsx UltiSnipsAddFiletypes typescriptreact.javascript.typescript.javascriptreact.javascript-react.javascript_react
 ]])
 
--- COC
-vim.api.nvim_command([[
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-]])
-
-vim.g.coc_user_config = {
-  ["tsserver.log"] = "verbose"
-}
-
-vim.g.coc_filetype_map = {
-  ['rspec.ruby'] = 'ruby',
-}
-
-vim.api.nvim_create_autocmd({"BufNewFile", "BufRead", "BufEnter"}, {
-  pattern = {"*.git/*", "fugitive://*", ".git/*"},
-  callback = function()
-    -- Disable coc
-    vim.b.coc_enabled = 0
-    -- Also disable specific language servers
-    vim.b.coc_suggest_disable = 1
-    vim.b.coc_diagnostic_disable = 1
-  end
-})
+-- COC references removed - now using native LSP
+-- Symbol highlighting on cursor hold is now handled in lsp/lspconfig.lua

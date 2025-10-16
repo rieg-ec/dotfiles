@@ -160,11 +160,6 @@
 - <Leader>r ~ rename
 - :Format ~ format entire file
 
-### coc-snippets:
-
-- <C-e> ~ expand snippets from coc-snippets
-- <C-g>e ~ expand snippet or jump to next placeholder
-
 ### command history
 
 - q: ~ show commmmand history

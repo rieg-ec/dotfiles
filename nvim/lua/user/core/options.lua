@@ -9,9 +9,12 @@ local options = {
   number = true, -- hlsearch
   wildmode = { 'longest', 'list' }, -- get bash-like tab completions
   wrap = false,
-  smarttab = false,
-  smartindent = false,
-  autoindent = false,
+  smarttab = true,
+  smartindent = true,
+  autoindent = true,
+  cindent = false,  -- Don't use C-style indenting (conflicts with smartindent)
+  copyindent = true,  -- Copy the previous indentation on autoindenting
+  preserveindent = true,  -- Preserve indent structure when reindenting
   numberwidth = 2,
   showmode = false,
   mouse = "a",
@@ -36,7 +39,7 @@ vim.g.mapleader = ';'
 vim.g.lsp_diagnostics_virtual_text_enabled = 1
 
 vim.opt.completeopt:remove({ 'preview' })
--- vim.cmd "filetype plugin indent on"
+vim.cmd "filetype plugin indent on"
 
 vim.opt.whichwrap:append("<")
 vim.opt.whichwrap:append(">")
@@ -49,18 +52,27 @@ vim.g.rust_recommended_style = false
 -- vim.opt.iskeyword:append("-")
 -- vim.opt.iskeyword:append("#")
 
+-- File type indentation settings
 vim.cmd([[
-  autocmd Filetype *.ruby setlocal ts=2 sw=2 sts=2
-  autocmd Filetype javascript setlocal ts=2 sw=2
-  autocmd Filetype *.html setlocal ts=2 sw=2 sts=2
-  autocmd Filetype *.css setlocal ts=2 sw=2 sts=2
-  autocmd Filetype *.json setlocal ts=2 sw=2 sts=2
-  autocmd Filetype *.vue setlocal ts=2 sw=2 sts=2
-  autocmd Filetype *.cpp setlocal ts=4 sw=4 sts=4
-  autocmd Filetype *.rs setlocal ts=2 sw=2 sts=2
-  autocmd Filetype python setlocal ts=4 sw=4 sts=4
+  augroup FileTypeSettings
+    autocmd!
+    autocmd Filetype ruby setlocal ts=2 sw=2 sts=2
+    autocmd Filetype javascript setlocal ts=2 sw=2 sts=2
+    autocmd Filetype typescript setlocal ts=2 sw=2 sts=2
+    autocmd Filetype javascriptreact setlocal ts=2 sw=2 sts=2
+    autocmd Filetype typescriptreact setlocal ts=2 sw=2 sts=2
+    autocmd Filetype html setlocal ts=2 sw=2 sts=2
+    autocmd Filetype css setlocal ts=2 sw=2 sts=2
+    autocmd Filetype json setlocal ts=2 sw=2 sts=2
+    autocmd Filetype vue setlocal ts=2 sw=2 sts=2
+    autocmd Filetype cpp setlocal ts=4 sw=4 sts=4
+    autocmd Filetype rust setlocal ts=2 sw=2 sts=2
+    autocmd Filetype python setlocal ts=4 sw=4 sts=4
+  augroup END
 
-  autocmd BufWritePre * :%s/\s\+$//e
+  augroup TrimWhitespace
+    autocmd!
+    autocmd BufWritePre * :%s/\s\+$//e
   augroup END
 ]])
 

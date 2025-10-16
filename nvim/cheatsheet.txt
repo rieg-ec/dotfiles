@@ -12,8 +12,7 @@ Preview hunk                             | :Gitsigns preview_hunk
 Reset buffer                             | :Gitsigns reset_buffer
 Diff current buffer                      | :Gitsigns diffthis
 
-## CoC
-rename symbol                            | <Leader>rn
+## LSP
 definition                               | <Leader>gd
 type definition                          | <Leader>gD
 declaration                              | <Leader>gdc

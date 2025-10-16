@@ -92,66 +92,28 @@ nnoremap <C-f> :NERDTreeFind<CR>
 nnoremap ff <cmd>Files<CR>
 nnoremap fg <cmd>Rg<CR>
 
-imap <expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) : "\<C-t>"
-imap <expr><S-TAB>
-      \ coc#pum#visible() ? coc#pum#prev(1) : "\<C-d>"
+" NOTE: LSP keybindings are now defined in lua/user/lsp/lspconfig.lua
+" They will be automatically loaded when LSP attaches to a buffer
+" Main keybindings:
+"   <Leader>gd  - Go to definition
+"   <Leader>gD  - Go to type definition
+"   <Leader>gdc - Go to declaration
+"   <Leader>gi  - Go to implementation
+"   <Leader>gr  - Show references
+"   <Leader>rn  - Rename symbol
+"   <Leader>ac  - Code action
+"   <Leader>F   - Format buffer
+"   K           - Show hover documentation
+"   [d          - Previous diagnostic
+"   ]d          - Next diagnostic
 
-inoremap <nowait><expr> <C-j> pumvisible() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <nowait><expr> <C-k> pumvisible() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-" GoTo code navigation
-nmap <Leader>gd <Plug>(coc-definition)
-nmap <Leader>gD <Plug>(coc-type-definition)
-nmap <Leader>gdc <Plug>(coc-declaration)
-nmap <Leader>gi <Plug>(coc-implementation)
-nmap <Leader>gr <Plug>(coc-references)
-nmap <Leader>F :call CocActionAsync('format')<CR>
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call ShowDocumentation()<CR>
-
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-
-" Highlight the symbol and its references when holding the cursor
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Symbol renaming
-nmap <leader>rn <Plug>(coc-rename)
-
-" Remap keys for applying code actions at the cursor position
-nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-" Remap keys for apply code actions affect whole buffer
-nmap <leader>as  <Plug>(coc-codeaction-source)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Add `:OR` command for organize imports of the current buffer
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+" Completion mappings are handled by nvim-cmp in lua/user/lsp/cmp.lua
+" Tab/S-Tab for navigation, Enter to confirm, C-j/C-k for scrolling docs
 
 vmap <C-j> <Plug>MoveBlockDown
 vmap <C-k> <Plug>MoveBlockUp
 
 
-let g:coc_snippet_next = '<S-tab>'
 let g:UltiSnipsExpandTrigger = '<nop>'
 
 imap <C-n> <Plug>(copilot-next)

@@ -4,8 +4,28 @@ call plug#begin()
     Plug 'SirVer/ultisnips'
     Plug 'rieg-ec/vim-snippets'
 
-    " LSP
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " LSP - Native Neovim LSP
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'williamboman/mason.nvim'
+    Plug 'williamboman/mason-lspconfig.nvim'
+    
+    " Autocompletion
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    
+    " Snippets
+    Plug 'L3MON4D3/LuaSnip'
+    Plug 'saadparwaiz1/cmp_luasnip'
+    Plug 'rafamadriz/friendly-snippets'
+    
+    " Additional LSP features
+    Plug 'nvimdev/lspsaga.nvim'
+    Plug 'onsails/lspkind.nvim'
+    Plug 'b0o/schemastore.nvim'  " JSON schemas
+    Plug 'stevearc/conform.nvim'  " Formatting
 
     " File Explorer
     Plug 'preservim/nerdtree'
@@ -44,7 +64,7 @@ call plug#begin()
 
     Plug 'segeljakt/vim-silicon'
 
-    Plug 'andymass/vim-matchup'
+    " Plug 'andymass/vim-matchup'  " Disabled - causes errors with Neovim 0.11
 
     Plug 'matze/vim-move'
 

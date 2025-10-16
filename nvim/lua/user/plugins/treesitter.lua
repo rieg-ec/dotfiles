@@ -7,8 +7,7 @@ require'nvim-treesitter.configs'.setup {
     disable = { "vim" }
   },
   indent = {
-    enable = true,
-    disable = { "ruby" }
+    enable = false,  -- Disabled - treesitter indent is buggy, use standard vim indent instead
   },
   context_commentstring = {
     enable = true,
