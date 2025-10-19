@@ -206,14 +206,27 @@ lspconfig.solargraph.setup({
     on_attach(client, bufnr)
   end,
   cmd = { "/Users/rieg/.rbenv/shims/solargraph", "stdio" },
+  -- Detect project root by looking for these files (in order of priority)
+  root_dir = require('lspconfig.util').root_pattern('Gemfile', '.git', '.rubocop.yml'),
   settings = {
     solargraph = {
       autoformat = false,
       formatting = false,
-      diagnostics = true,
+      -- DISABLE Solargraph's built-in diagnostics (they don't respect project config properly)
+      diagnostics = false,
       hover = true,
+      useBundler = false,
     }
   }
+})
+
+-- RuboCop LSP (for proper Ruby linting with project's .rubocop.yml)
+lspconfig.rubocop.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = { "/Users/rieg/.rbenv/shims/rubocop", "--lsp" },
+  root_dir = require('lspconfig.util').root_pattern('Gemfile', '.git', '.rubocop.yml'),
+  filetypes = { "ruby" },
 })
 
 -- Python (Pyright)

@@ -22,7 +22,8 @@ require("mason-lspconfig").setup({
     "jsonls",      -- JSON
 
     -- Ruby
-    "solargraph", -- Ruby
+    "solargraph", -- Ruby (code navigation, hover, etc)
+    "rubocop",    -- Ruby linting (respects project's .rubocop.yml)
 
     -- Python
     "pyright", -- Python

@@ -58,13 +58,20 @@ require("conform").setup({
   formatters = {
     rubocop = {
       command = "/Users/rieg/.rbenv/shims/rubocop",
-      args = { 
-        "--autocorrect-all",  -- Format even with errors
-        "--format", "quiet",
-        "--force-exclusion",  -- Respect .rubocop.yml excludes
-        "--stderr",
-        "--stdin", "$FILENAME",
-      },
+      args = function(self, ctx)
+        -- Find project root with .rubocop.yml
+        local root = require("conform.util").root_file({ ".rubocop.yml", "Gemfile", ".git" })(self, ctx)
+        return {
+          "--autocorrect-all",  -- Format even with errors
+          "--format", "quiet",
+          "--force-exclusion",  -- Respect .rubocop.yml excludes
+          "--stderr",
+          "--stdin", "$FILENAME",
+          root and ("--config=" .. root .. "/.rubocop.yml") or "",  -- Explicitly use project config
+        }
+      end,
+      -- Run from the file's directory to find project's .rubocop.yml
+      cwd = require("conform.util").root_file({ ".rubocop.yml", "Gemfile", ".git" }),
     },
     black = {
       command = "/Users/rieg/.pyenv/shims/black",
