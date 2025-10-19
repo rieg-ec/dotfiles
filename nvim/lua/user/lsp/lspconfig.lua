@@ -1,45 +1,120 @@
 -- LSP server configurations
 local lspconfig = require('lspconfig')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
+local util = require('lspconfig.util')
+local path = util.path
+
+local function path_exists(p)
+  local stat = vim.loop.fs_stat(p)
+  return stat and stat.type ~= nil
+end
+
+local function find_typescript_sdk(root_dir)
+  local ts_path = util.search_ancestors(root_dir, function(dir)
+    local ts_sdk = path.join(dir, 'node_modules', 'typescript', 'lib')
+    if path_exists(ts_sdk) then
+      return ts_sdk
+    end
+  end)
+  if ts_path then
+    return ts_path
+  end
+
+  local fallback_tsdk = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/typescript/lib')
+  if path_exists(fallback_tsdk) then
+    return fallback_tsdk
+  end
+
+  return ''
+end
+
+local function find_vue_typescript_plugin(root_dir)
+  local plugin_path = util.search_ancestors(root_dir, function(dir)
+    local direct = path.join(dir, 'node_modules', '@vue', 'typescript-plugin')
+    if path_exists(direct) then
+      return direct
+    end
+
+    local nested = path.join(dir, 'node_modules', '@vue', 'language-server', 'node_modules', '@vue', 'typescript-plugin')
+    if path_exists(nested) then
+      return nested
+    end
+  end)
+
+  if plugin_path then
+    return plugin_path
+  end
+
+  local mason_nested = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/language-server/node_modules/@vue/typescript-plugin')
+  if path_exists(mason_nested) then
+    return mason_nested
+  end
+
+  local mason_direct = vim.fn.expand('~/.local/share/nvim/mason/packages/vue-language-server/node_modules/@vue/typescript-plugin')
+  if path_exists(mason_direct) then
+    return mason_direct
+  end
+
+  return ''
+end
+
+local function ensure_typescript_plugin(new_config, root_dir)
+  local plugin_path = find_vue_typescript_plugin(root_dir)
+  if plugin_path == '' then
+    return
+  end
+
+  new_config.init_options = new_config.init_options or {}
+  new_config.init_options.plugins = new_config.init_options.plugins or {}
+
+  for _, plugin in ipairs(new_config.init_options.plugins) do
+    if plugin.name == '@vue/typescript-plugin' then
+      plugin.location = plugin.location or plugin_path
+      plugin.languages = plugin.languages or { 'vue' }
+      return
+    end
+  end
+
+  table.insert(new_config.init_options.plugins, {
+    name = '@vue/typescript-plugin',
+    location = plugin_path,
+    languages = { 'vue' },
+  })
+end
+
+local function ensure_volar_tsdk(new_config, root_dir)
+  local tsdk = find_typescript_sdk(root_dir)
+  if tsdk == '' then
+    return
+  end
+
+  new_config.init_options = new_config.init_options or {}
+  new_config.init_options.typescript = new_config.init_options.typescript or {}
+  new_config.init_options.typescript.tsdk = tsdk
+end
 
 -- Add additional capabilities supported by nvim-cmp
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- LSP keymaps (only active when LSP is attached)
 local on_attach = function(client, bufnr)
-  local opts = { noremap = true, silent = true, buffer = bufnr }
-
-  -- Navigation
-  vim.keymap.set('n', '<Leader>gd', vim.lsp.buf.definition, opts)
-  vim.keymap.set('n', '<Leader>gD', vim.lsp.buf.type_definition, opts)
-  vim.keymap.set('n', '<Leader>gdc', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', '<Leader>gi', vim.lsp.buf.implementation, opts)
-  vim.keymap.set('n', '<Leader>gr', vim.lsp.buf.references, opts)
-
-  -- Documentation
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-
-  -- Code actions
-  vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)
-  vim.keymap.set('n', '<Leader>ac', vim.lsp.buf.code_action, opts)
-  vim.keymap.set('n', '<Leader>F', function() vim.lsp.buf.format({ async = true }) end, opts)
-
-  -- Diagnostics
-  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-  vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-  vim.keymap.set('n', '<Leader>e', function()
-    vim.diagnostic.open_float({ focusable = true, focus = true })
-  end, opts)
+  -- Set up LSP keymaps from centralized configuration
+  require('user.core.keymaps').setup_lsp(bufnr)
 
   -- Highlight references of symbol under cursor
   if client.server_capabilities.documentHighlightProvider then
     vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
       buffer = bufnr,
-      callback = vim.lsp.buf.document_highlight,
+      callback = function()
+        -- Safely call document_highlight with error handling
+        pcall(vim.lsp.buf.document_highlight)
+      end,
     })
     vim.api.nvim_create_autocmd("CursorMoved", {
       buffer = bufnr,
-      callback = vim.lsp.buf.clear_references,
+      callback = function()
+        pcall(vim.lsp.buf.clear_references)
+      end,
     })
   end
 
@@ -51,7 +126,7 @@ end
 local signs = { Error = "", Warn = "", Hint = "", Info = "" }
 for type, icon in pairs(signs) do
   local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
 -- Diagnostic configuration
@@ -71,9 +146,19 @@ vim.diagnostic.config({
 -- Language server specific configurations
 
 -- TypeScript/JavaScript
+-- Note: ts_ls also needs to attach to Vue files for Volar to work properly
 lspconfig.ts_ls.setup({
   capabilities = capabilities,
-  on_attach = on_attach,
+  on_new_config = ensure_typescript_plugin,
+  on_attach = function(client, bufnr)
+    -- For Vue files, disable some ts_ls features that Volar handles better
+    if vim.bo[bufnr].filetype == "vue" then
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
+      client.server_capabilities.documentHighlightProvider = false
+    end
+    on_attach(client, bufnr)
+  end,
   settings = {
     javascript = {
       format = {
@@ -97,6 +182,7 @@ lspconfig.ts_ls.setup({
     "typescript",
     "typescriptreact",
     "typescript.tsx",
+    "vue",  -- Required for Volar to work
   },
 })
 
@@ -124,32 +210,73 @@ lspconfig.eslint.setup({
   },
 })
 
--- Vue (Volar) - DISABLED (too slow, use HTML LSP for Vue templates instead)
--- Uncomment if you need full Vue 3 TypeScript support
+-- Vue (Volar) - provides TypeScript support in Vue files
+-- Note: Volar requires TypeScript to be installed in your project: npm install --save-dev typescript
 lspconfig.volar.setup({
   capabilities = capabilities,
-  on_attach = on_attach,
+  on_attach = function(client, bufnr)
+    -- Enable inlay hints if supported
+    if client.server_capabilities.inlayHintProvider then
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+    end
+    on_attach(client, bufnr)
+  end,
   filetypes = { "vue" },
   init_options = {
-    typescript = {
-      tsdk = ""
+    vue = {
+      hybridMode = false,  -- false = Volar handles .vue files entirely
     },
   },
-  root_dir = require('lspconfig.util').root_pattern('package.json', 'vue.config.js'),
+  settings = {
+    vue = {
+      inlayHints = {
+        inlineHandlerLeading = true,
+        missingProps = true,
+        destructuredProps = true,
+        optionsWrapper = true,
+        vBindShorthand = true,
+      },
+    },
+    typescript = {
+      inlayHints = {
+        parameterNames = { enabled = "all" },
+        parameterTypes = { enabled = true },
+        variableTypes = { enabled = true },
+        propertyDeclarationTypes = { enabled = true },
+        functionLikeReturnTypes = { enabled = true },
+        enumMemberValues = { enabled = true },
+      },
+      suggest = {
+        includeCompletionsForModuleExports = true,
+        includeAutomaticOptionalChainCompletions = true,
+      },
+      preferences = {
+        quoteStyle = "single",
+      },
+    },
+  },
+  root_dir = require('lspconfig.util').root_pattern(
+    'package.json', 
+    'vue.config.js', 
+    'vite.config.js', 
+    'vite.config.ts',
+    'nuxt.config.js',
+    'nuxt.config.ts'
+  ),
 })
 
 -- HTML
 lspconfig.html.setup({
   capabilities = capabilities,
   on_attach = on_attach,
-  filetypes = { "html", "handlebars", "htmldjango", "blade", "vue" },
+  filetypes = { "html", "handlebars", "htmldjango", "blade" },
 })
 
 -- CSS
 lspconfig.cssls.setup({
   capabilities = capabilities,
   on_attach = on_attach,
-  filetypes = { "css", "scss", "less", "vue" },
+  filetypes = { "css", "scss", "less" },
 })
 
 -- Tailwind CSS
@@ -212,8 +339,8 @@ lspconfig.solargraph.setup({
     solargraph = {
       autoformat = false,
       formatting = false,
-      -- DISABLE Solargraph's built-in diagnostics (they don't respect project config properly)
-      diagnostics = false,
+      -- Enable diagnostics for better error detection
+      diagnostics = true,
       hover = true,
       useBundler = false,
     }

@@ -13,13 +13,13 @@ require("mason-lspconfig").setup({
   -- Automatically install these language servers
   ensure_installed = {
     -- Web Development
-    "ts_ls",       -- TypeScript/JavaScript
-    "eslint",      -- ESLint
-    -- "volar",       -- Vue (disabled - too slow, use HTML/CSS LSP instead)
-    "tailwindcss", -- Tailwind CSS
-    "html",        -- HTML
-    "cssls",       -- CSS
-    "jsonls",      -- JSON
+    "ts_ls",               -- TypeScript/JavaScript
+    "eslint",              -- ESLint
+    "vue-language-server", -- Vue (TypeScript support in Vue files)
+    "tailwindcss",         -- Tailwind CSS
+    "html",                -- HTML
+    "cssls",               -- CSS
+    "jsonls",              -- JSON
 
     -- Ruby
     "solargraph", -- Ruby (code navigation, hover, etc)
