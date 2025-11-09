@@ -96,6 +96,13 @@ function M.setup_general()
   -- Replace highlighted text
   map('n', '<Leader>f', ':%s///gc<Left><Left><Left><Left>', { desc = 'Replace highlighted text' })
 
+  -- Copy full path of current file
+  map('n', '<Leader>yp', function()
+    local path = vim.fn.expand('%:p')
+    vim.fn.setreg('+', path)
+    print('Copied: ' .. path)
+  end, { desc = 'Copy full path of current file' })
+
   -- Git navigation (for git-diff)
   map('n', ']c', ':lua get_next_commit("next")<CR>', { desc = 'Next commit' })
   map('n', '[c', ':lua get_next_commit("prev")<CR>', { desc = 'Previous commit' })
@@ -194,7 +201,8 @@ function M.setup_lsp(bufnr)
   -- Code actions
   map('n', '<Leader>rn', vim.lsp.buf.rename, buf_opts)
   map('n', '<Leader>ac', vim.lsp.buf.code_action, buf_opts)
-  map('n', '<Leader>F', function() vim.lsp.buf.format({ async = true }) end, buf_opts)
+  -- Formatting is handled by conform.nvim, not LSP
+  -- map('n', '<Leader>F', function() vim.lsp.buf.format({ async = true }) end, buf_opts)
 end
 
 -- ╭─────────────────────────────────────────────────────────╮

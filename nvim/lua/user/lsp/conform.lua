@@ -3,8 +3,8 @@
 
 require("conform").setup({
   formatters_by_ft = {
-    -- Ruby - use rubocop
-    ruby = { "rubocop" },
+    -- Ruby - handled by RuboCop LSP (see languages/ruby.lua)
+    -- ruby = {},
     
     -- Python - use black
     python = { "black" },
@@ -49,42 +49,52 @@ require("conform").setup({
     end
     
     return {
-      timeout_ms = 1000,  -- Reduced timeout
+      timeout_ms = 3000,  -- Increased timeout for RuboCop on Rails files
       lsp_fallback = true,
     }
   end,
   
   -- Customize formatters
   formatters = {
-    rubocop = {
-      command = "/Users/rieg/.rbenv/shims/rubocop",
-      args = function(self, ctx)
-        -- Find project root with .rubocop.yml
-        local root = require("conform.util").root_file({ ".rubocop.yml", "Gemfile", ".git" })(self, ctx)
-        return {
-          "--autocorrect-all",  -- Format even with errors
-          "--format", "quiet",
-          "--force-exclusion",  -- Respect .rubocop.yml excludes
-          "--stderr",
-          "--stdin", "$FILENAME",
-          root and ("--config=" .. root .. "/.rubocop.yml") or "",  -- Explicitly use project config
-        }
-      end,
-      -- Run from the file's directory to find project's .rubocop.yml
-      cwd = require("conform.util").root_file({ ".rubocop.yml", "Gemfile", ".git" }),
-    },
     black = {
       command = "/Users/rieg/.pyenv/shims/black",
     },
   },
 })
 
--- Optional: Add a keymap to format manually
+-- Keymap to format manually with better error handling
 vim.keymap.set({ "n", "v" }, "<leader>F", function()
-  require("conform").format({
-    lsp_fallback = true,
-    async = false,
-    timeout_ms = 500,
-  })
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filetype = vim.bo[bufnr].filetype
+  
+  -- For Ruby files, use LSP formatting (RuboCop LSP)
+  if filetype == "ruby" then
+    vim.notify("Formatting Ruby file with RuboCop LSP...", vim.log.levels.INFO)
+    vim.lsp.buf.format({
+      async = false,
+      timeout_ms = 5000,  -- Give RuboCop enough time for large Rails files
+      bufnr = bufnr,
+      filter = function(client)
+        -- Use only RuboCop LSP for formatting Ruby files
+        return client.name == "rubocop"
+      end,
+    })
+    vim.notify("Formatting completed", vim.log.levels.INFO)
+  else
+    -- For other files, use conform.nvim
+    vim.notify("Formatting " .. filetype .. " file...", vim.log.levels.INFO)
+    require("conform").format({
+      lsp_fallback = true,
+      async = false,
+      timeout_ms = 5000,
+      bufnr = bufnr,
+    }, function(err)
+      if err then
+        vim.notify("Formatting failed: " .. err, vim.log.levels.ERROR)
+      else
+        vim.notify("Formatting completed", vim.log.levels.INFO)
+      end
+    end)
+  end
 end, { desc = "Format file or range (in visual mode)" })
 

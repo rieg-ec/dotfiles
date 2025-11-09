@@ -25,10 +25,15 @@ function M.setup(lspconfig, capabilities, on_attach)
     }
   })
 
-  -- RuboCop LSP (for proper Ruby linting with project's .rubocop.yml)
+  -- RuboCop LSP (for proper Ruby linting and formatting with project's .rubocop.yml)
   lspconfig.rubocop.setup({
     capabilities = capabilities,
-    on_attach = on_attach,
+    on_attach = function(client, bufnr)
+      -- Enable RuboCop's formatting capability
+      client.server_capabilities.documentFormattingProvider = true
+      client.server_capabilities.documentRangeFormattingProvider = true
+      on_attach(client, bufnr)
+    end,
     cmd = { "/Users/rieg/.rbenv/shims/rubocop", "--lsp" },
     root_dir = require('lspconfig.util').root_pattern('Gemfile', '.git', '.rubocop.yml'),
     filetypes = { "ruby" },
@@ -36,4 +41,6 @@ function M.setup(lspconfig, capabilities, on_attach)
 end
 
 return M
+
+
 

@@ -44,8 +44,13 @@ cmp.setup({
     -- Ctrl-Space to trigger completion
     ['<C-Space>'] = cmp.mapping.complete(),
     
-    -- Ctrl-e to abort
-    ['<C-e>'] = cmp.mapping.abort(),
+    -- Ctrl-e to go to end of line (closes completion if open)
+    ['<C-e>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.close()
+      end
+      fallback()
+    end, { 'i', 's' }),
     
     -- Enter to confirm (matching your coc config)
     ['<CR>'] = cmp.mapping.confirm({ select = false }),
