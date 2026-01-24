@@ -1,0 +1,21 @@
+[core]
+	excludesfile = ~/.gitignore
+	editor = nvim
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	side-by-side = true
+	file-style = white
+
+[merge]
+	conflictStyle = zdiff3
+
+[commit]
+	verbose = true
+[user]
+	name = rieg-ec
+	email = rieg.10199@gmail.com
