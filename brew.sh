@@ -18,6 +18,8 @@ brew install ripgrep
 
 brew install fzf
 
+brew install git-delta
+
 brew cleanup
 
 brew install --cask ngrok
