@@ -1,30 +1,79 @@
-# My personal dotfiles :coffee:
+# Dotfiles
 
-## Install steps
+Personal development environment configuration for macOS.
 
-- clone repo
-- install pyenv: [https://github.com/pyenv/pyenv#automatic-installer](https://github.com/pyenv/pyenv#automatic-installer)
-- install python `pyenv install 3.10.4`
-- install python de packages:
+## What's Included
+
+### Neovim (`nvim/`)
+Full IDE-like setup with native LSP support:
+- **Language servers**: TypeScript, Vue, Python (Pyright), Ruby (Solargraph + RuboCop), Go, Rust, C/C++, Tailwind CSS
+- **Plugins**: Telescope, Treesitter, Gitsigns, Diffview, NERDTree, Copilot, ChatGPT integration
+- **Formatting**: Auto-format on save via conform.nvim (black, eslint, rubocop, gofmt, rustfmt, etc.)
+- **Completion**: nvim-cmp with LSP, buffer, path, and snippet sources
+
+### Bash (`bash/`)
+Shell configuration with development focus:
+- Git branch in prompt
+- Version managers: pyenv, rbenv, nodenv, jenv, nvm
+- Git aliases (`gs`, `gd`, `ga`, `gri`, `gria`, `gcf`, `gca`, `grc`, `gpfl`)
+- Docker utilities (`docker_wipe_container`, `docker_prune_all`)
+- FZF integration
+
+### Tmux (`tmux/`)
+Terminal multiplexer config:
+- Vi-mode keybindings
+- Mouse support
+- tmux-resurrect for session persistence (Ctrl-s save, Ctrl-r restore)
+- New panes open in current directory
+
+### Git (`.gitconfig`)
+- Delta pager with side-by-side diffs
+- zdiff3 merge conflict style
+
+### macOS (`.macos`)
+System defaults for keyboard, Finder, and trackpad.
+
+## Setup Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `setup.sh` | Symlinks bash configs, sets up global gitignore |
+| `nvim_setup.sh` | Installs vim-plug and plugins |
+| `tmux_setup.sh` | Installs tpm and symlinks config |
+| `brew.sh` | Installs Homebrew packages |
+
+## Installation
+
 ```bash
-sudo python3 -m pip install flake8 autopep8 jedi pynvim
+# Clone and enter repo
+git clone <repo> && cd dotfiles
+
+# Install Homebrew packages
+./brew.sh
+
+# Version managers
+# pyenv: https://github.com/pyenv/pyenv#automatic-installer
+# rbenv: https://github.com/rbenv/rbenv
+# nodenv: https://github.com/nodenv/nodenv-installer
+
+# Run setup scripts
+./setup.sh
+./nvim_setup.sh
+./tmux_setup.sh
 ```
-- install [rbenv](https://github.com/rbenv/rbenv#:~:text=and%20some%20alternatives.-,Installation,-On%20systems%20with)
-- install [ruby-build](https://github.com/rbenv/ruby-build#readme)
-- install ruby: `rbenv install 3.1.3`
-- install ruby gems:
+
+### Language tooling
+
 ```bash
-gem install solargraph
-gem install bundler
-gem install rubocop
+# Python
+pyenv install 3.12
+pip install pynvim
+
+# Ruby
+rbenv install 3.3
+gem install solargraph rubocop bundler
+
+# Node
+nodenv install 22.x.x
 ```
-- install [nodenv-installer](https://github.com/nodenv/nodenv-installer#nodenv-installer)
-- install [nodenv-alias](https://github.com/nodenv/nodenv-aliases)
-- install [node-build](https://github.com/nodenv/node-build)
-- install node 16: `nodenv install 16.x.x && nodenv alias 16 --auto`
-- install [neovim](https://github.com/neovim/neovim)
-- run `./nvim_setup.sh`
-- install [FZF](https://github.com/junegunn/fzf)
-- install [Rg](https://github.com/BurntSushi/ripgrep)
-- run `./setup.sh`
 
