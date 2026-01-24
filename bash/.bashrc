@@ -116,30 +116,40 @@ c17() {
   ./a.out < "$2";
 }
 
+# =============================================================================
+# PATH Configuration
+# =============================================================================
+export JAVA_HOME=$(/usr/libexec/java_home)
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export BUN_INSTALL="$HOME/.bun"
+
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="$HOME/nvim/bin:$PATH"
+export PATH="$HOME/.nodenv/bin:$PATH"
+export PATH="$HOME/.pyenv/bin:$PATH"
+export PATH="$HOME/.rbenv/bin:$PATH"
+export PATH="$HOME/.jenv/bin:$PATH"
+export PATH="$JAVA_HOME/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+export PATH="$ANDROID_HOME/platform-tools:$PATH"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# =============================================================================
+# Version Managers
+# =============================================================================
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-
-export PATH="$HOME/.poetry/bin:$PATH"
+eval "$(nodenv init -)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+eval "$(rbenv init - --no-rehash bash)"
+eval "$(jenv init -)"
 
 # nvim
-export PATH="$HOME/nvim/bin:$PATH"
 alias n="nvim"
-
-export PATH="$HOME/.nodenv/bin:$PATH"
-eval "$(nodenv init -)"
-
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-
-eval "$(rbenv init - --no-rehash bash)"
-export PATH="$HOME/.rbenv/bin:$PATH"
-
-export JAVA_HOME=$(/usr/libexec/java_home)
-export PATH=$JAVA_HOME/bin:$PATH
-
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 
 source ~/.bash-git-completion
 
@@ -164,17 +174,11 @@ export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_mo
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-eval "$(pyenv virtualenv-init -)"
-
-
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '$HOME/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/path.bash.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '$HOME/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/completion.bash.inc'; fi
-
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$HOME/Library/Android/sdk/platform-tools:$PATH
 
 function print_all_files() {
   directory_path="$1"
@@ -231,9 +235,3 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 alias sed='gsed'
 
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
