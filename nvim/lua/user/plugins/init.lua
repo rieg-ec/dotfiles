@@ -70,6 +70,9 @@ require 'user.plugins.mrkdwn'
 
 require 'user.plugins.diffview'
 
+require('telescope').setup()
+require 'user.plugins.octo'
+
 -- require 'user.plugins.gitlinker'
 
 -- vim-move
