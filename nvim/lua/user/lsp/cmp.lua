@@ -19,7 +19,7 @@ cmp.setup({
   },
   
   mapping = cmp.mapping.preset.insert({
-    -- Tab to select next item (matching your coc config)
+    -- Tab to select next item
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -37,7 +37,7 @@ cmp.setup({
       end
     end, { 'i', 's' }),
     
-    -- Ctrl-j/k to scroll docs (matching your coc config)
+    -- Ctrl-j/k to scroll docs
     ['<C-j>'] = cmp.mapping.scroll_docs(4),
     ['<C-k>'] = cmp.mapping.scroll_docs(-4),
     
@@ -52,7 +52,7 @@ cmp.setup({
       fallback()
     end, { 'i', 's' }),
     
-    -- Enter to confirm (matching your coc config)
+    -- Enter to confirm
     ['<CR>'] = cmp.mapping.confirm({ select = false }),
   }),
   

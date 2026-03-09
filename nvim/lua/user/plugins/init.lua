@@ -78,8 +78,6 @@ require 'user.plugins.octo'
 -- vim-move
 vim.g.move_map_keys = 0
 
--- coc_global_extensions removed - now using native LSP with Mason
-
 vim.g.NERDTreeShowHidden = 1
 vim.g.NERDTreeIgnore = { '^__init__.py', '^__pycache__' }
 
@@ -111,5 +109,3 @@ vim.cmd([[
   " autocmd FileType jsx UltiSnipsAddFiletypes typescriptreact.javascript.typescript.javascriptreact.javascript-react.javascript_react
 ]])
 
--- COC references removed - now using native LSP
--- Symbol highlighting on cursor hold is now handled in lsp/lspconfig.lua

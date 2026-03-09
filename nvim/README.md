@@ -2,8 +2,6 @@
 
 - within vim: `:PlugInstall`
 
-- CoC will install all extensions not already installed upon opening vim, but coc-clangd needs clangd binaries: `:CocCommand clangd.install`
-
 # Useful nvim shortcuts:
 
 ### save/exit files:
@@ -148,17 +146,6 @@
 
 - gc ~ comment line/block (visual mode)
 - gcc ~ comment line (normal mode)
-
-### CoC:
-
-- <Leader>gd ~ jump to definition
-- <Leader>gr ~ get reference
-- <Leader>h ~ show docs?
-- <Leader>gdc ~ jump to declaration
-- <Leader>gi ~ jump to implementation
-- <Leader>gD ~ jump to type definition
-- <Leader>r ~ rename
-- :Format ~ format entire file
 
 ### command history
 
