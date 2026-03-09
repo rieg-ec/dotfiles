@@ -8,19 +8,19 @@ call plug#begin()
     Plug 'neovim/nvim-lspconfig'
     Plug 'williamboman/mason.nvim'
     Plug 'williamboman/mason-lspconfig.nvim'
-    
+
     " Autocompletion
     Plug 'hrsh7th/nvim-cmp'
     Plug 'hrsh7th/cmp-nvim-lsp'
     Plug 'hrsh7th/cmp-buffer'
     Plug 'hrsh7th/cmp-path'
     Plug 'hrsh7th/cmp-cmdline'
-    
+
     " Snippets
     Plug 'L3MON4D3/LuaSnip'
     Plug 'saadparwaiz1/cmp_luasnip'
     Plug 'rafamadriz/friendly-snippets'
-    
+
     " Additional LSP features
     Plug 'nvimdev/lspsaga.nvim'
     Plug 'onsails/lspkind.nvim'
@@ -81,7 +81,6 @@ call plug#begin()
     Plug 'jackMort/ChatGPT.nvim'
     Plug 'MunifTanjim/nui.nvim'
     Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim'
 
     " create shareable urls to upstream repository
     Plug 'tpope/vim-rhubarb'
