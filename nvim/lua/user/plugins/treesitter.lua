@@ -4,7 +4,7 @@ require'nvim-treesitter.configs'.setup {
   sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
   highlight = {
     enable = true, -- false will disable the whole extension
-    disable = { "vim", "vue" }  -- Disable for vim and vue files (vue parser is buggy)
+    disable = { "vim", "vue", "objc" }  -- Disable for buggy parsers
   },
   indent = {
     enable = false,  -- Disabled - treesitter indent is buggy, use standard vim indent instead
