@@ -189,11 +189,11 @@ function M.setup_lsp(bufnr)
   local buf_opts = { noremap = true, silent = true, buffer = bufnr }
 
   -- Navigation
-  map('n', '<Leader>gd', vim.lsp.buf.definition, buf_opts)
-  map('n', '<Leader>gD', vim.lsp.buf.type_definition, buf_opts)
+  map('n', '<Leader>gd', require('telescope.builtin').lsp_definitions, buf_opts)
+  map('n', '<Leader>gD', require('telescope.builtin').lsp_type_definitions, buf_opts)
   map('n', '<Leader>gdc', vim.lsp.buf.declaration, buf_opts)
-  map('n', '<Leader>gi', vim.lsp.buf.implementation, buf_opts)
-  map('n', '<Leader>gr', vim.lsp.buf.references, buf_opts)
+  map('n', '<Leader>gi', require('telescope.builtin').lsp_implementations, buf_opts)
+  map('n', '<Leader>gr', require('telescope.builtin').lsp_references, buf_opts)
 
   -- Documentation
   map('n', 'K', vim.lsp.buf.hover, buf_opts)
