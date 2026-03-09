@@ -1,172 +1,144 @@
-## Install plugins
+# Neovim Config
 
-- within vim: `:PlugInstall`
+Native LSP setup with nvim-cmp for autocompletion. Leader key is `;`.
 
-# Useful nvim shortcuts:
+## Installation
 
-### save/exit files:
+### Prerequisites
 
-- :w ~ save
-- :q ~ quit
-- :DiffSaved ~ see changes from last saved
+- Neovim 0.9+
+- Node.js (for TypeScript, Vue, ESLint LSPs)
+- ripgrep (for FZF/Telescope grep)
 
-### recording
+Language-specific:
+- Ruby: solargraph + rubocop gems
+- Python: pyenv + black
+- C/C++: LLVM/clangd (`brew install llvm`)
+- Rust: cargo
 
-- q<register> ~ start recording in register
-- q ~ stop recording
+### Setup
 
-### copy/paste:
+```bash
+# 1. Symlink config
+ln -s ~/cs/dotfiles/nvim ~/.config/nvim
 
-- :reg ~ show registers
-- yiw | bvey ~ yank word under cursor
-- viwp | bvep ~ replace word under cursor with yanked word
-- y ~ copy to system clipboard (visual mode, or selecting in insert mode)
-- yy ~ copy entire line
-- p ~ paste (from system clipboard, visual/normal mode)
+# 2. Install plugins
+nvim +PlugInstall
 
-### navigation:
+# 3. LSP servers install automatically via Mason
+#    Verify with :Mason inside nvim
+```
 
-- / ~ highlight <text>
-- <Leader>/ ~ fzf text in current buffer
-- :noh ~ reset highlighed text
-- n ~ jump next highlight
-- N ~ jump next highlight
-- G ~ go bottom of file
-- gg ~ go top of file
-- ma ~ create mark "a"
-- \`a ~ go to mark "a"
-- { ~ navigate blocks of text
-- <Leader>gf ~ go to file under cursor
-- <C-6> ~ switch between last file and current file
-- e ~ jump to next word (normal mode)
-- ^ ~ jump to end of line
-- $ ~ jump to beginning of line
-- <Shift-v> ~ select line
+## Plugin Manager
 
-- :%s//<replace>/ ~ replace one instance of highlighted text by <replace>
-- :%s//<replace>/g ~ replace all instances of highlighted text by <replace>
-- <Leader>f ~ put :%s/<match>/<replace>/gc into input to replace text one by one (normal)
-- \`\` ~ go back to last cursor position after done with replacing
+[vim-plug](https://github.com/junegunn/vim-plug) — plugins listed in `lua/user/plugins/plugins.vim`.
 
-- zz ~ bring current line to middle of window
-- <Ctrl-e> ~ scroll window instead of cursor (useful for scrolling past end of file)
-- <Ctrl-y> ~ scroll window instead of cursor
+## Plugins
 
-### rollback changes:
+### LSP & Completion
 
-- u ~ revert in normal mode
-- <C+r> revert the revert
+| Plugin | Purpose |
+|--------|---------|
+| nvim-lspconfig | LSP client configuration |
+| mason.nvim + mason-lspconfig | Auto-install LSP servers |
+| nvim-cmp | Autocompletion engine |
+| cmp-nvim-lsp, cmp-buffer, cmp-path, cmp-cmdline | Completion sources |
+| LuaSnip + friendly-snippets | Snippet engine + library |
+| UltiSnips + vim-snippets | Additional snippets |
+| lspsaga.nvim | LSP UI enhancements (hover, rename, code actions) |
+| lspkind.nvim | Completion item icons |
+| conform.nvim | Code formatting (format on save) |
+| schemastore.nvim | JSON schemas for jsonls |
 
-### selection:
+### LSP Servers (via Mason)
 
-- S-up/down/left/right/PgUp/PgDown/home/end ~ select text
-- dd ~ delete line
-- D ~ delete text from cursor to right
-- x ~ delete text
-- <C-v> + <S-arrow> ~ select text vertically
-- < & > ~ shift left/right
-- cc ~ remove line + insert mode (normal mode)
-- r ~ replace word under cursor (normal mode)
-- diw ~ remove word under cursor
-- o ~ insert text under cursorline (normal mode)
-- s ~ replace replace and insert
+- **Web:** ts_ls, eslint, vue_ls, tailwindcss, html, cssls, jsonls
+- **Ruby:** solargraph, rubocop
+- **Python:** pyright
+- **Systems:** clangd, rust_analyzer
+- **Other:** yamlls, lua_ls
 
-### text & formatting:
+### Formatters (via conform.nvim)
 
-- ~ ~ swap case
-- r + <char> ~ swap char under cursor by <char> (normal)
-- :Format ~ format current buffer
+Python (black), Go (gofmt), Rust (rustfmt), C/C++ (clang_format), Shell (shfmt), Lua (stylua). Ruby and JS/TS use their LSPs for formatting.
 
-### Modes:
+### Editor
 
-- i ~ insert mode
-- a ~ start insert from next character
-- I ~ start in the beginning of line
-- A ~ start in the end of line
+| Plugin | Purpose |
+|--------|---------|
+| NERDTree + nerdtree-git-plugin | File explorer |
+| Comment.nvim | Toggle comments (gcc/gc) |
+| auto-pairs | Auto-close brackets/quotes |
+| vim-move | Move lines/blocks with Alt+j/k |
+| vim-zoom | Zoom splits |
+| nvim-treesitter | Syntax highlighting + text objects |
+| rainbow-delimiters.nvim | Rainbow parentheses |
 
-### plugins:
+### Search
 
-- :PluginInstall ~ install plugins
-- :PluginUpdate ~ install or update plugins
-- :PlugClean[!] ~ remove unlisted plugins (bang version will clean without prompt)
-- :PlugDiff ~ Examine changes from the previous update and the pending changes
+| Plugin | Purpose |
+|--------|---------|
+| fzf + fzf.vim | Fuzzy file/text search |
+| telescope.nvim | LSP navigation (definitions, references) |
+| cheatsheet.nvim | Searchable keybinding cheatsheet |
 
-### Tab management:
+### Git
 
-- gt ~ next tab (normal mode)
-- gT ~ previous tab
-- <TAB> ~ next tab (normal mode)
-- <S-TAB> ~ previous tab (normal mode)
+| Plugin | Purpose |
+|--------|---------|
+| gitsigns.nvim | Git signs in gutter, hunk staging |
+| vim-fugitive | Git commands (:Git blame, :Git log, etc.) |
+| vim-rhubarb | GitHub URLs for fugitive (:GBrowse) |
+| diffview.nvim | Side-by-side diff viewer |
+| octo.nvim | GitHub issues and PRs in Neovim |
 
-- :tab <file> ~ create new tab inside nvim
-- :tab split ~ duplicate current tab
-- :vsplit ~ create vertical split
-- :hsplit ~ create horizontal split
-- <C-h/j/k/l> ~ move to other windows
-- <C-Home/End> ~ move through vertical splits
-- <C-W-arrows> ~ navigate splits
-- <A-left/right> ~ resize tabs horizontally
+### UI & Theme
 
-### buffers:
+| Plugin | Purpose |
+|--------|---------|
+| onedark.nvim | Color scheme (darker variant, transparent bg) |
+| vim-airline | Status line |
+| alpha-nvim | Dashboard / start screen |
+| nvim-web-devicons | File type icons |
 
-- :bw ~ buffer wipeout
-- <Tab> ~ go to next buffer
-- <S-Tab> ~ go to previous buffer
-- to change buffer without saving current one, :set hidden
-- <Leader>z ~ zoom current split
-- <Leader>c ~ close buffer and keep tab split
+### Other
 
-### shortcuts and macros management
+| Plugin | Purpose |
+|--------|---------|
+| copilot.vim | GitHub Copilot |
+| ChatGPT.nvim | ChatGPT integration (requires OpenAI API key in `.env`) |
+| markdown-preview.nvim | Live markdown preview in browser |
+| vim-rails | Rails navigation/commands |
+| vim-silicon | Code screenshots |
+| vim-js + vim-jsx-pretty | JS/JSX syntax |
 
-- @: ~ repeat last ex command
-- @@ ~ repeat last macro
+## Config Structure
 
-### Extras
+```
+lua/user/
+├── core/
+│   ├── options.lua        # Editor settings (tabs, clipboard, etc.)
+│   ├── keymaps.lua        # All keybindings
+│   ├── functions.lua      # Custom functions
+│   └── git-diff.lua       # Git diff navigation
+├── lsp/
+│   ├── mason.lua          # LSP server installation list
+│   ├── lspconfig.lua      # LSP setup orchestration
+│   ├── cmp.lua            # Autocompletion config
+│   ├── conform.lua        # Formatter config
+│   ├── lspsaga.lua        # LSP UI config
+│   └── languages/         # Per-language LSP settings
+│       ├── web.lua        # TS, Vue, HTML, CSS, Tailwind
+│       ├── ruby.lua       # Solargraph + RuboCop
+│       ├── python.lua     # Pyright
+│       ├── systems.lua    # C/C++, Rust, Go
+│       └── other.lua      # YAML, Lua
+├── plugins/
+│   ├── plugins.vim        # vim-plug plugin list
+│   └── *.lua              # Individual plugin configs
+└── snippets/              # Custom snippets (React, JS, HTML)
+```
 
-- set nuw=x ~ change line number column spacing
+## Keybindings
 
-### plugin manager:
-
-- vim-plug
-
-## plugins shortcuts:
-
-### Codi:
-
-- :Codi ~ start codi
-
-### NERDTree:
-
-- q ~ close nerdtree
-- <C-t> ~ toggle nerdtree
-- <C-f> ~ find current file on nerdtree
-- m ~ display action menu for current node
-
-### vim-commentary:
-
-- gc ~ comment line/block (visual mode)
-- gcc ~ comment line (normal mode)
-
-### command history
-
-- q: ~ show commmmand history
-
-### FZF
-
-- :Files ~ search all files
-- :GFiles ~ search files in version control with preview window
-- :GFiles? ~ search files not staged for commit + its state (modified, untracked, deleted files)
-- :Colors ~ change colorschemes
-- :Lines ~ text search over lines in opened buffers
-- :BLines ~ text search over current buffer
-- :History ~ show recently opened buffers
-- :Commits ~ show commit history with diffs -> <S-up/down> to explore
-- :BCommits ~ git commits for current buffer
-- :Mappings ~ show normal mode mappings
-- :Filetypes ~ change filetype of current buffer
-
-### VimSpector debugger
-
-to install vimspector debuggers for specific language:\_ `VimspectorInstall <tab>`
-
--
+See `cheatsheet.txt` or run `:Cheatsheet` inside Neovim.
