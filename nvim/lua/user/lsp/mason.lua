@@ -15,7 +15,7 @@ require("mason-lspconfig").setup({
     -- Web Development
     "ts_ls",               -- TypeScript/JavaScript
     "eslint",              -- ESLint
-    "vue-language-server", -- Vue (TypeScript support in Vue files)
+    "vue_ls",              -- Vue (TypeScript support in Vue files)
     "tailwindcss",         -- Tailwind CSS
     "html",                -- HTML
     "cssls",               -- CSS
