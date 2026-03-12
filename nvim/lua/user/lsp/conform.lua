@@ -1,6 +1,39 @@
 -- Formatting with conform.nvim
 -- This provides better formatting than LSP built-in formatters
 
+-- Track when saving-and-quitting so Ruby formatting runs synchronously
+vim.g._conform_quitting = false
+
+local function create_quit_save_cmd(cmd_name, vim_cmd)
+  vim.api.nvim_create_user_command(cmd_name, function(opts)
+    vim.g._conform_quitting = true
+    local bang = opts.bang and "!" or ""
+    local ok, err = pcall(vim.cmd, vim_cmd .. bang)
+    vim.g._conform_quitting = false
+    if not ok then error(err) end
+  end, { bang = true })
+end
+
+create_quit_save_cmd("Wq", "wq")
+create_quit_save_cmd("Wqa", "wqa")
+create_quit_save_cmd("X", "x")
+create_quit_save_cmd("Xa", "xa")
+
+-- Redirect :wq, :wqa, :x, :xa to our commands that set the quitting flag
+vim.cmd([[
+  cnoreabbrev <expr> wq  (getcmdtype() == ':' && getcmdline() ==# 'wq')  ? 'Wq'  : 'wq'
+  cnoreabbrev <expr> wqa (getcmdtype() == ':' && getcmdline() ==# 'wqa') ? 'Wqa' : 'wqa'
+  cnoreabbrev <expr> x   (getcmdtype() == ':' && getcmdline() ==# 'x')   ? 'X'   : 'x'
+  cnoreabbrev <expr> xa  (getcmdtype() == ':' && getcmdline() ==# 'xa')  ? 'Xa'  : 'xa'
+]])
+
+-- ZZ is equivalent to :x
+vim.keymap.set('n', 'ZZ', function()
+  vim.g._conform_quitting = true
+  vim.cmd('x')
+  vim.g._conform_quitting = false
+end, { desc = 'Save and quit (sync format)' })
+
 require("conform").setup({
   formatters_by_ft = {
     -- Ruby - handled by RuboCop LSP (see languages/ruby.lua)
@@ -39,8 +72,18 @@ require("conform").setup({
     lua = { "stylua" },
   },
 
-  -- Format on save
+  -- Format on save (synchronous — blocks :w until done)
   format_on_save = function(bufnr)
+    local filetype = vim.bo[bufnr].filetype
+
+    -- Ruby: sync only when quitting (so file is formatted before exit)
+    if filetype == "ruby" then
+      if vim.g._conform_quitting then
+        return { timeout_ms = 5000, lsp_fallback = true }
+      end
+      return -- defer to async format_after_save
+    end
+
     -- Disable format on save for large files
     local max_filesize = 100 * 1024 -- 100 KB
     local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(bufnr))
@@ -49,7 +92,21 @@ require("conform").setup({
     end
 
     return {
-      timeout_ms = 3000, -- Increased timeout for RuboCop on Rails files
+      timeout_ms = 3000,
+      lsp_fallback = true,
+    }
+  end,
+
+  -- Format after save (async — :w returns instantly, buffer updates when done)
+  format_after_save = function(bufnr)
+    local filetype = vim.bo[bufnr].filetype
+
+    -- Ruby: async only when NOT quitting (quitting already handled sync above)
+    if filetype ~= "ruby" or vim.g._conform_quitting then
+      return
+    end
+
+    return {
       lsp_fallback = true,
     }
   end,
