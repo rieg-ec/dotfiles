@@ -16,6 +16,8 @@
 
 [commit]
 	verbose = true
+[alias]
+	reword = "!f() { GIT_SEQUENCE_EDITOR=\"sed -i '' \\\"1s/pick/reword/\\\"\" git rebase -i \"$1\"^; }; f"
 [user]
 	name = rieg-ec
 	email = rieg.10199@gmail.com
