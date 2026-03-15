@@ -1,51 +1,34 @@
 -- Systems Programming LSP Configurations
 -- C/C++, Go, Rust
 
-local M = {}
+-- C/C++ (Clangd)
+vim.lsp.config('clangd', {
+  cmd = {
+    "/opt/homebrew/opt/llvm/bin/clangd",
+    "--background-index",
+    "--completion-style=detailed",
+  },
+})
 
-function M.setup(lspconfig, capabilities, on_attach)
-  -- C/C++ (Clangd)
-  lspconfig.clangd.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    cmd = {
-      "/opt/homebrew/opt/llvm/bin/clangd",
-      "--background-index",
-      "--completion-style=detailed",
+-- Go
+vim.lsp.config('gopls', {
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
     },
-  })
+  },
+})
 
-  -- Go
-  lspconfig.gopls.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      gopls = {
-        analyses = {
-          unusedparams = true,
-        },
-        staticcheck = true,
+-- Rust
+vim.lsp.config('rust_analyzer', {
+  settings = {
+    ['rust-analyzer'] = {
+      checkOnSave = {
+        command = "clippy",
       },
     },
-  })
-
-  -- Rust
-  lspconfig.rust_analyzer.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = {
-      ['rust-analyzer'] = {
-        checkOnSave = {
-          command = "clippy",
-        },
-      },
-    },
-  })
-end
-
-return M
-
-
-
-
-
+  },
+})

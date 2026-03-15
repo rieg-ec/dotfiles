@@ -44,6 +44,6 @@ require("mason-lspconfig").setup({
     "lua_ls", -- Lua
   },
 
-  -- Auto-install configured servers (with lspconfig)
-  automatic_installation = true,
+  -- Automatically enable installed servers via vim.lsp.enable()
+  automatic_enable = true,
 })
