@@ -19,13 +19,18 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     -- Highlight references of symbol under cursor
     if client and client.server_capabilities.documentHighlightProvider then
+      local group = vim.api.nvim_create_augroup("lsp_document_highlight_" .. bufnr, { clear = true })
       vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        group = group,
         buffer = bufnr,
         callback = function()
-          pcall(vim.lsp.buf.document_highlight)
+          if #vim.lsp.get_clients({ bufnr = bufnr, method = "textDocument/documentHighlight" }) > 0 then
+            vim.lsp.buf.document_highlight()
+          end
         end,
       })
       vim.api.nvim_create_autocmd("CursorMoved", {
+        group = group,
         buffer = bufnr,
         callback = function()
           pcall(vim.lsp.buf.clear_references)
@@ -54,6 +59,58 @@ vim.diagnostic.config({
     source = 'always',
     focusable = true,
   },
+})
+
+-- Override :LspRestart/:LspStop after nvim-lspconfig loads (its plugin/ dir
+-- runs after init.lua). copilot.vim registers as "GitHub Copilot" which has
+-- spaces, making vim.lsp.enable() fail on Neovim 0.11+.
+vim.api.nvim_create_autocmd('VimEnter', {
+  once = true,
+  callback = function()
+    local function lsp_client_names(exclude_copilot)
+      return function()
+        local names = {}
+        for _, c in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+          if not exclude_copilot or c.name ~= 'GitHub Copilot' then
+            table.insert(names, c.name)
+          end
+        end
+        return names
+      end
+    end
+
+    vim.api.nvim_create_user_command('LspRestart', function(opts)
+      local clients = vim.lsp.get_clients({ bufnr = 0 })
+      local filter = opts.fargs[1]
+      for _, client in ipairs(clients) do
+        if client.name ~= 'GitHub Copilot' and (not filter or client.name == filter) then
+          vim.lsp.enable(client.name, false)
+          client:stop()
+        end
+      end
+      local timer = assert(vim.uv.new_timer())
+      timer:start(500, 0, function()
+        for _, client in ipairs(clients) do
+          if client.name ~= 'GitHub Copilot' and (not filter or client.name == filter) then
+            vim.schedule_wrap(vim.lsp.enable)(client.name)
+          end
+        end
+      end)
+    end, { force = true, nargs = '?', bang = true, complete = lsp_client_names(true),
+      desc = 'Restart LSP servers (excluding Copilot)' })
+
+    vim.api.nvim_create_user_command('LspStop', function(opts)
+      local clients = vim.lsp.get_clients({ bufnr = 0 })
+      local filter = opts.fargs[1]
+      for _, client in ipairs(clients) do
+        if client.name ~= 'GitHub Copilot' and (not filter or client.name == filter) then
+          vim.lsp.enable(client.name, false)
+          if opts.bang then client:stop(true) end
+        end
+      end
+    end, { force = true, nargs = '?', bang = true, complete = lsp_client_names(true),
+      desc = 'Stop LSP servers (excluding Copilot)' })
+  end,
 })
 
 -- Load language-specific configurations
