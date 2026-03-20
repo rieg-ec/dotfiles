@@ -1,5 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "plugin": [],
+  "mcp": {
+    "linear": {
+      "type": "remote",
+      "url": "https://mcp.linear.app/mcp",
+      "oauth": {}
+    }
+  },
   "permission": {
     "bash": {
       "*": "ask",
@@ -86,6 +94,15 @@
       "gh config list *": "allow",
       "gh config get *": "allow",
       "gh extension list *": "allow",
+      "gh api *": "allow",
+      "gh api *--method POST*": "ask",
+      "gh api *--method PATCH*": "ask",
+      "gh api *--method PUT*": "ask",
+      "gh api *--method DELETE*": "ask",
+      "gh api *-X POST*": "ask",
+      "gh api *-X PATCH*": "ask",
+      "gh api *-X PUT*": "ask",
+      "gh api *-X DELETE*": "ask",
       "bin/lint *": "allow",
       "bundle exec rspec *": "allow",
       "npx tsc *": "allow",
