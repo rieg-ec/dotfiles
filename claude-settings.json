@@ -1,6 +1,9 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
-    "defaultMode": "default",
     "allow": [
       "Bash(ls:*)",
       "Bash(find:*)",
@@ -87,14 +90,28 @@
       "Read(*)",
       "Glob(*)",
       "Grep(*)"
+    ],
+    "defaultMode": "default"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "claude-session-id-hook",
+            "timeout": 5000
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
     "Notion@claude-plugins-official": false,
-    "superpowers@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "ruby-lsp@claude-plugins-official": true
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  }
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true
 }

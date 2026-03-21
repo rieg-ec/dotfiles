@@ -35,3 +35,8 @@ else
 fi
 
 sh $dotfiles_dir/.macos # optional, macOS only
+
+# opencode
+mkdir -p $HOME/.config/opencode
+ln -sf $dotfiles_dir/opencode.json $HOME/.config/opencode/opencode.json
+ln -sfn $dotfiles_dir/opencode/plugins $HOME/.config/opencode/plugins

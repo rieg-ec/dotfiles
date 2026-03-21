@@ -235,3 +235,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 alias sed='gsed'
 
+
+# opencode
+export PATH=/Users/rieg/.opencode/bin:$PATH
+export OPENCODE_DISABLE_DEFAULT_PLUGINS=1

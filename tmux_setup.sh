@@ -13,6 +13,8 @@ if type -p tmux > /dev/null; then
     git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
 
     ln -sf $dotfiles_dir/tmux/.tmux.conf $HOME/.tmux.conf
+    ln -sf $dotfiles_dir/tmux/cc-fork.sh $HOME/.tmux/cc-fork.sh
+    ln -sf $dotfiles_dir/tmux/claude-session-id-hook $HOME/.local/bin/claude-session-id-hook
 else
     echo "tmux FAILED TO INSTALL!!!" >> $log_file
 fi

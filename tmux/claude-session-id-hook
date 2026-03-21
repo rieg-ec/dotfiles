@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Hook for Claude Code SessionStart — exposes session ID to tmux and shell environment
+INPUT=$(cat)
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
+
+# Inject into conversation context so the model can see it
+jq -n --arg ctx "CLAUDE_CODE_SESSION_ID=$SESSION_ID" \
+    '{ hookSpecificOutput: { hookEventName: "SessionStart", additionalContext: $ctx } }'
+
+# Write session ID to a tmux-pane-keyed file so external scripts (cc-fork) can read it
+if [ -n "$TMUX_PANE" ] && [ -n "$SESSION_ID" ]; then
+    pane_id="${TMUX_PANE#%}"
+    echo "$SESSION_ID" > "/tmp/claude-session-pane-${pane_id}.id"
+fi
+
+# Inject into shell environment so Bash tool calls can use it
+if [ -n "$CLAUDE_ENV_FILE" ] && ! grep -q "CLAUDE_CODE_SESSION_ID" "$CLAUDE_ENV_FILE" 2>/dev/null; then
+    echo "export CLAUDE_CODE_SESSION_ID=\"$SESSION_ID\"" > "$CLAUDE_ENV_FILE"
+fi
