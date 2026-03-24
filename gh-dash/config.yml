@@ -1,0 +1,121 @@
+# gh-dash configuration
+# Symlink: ln -sf ~/cs/dotfiles/gh-dash/config.yml ~/.config/gh-dash/config.yml
+
+prSections:
+  - title: "My PRs"
+    filters: "is:open author:@me"
+  - title: "Rails"
+    filters: "is:open repo:grupalia/grupalia-rails"
+  - title: "Customers"
+    filters: "is:open repo:grupalia/grupalia-rn"
+  - title: "Promoters"
+    filters: "is:open repo:grupalia/promoters"
+  - title: "UI Kit"
+    filters: "is:open repo:grupalia/rn-ui-kit"
+  - title: "AI Kool-Aid"
+    filters: "is:open repo:grupalia/ai-kool-aid"
+
+issueSections:
+  - title: "My Issues"
+    filters: "is:open author:@me"
+  - title: "Assigned"
+    filters: "is:open assignee:@me"
+
+repoPaths:
+  grupalia/grupalia-rails: ~/cs/grupalia/dev/grupalia-rails
+  grupalia/grupalia-rn: ~/cs/grupalia/dev/grupalia-rn
+  grupalia/promoters: ~/cs/grupalia/dev/promoters
+  grupalia/rn-ui-kit: ~/cs/grupalia/dev/rn-ui-kit
+  grupalia/ai-kool-aid: ~/cs/grupalia/dev/ai-kool-aid
+
+defaults:
+  view: prs
+  prsLimit: 20
+  issuesLimit: 20
+  refetchIntervalMinutes: 5
+  preview:
+    open: true
+    width: 0.50
+  layout:
+    prs:
+      repoName:
+        grow: true
+        width: 15
+        hidden: false
+      author:
+        width: 12
+        hidden: false
+      base:
+        hidden: true
+
+pager:
+  diff: delta
+
+keybindings:
+  universal:
+    - key: "?"
+      builtin: help
+    - key: J
+      builtin: pageDown
+    - key: K
+      builtin: pageUp
+  prs:
+    - key: H
+      builtin: prevSidebarTab
+    - key: L
+      builtin: nextSidebarTab
+    - key: O
+      name: open in octo.nvim
+      command: >
+        tmux new-window -c {{.RepoPath}} '
+        nvim -c "Octo pr edit {{.PrNumber}}"
+        '
+    - key: C
+      builtin: checkout
+    - key: D
+      name: diffview in nvim
+      command: >
+        cd {{.RepoPath}} &&
+        git fetch origin pull/{{.PrNumber}}/head:pr-{{.PrNumber}} &&
+        tmux new-window -c {{.RepoPath}} '
+        nvim -c "DiffviewOpen origin/{{.BaseRefName}}...pr-{{.PrNumber}}"
+        '
+    - key: W
+      name: checkout PR (worktree)
+      command: >
+        cd {{.RepoPath}} &&
+        git fetch origin pull/{{.PrNumber}}/head:pr-{{.PrNumber}} &&
+        git worktree add /tmp/pr-reviews/{{.PrNumber}} pr-{{.PrNumber}} 2>/dev/null;
+        tmux new-window -c /tmp/pr-reviews/{{.PrNumber}}
+    - key: "!"
+      name: remove me as reviewer
+      command: >
+        gh api --method DELETE repos/{{.RepoName}}/pulls/{{.PrNumber}}/requested_reviewers
+        -f "reviewers[]=rieg-ec"
+    - key: v
+      builtin: approve
+    - key: V
+      name: approve (LGTM)
+      command: >
+        gh pr review --repo {{.RepoName}} --approve --body "LGTM" {{.PrNumber}}
+
+theme:
+  ui:
+    sectionsShowCount: true
+    table:
+      compact: false
+  colors:
+    text:
+      primary: "#E2E1ED"
+      secondary: "#666CA6"
+      inverted: "#242347"
+      faint: "#B0B3BF"
+      warning: "#E0AF68"
+      error: "#DB4B4B"
+      success: "#3DF294"
+    background:
+      selected: "#1B1B33"
+    border:
+      primary: "#383B5B"
+      secondary: "#39386B"
+      faint: "#2B2B40"
