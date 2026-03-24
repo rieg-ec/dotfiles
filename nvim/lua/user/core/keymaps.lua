@@ -134,9 +134,13 @@ function M.setup_general()
     print('Copied: ' .. path)
   end, { desc = 'Copy full path of current file' })
 
-  -- Git navigation (for git-diff)
+  -- Git
   map('n', ']c', ':lua get_next_commit("next")<CR>', { desc = 'Next commit' })
   map('n', '[c', ':lua get_next_commit("prev")<CR>', { desc = 'Previous commit' })
+  vim.api.nvim_create_user_command('Gd', function()
+    require('gitsigns').diffthis()
+    vim.cmd('wincmd h')
+  end, { desc = 'Diff current file against index' })
 end
 
 -- ╭─────────────────────────────────────────────────────────╮
