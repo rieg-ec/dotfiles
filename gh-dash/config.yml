@@ -84,8 +84,10 @@ keybindings:
       name: checkout PR (worktree)
       command: >
         cd {{.RepoPath}} &&
-        git fetch origin pull/{{.PrNumber}}/head:pr-{{.PrNumber}} &&
+        git fetch origin pull/{{.PrNumber}}/head:pr-{{.PrNumber}} 2>/dev/null;
         git worktree add /tmp/pr-reviews/{{.PrNumber}} pr-{{.PrNumber}} 2>/dev/null;
+        git -C /tmp/pr-reviews/{{.PrNumber}} fetch origin pull/{{.PrNumber}}/head &&
+        git -C /tmp/pr-reviews/{{.PrNumber}} reset --hard FETCH_HEAD &&
         tmux new-window -c /tmp/pr-reviews/{{.PrNumber}}
     - key: "!"
       name: remove me as reviewer
