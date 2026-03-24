@@ -14,6 +14,15 @@ _G.copy_files_to_clipboard = function(selected_files)
     print("Copied " .. #selected_files .. " file(s) to clipboard")
 end
 
+-- Git file history commands
+vim.api.nvim_create_user_command('GitFileLog', function()
+  require('telescope.builtin').git_bcommits()
+end, { desc = 'Telescope: commit history for current file with diff preview' })
+
+vim.api.nvim_create_user_command('GitFileLogDiff', function()
+  vim.cmd('DiffviewFileHistory %')
+end, { desc = 'Diffview: commit history for current file with full side-by-side diff' })
+
 -- Create a Vim function to call the Lua function
 vim.cmd([[
 function! CopyFilesToClipboard(selected_files)
