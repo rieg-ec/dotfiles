@@ -96,6 +96,30 @@ function M.setup_general()
   -- Replace highlighted text
   map('n', '<Leader>f', ':%s///gc<Left><Left><Left><Left>', { desc = 'Replace highlighted text' })
 
+  -- Toggle between source and RSpec file
+  map('n', '<Leader>s', function()
+    local path = vim.fn.expand('%:.')
+    local target
+
+    if path:match('_spec%.rb$') then
+      -- Spec -> source
+      target = path:gsub('^spec/lib/', 'lib/'):gsub('^spec/', 'app/'):gsub('_spec%.rb$', '.rb')
+      if vim.fn.filereadable(target) == 0 then
+        -- Try lib/ if app/ doesn't exist
+        target = path:gsub('^spec/', 'lib/'):gsub('_spec%.rb$', '.rb')
+      end
+    else
+      -- Source -> spec
+      target = path:gsub('^app/', 'spec/'):gsub('^lib/', 'spec/lib/'):gsub('%.rb$', '_spec.rb')
+    end
+
+    if vim.fn.filereadable(target) == 1 then
+      vim.cmd('vsplit ' .. target)
+    else
+      vim.notify('File not found: ' .. target, vim.log.levels.WARN)
+    end
+  end, { desc = 'Toggle between source and RSpec file' })
+
   -- Copy full path of current file
   map('n', '<Leader>yp', function()
     local path = vim.fn.expand('%:p')
