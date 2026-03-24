@@ -101,6 +101,7 @@ type AuthResult = OAuthSuccess | ApiKeySuccess | FailedResult;
 
 async function authorize(mode: "max" | "console") {
   const pkce = generatePKCE();
+  const state = toBase64Url(randomBytes(32));
 
   const url = new URL(
     `https://${mode === "console" ? "console.anthropic.com" : "claude.ai"}/oauth/authorize`,
@@ -118,7 +119,7 @@ async function authorize(mode: "max" | "console") {
   );
   url.searchParams.set("code_challenge", pkce.challenge);
   url.searchParams.set("code_challenge_method", "S256");
-  url.searchParams.set("state", pkce.verifier);
+  url.searchParams.set("state", state);
   return {
     url: url.toString(),
     verifier: pkce.verifier,
@@ -129,20 +130,22 @@ async function exchange(
   code: string,
   verifier: string,
 ): Promise<OAuthSuccess | FailedResult> {
-  const splits = code.split("#");
+  const splits = code.trim().split("#");
+  const body = new URLSearchParams({
+    code: splits[0],
+    state: splits[1] ?? "",
+    grant_type: "authorization_code",
+    client_id: CLIENT_ID,
+    redirect_uri: "https://console.anthropic.com/oauth/code/callback",
+    code_verifier: verifier,
+  });
   const result = await fetch("https://console.anthropic.com/v1/oauth/token", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": `claude-cli/${CC_VERSION} (external, cli)`,
     },
-    body: JSON.stringify({
-      code: splits[0],
-      state: splits[1],
-      grant_type: "authorization_code",
-      client_id: CLIENT_ID,
-      redirect_uri: "https://console.anthropic.com/oauth/code/callback",
-      code_verifier: verifier,
-    }),
+    body: body.toString(),
   });
   if (!result.ok) {
     const errorBody = await result.text().catch(() => "no body");
@@ -237,18 +240,20 @@ const AnthropicAuthPlugin: Plugin = async ({ client }) => {
 
               // Refresh token if expired
               if (!currentAuth.access || currentAuth.expires < Date.now()) {
+                const refreshBody = new URLSearchParams({
+                  grant_type: "refresh_token",
+                  refresh_token: currentAuth.refresh,
+                  client_id: CLIENT_ID,
+                });
                 const response = await fetch(
                   "https://console.anthropic.com/v1/oauth/token",
                   {
                     method: "POST",
                     headers: {
-                      "Content-Type": "application/json",
+                      "Content-Type": "application/x-www-form-urlencoded",
+                      "User-Agent": `claude-cli/${CC_VERSION} (external, cli)`,
                     },
-                    body: JSON.stringify({
-                      grant_type: "refresh_token",
-                      refresh_token: currentAuth.refresh,
-                      client_id: CLIENT_ID,
-                    }),
+                    body: refreshBody.toString(),
                   },
                 );
                 if (!response.ok) {
