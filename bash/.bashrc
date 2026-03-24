@@ -239,3 +239,4 @@ alias sed='gsed'
 # opencode
 export PATH=/Users/rieg/.opencode/bin:$PATH
 export OPENCODE_DISABLE_DEFAULT_PLUGINS=1
+alias yolocode='OPENCODE_CONFIG_CONTENT='\''{"permission":{"*":"allow","bash":{"*":"allow","rm *":"deny"}}}'\'' opencode'
