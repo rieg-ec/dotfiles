@@ -17,7 +17,13 @@ function M.setup_general()
   -- File operations
   map('n', '<Leader>w', ':w<CR>', { desc = 'Save current buffer' })
   map('n', '<Leader>c', ':bp<BAR>bd#<CR>', { silent = true, desc = 'Close current buffer' })
-  map('n', '<Leader>d', ':bd<BAR>q<CR>', { silent = true, desc = 'Close buffer and window' })
+  map('n', '<Leader>d', function()
+    local buf = vim.api.nvim_get_current_buf()
+    vim.cmd('close')
+    if vim.api.nvim_buf_is_valid(buf) then
+      vim.cmd('bd ' .. buf)
+    end
+  end, { silent = true, desc = 'Close window and buffer' })
 
   -- Better deletion (don't yank)
   map({ 'n', 'v' }, 'd', '"_d', { desc = 'Delete without yanking' })
