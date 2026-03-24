@@ -1,7 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "./plugins/anthropic-auth.ts"
+    "./plugins/anthropic-auth.ts",
+    "./plugins/reviewer.ts"
   ],
   "mcp": {
     "linear": {
@@ -126,6 +127,7 @@
     "webfetch": "allow",
     "websearch": "allow",
     "codesearch": "allow",
-    "external_directory": "allow"
+    "external_directory": "allow",
+    "review": "ask"
   }
 }
