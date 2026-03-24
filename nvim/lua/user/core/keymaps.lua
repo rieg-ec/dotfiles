@@ -17,6 +17,7 @@ function M.setup_general()
   -- File operations
   map('n', '<Leader>w', ':w<CR>', { desc = 'Save current buffer' })
   map('n', '<Leader>c', ':bp<BAR>bd#<CR>', { silent = true, desc = 'Close current buffer' })
+  map('n', '<Leader>d', ':bd<BAR>q<CR>', { silent = true, desc = 'Close buffer and window' })
 
   -- Better deletion (don't yank)
   map({ 'n', 'v' }, 'd', '"_d', { desc = 'Delete without yanking' })
