@@ -14,6 +14,8 @@ prSections:
     filters: "is:open repo:grupalia/rn-ui-kit"
   - title: "AI Kool-Aid"
     filters: "is:open repo:grupalia/ai-kool-aid"
+  - title: "Other repos"
+    filters: "is:open repo:rieg-ec/octo.nvim repo:rieg-ec/dotfiles repo:grupalia/landing repo:rieg-ec/lyricl"
 
 issueSections:
   - title: "My Issues"
@@ -27,6 +29,7 @@ repoPaths:
   grupalia/promoters: ~/cs/grupalia/dev/promoters
   grupalia/rn-ui-kit: ~/cs/grupalia/dev/rn-ui-kit
   grupalia/ai-kool-aid: ~/cs/grupalia/dev/ai-kool-aid
+  rieg-ec/octo.nvim: ~/cs/octo.nvim
 
 defaults:
   view: prs
@@ -66,10 +69,7 @@ keybindings:
       builtin: nextSidebarTab
     - key: O
       name: open in octo.nvim
-      command: >
-        tmux new-window -c {{.RepoPath}} '
-        nvim -c "Octo pr edit {{.PrNumber}}"
-        '
+      command: tmux new-window -c {{.RepoPath}} 'nvim -c "Octo pr edit {{.PrNumber}}"'
     - key: C
       builtin: checkout
     - key: D
