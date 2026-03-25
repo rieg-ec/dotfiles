@@ -1,6 +1,8 @@
 -- Formatting with conform.nvim
 -- This provides better formatting than LSP built-in formatters
 
+local M = {}
+
 -- Track when saving-and-quitting so Ruby formatting runs synchronously
 vim.g._conform_quitting = false
 
@@ -27,12 +29,12 @@ vim.cmd([[
   cnoreabbrev <expr> xa  (getcmdtype() == ':' && getcmdline() ==# 'xa')  ? 'Xa'  : 'xa'
 ]])
 
--- ZZ is equivalent to :x
-vim.keymap.set('n', 'ZZ', function()
+-- ZZ handler: save-and-quit with synchronous formatting
+function M.save_and_quit()
   vim.g._conform_quitting = true
   vim.cmd('x')
   vim.g._conform_quitting = false
-end, { desc = 'Save and quit (sync format)' })
+end
 
 require("conform").setup({
   formatters_by_ft = {
@@ -119,8 +121,8 @@ require("conform").setup({
   },
 })
 
--- Keymap to format manually with better error handling
-vim.keymap.set({ "n", "v" }, "<leader>F", function()
+-- Format handler with Ruby/other distinction
+function M.format_manually()
   local bufnr = vim.api.nvim_get_current_buf()
   local filetype = vim.bo[bufnr].filetype
 
@@ -129,16 +131,14 @@ vim.keymap.set({ "n", "v" }, "<leader>F", function()
     vim.notify("Formatting Ruby file with RuboCop LSP...", vim.log.levels.INFO)
     vim.lsp.buf.format({
       async = false,
-      timeout_ms = 5000, -- Give RuboCop enough time for large Rails files
+      timeout_ms = 5000,
       bufnr = bufnr,
       filter = function(client)
-        -- Use only RuboCop LSP for formatting Ruby files
         return client.name == "rubocop"
       end,
     })
     vim.notify("Formatting completed", vim.log.levels.INFO)
   else
-    -- For other files, use conform.nvim
     vim.notify("Formatting " .. filetype .. " file...", vim.log.levels.INFO)
     require("conform").format({
       lsp_fallback = true,
@@ -153,4 +153,6 @@ vim.keymap.set({ "n", "v" }, "<leader>F", function()
       end
     end)
   end
-end, { desc = "Format file or range (in visual mode)" })
+end
+
+return M

@@ -241,6 +241,48 @@ function M.setup_lsp(bufnr)
 end
 
 -- ╭─────────────────────────────────────────────────────────╮
+-- │ Formatting Mappings (conform.nvim)                    │
+-- ╰─────────────────────────────────────────────────────────╯
+
+function M.setup_formatting()
+  local ok, conform = pcall(require, 'user.lsp.conform')
+  if not ok then return end
+
+  map('n', 'ZZ', conform.save_and_quit, { desc = 'Save and quit (sync format)' })
+  map({ 'n', 'v' }, '<leader>F', conform.format_manually, { desc = 'Format file or range' })
+end
+
+-- ╭─────────────────────────────────────────────────────────╮
+-- │ Octo Review Mappings (buffer-local)                   │
+-- ╰─────────────────────────────────────────────────────────╯
+
+function M.setup_octo_review()
+  local group = vim.api.nvim_create_augroup("UserOctoReviewKeys", { clear = true })
+
+  vim.api.nvim_create_autocmd("BufEnter", {
+    group = group,
+    pattern = { "octo://*", "OctoChangedFiles-*" },
+    callback = function(args)
+      local bufnr = args.buf
+      local review = require('user.plugins.octo_review')
+
+      if not review.is_review_buffer(bufnr) or vim.b[bufnr].octo_review_keys_applied then
+        return
+      end
+
+      vim.b[bufnr].octo_review_keys_applied = true
+      local buf_opts = { buffer = bufnr, silent = true, noremap = true }
+
+      map("n", "<Tab>", review.next_file, vim.tbl_extend("force", buf_opts, { desc = "Next Octo review file" }))
+      map("n", "<S-Tab>", review.prev_file, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review file" }))
+      map("n", "<BTab>", review.prev_file, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review file" }))
+      map("n", "]c", function() review.move_commit("next") end, vim.tbl_extend("force", buf_opts, { desc = "Next Octo review commit" }))
+      map("n", "[c", function() review.move_commit("prev") end, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review commit" }))
+    end,
+  })
+end
+
+-- ╭─────────────────────────────────────────────────────────╮
 -- │ Initialize all keymaps                                 │
 -- ╰─────────────────────────────────────────────────────────╯
 
@@ -248,6 +290,8 @@ function M.init()
   M.setup_general()
   M.setup_plugins()
   M.setup_diagnostics()
+  M.setup_formatting()
+  M.setup_octo_review()
 
   -- LSP keymaps are set up via the on_attach function
   -- in lspconfig.lua
