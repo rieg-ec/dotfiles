@@ -62,6 +62,7 @@ require 'user.plugins.alpha'
 require 'user.plugins.treesitter'
 
 require 'Comment'.setup()
+require('nvim-autopairs').setup({})
 require 'user.plugins.gitsigns'
 
 require 'user.plugins.cheatsheet'

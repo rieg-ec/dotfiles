@@ -41,7 +41,7 @@ call plug#begin()
 
     Plug 'goolord/alpha-nvim'
 
-    Plug 'jiangmiao/auto-pairs'
+    Plug 'windwp/nvim-autopairs'
 
     " zoom in and out of windows
     Plug 'dhruvasagar/vim-zoom'
