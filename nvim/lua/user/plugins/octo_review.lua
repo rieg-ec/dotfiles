@@ -87,47 +87,6 @@ local function get_current_commit_index(review, entries)
   return nil
 end
 
-local function set_commit_description(review, message)
-  review._octo_commit_message = message
-  -- Wait for the layout to re-render, then patch the file panel
-  vim.defer_fn(function()
-    if not review.layout or not review.layout.file_panel then
-      return
-    end
-    local panel = review.layout.file_panel
-    if not panel:buf_loaded() then
-      return
-    end
-    local bufnr = panel.bufid
-    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-
-    -- Find "Showing changes for:" and replace it + the SHA range below
-    local start_idx
-    for i, line in ipairs(lines) do
-      if line:match("^Showing changes for:") then
-        start_idx = i
-        break
-      end
-    end
-
-    if not start_idx then
-      return
-    end
-
-    -- Replace from "Showing changes for:" to end of buffer
-    local replacement = {}
-    if message then
-      for _, msg_line in ipairs(vim.split(message, "\n", { plain = true })) do
-        table.insert(replacement, msg_line)
-      end
-    end
-
-    vim.bo[bufnr].modifiable = true
-    vim.api.nvim_buf_set_lines(bufnr, start_idx - 1, #lines, false, replacement)
-    vim.bo[bufnr].modifiable = false
-  end, 200)
-end
-
 function M.move_commit(direction)
   local review = get_current_review()
   if not review then
@@ -148,9 +107,7 @@ function M.move_commit(direction)
 
     if current_idx == #entries + 1 then
       local target = direction == "next" and entries[1] or entries[#entries]
-      review:focus_commit(target.right, target.left)
-      set_commit_description(review, target.message)
-      notify(string.format("Reviewing %s (%s)", target.title, target.right:sub(1, 7)))
+      review:focus_commit(target.right, target.left, { message = target.message })
       return
     end
 
@@ -158,13 +115,10 @@ function M.move_commit(direction)
     local target = entries[current_idx + offset]
 
     if target then
-      review:focus_commit(target.right, target.left)
-      set_commit_description(review, target.message)
-      notify(string.format("Reviewing %s (%s)", target.title, target.right:sub(1, 7)))
+      review:focus_commit(target.right, target.left, { message = target.message })
       return
     end
 
-    review._octo_commit_message = nil
     focus_pull_request(review)
   end)
 end

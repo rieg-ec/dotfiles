@@ -141,6 +141,18 @@ function M.setup_general()
     require('gitsigns').diffthis()
     vim.cmd('wincmd h')
   end, { desc = 'Diff current file against index' })
+
+  -- Octo (PR review)
+  map('n', '<Leader>op', ':Octo pr list<CR>', { desc = 'List PRs (Octo)' })
+  map('n', '<Leader>os', ':Octo pr search<CR>', { desc = 'Search PRs (Octo)' })
+  map('n', '<Leader>oc', ':Octo pr commits<CR>', { desc = 'PR commits (Octo)' })
+  map('n', '<Leader>oca', ':Octo comment add<CR>', { desc = 'Add comment (Octo)' })
+  map('n', '<Leader>ocd', ':Octo comment delete<CR>', { desc = 'Delete comment (Octo)' })
+  map('n', '<Leader>ocr', ':Octo comment reply<CR>', { desc = 'Reply to comment (Octo)' })
+  map('n', '<Leader>od', ':Octo pr diff<CR>', { desc = 'PR diff (Octo)' })
+  map('n', '<Leader>or', ':Octo review start<CR>', { desc = 'Start review (Octo)' })
+  map('n', '<Leader>oR', ':Octo review submit<CR>', { desc = 'Submit review (Octo)' })
+  map('n', '<Leader>oi', open_image_preview, { desc = 'Preview image URL (Octo)' })
 end
 
 -- ╭─────────────────────────────────────────────────────────╮
@@ -278,6 +290,10 @@ function M.setup_octo_review()
       map("n", "<BTab>", review.prev_file, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review file" }))
       map("n", "]c", function() review.move_commit("next") end, vim.tbl_extend("force", buf_opts, { desc = "Next Octo review commit" }))
       map("n", "[c", function() review.move_commit("prev") end, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review commit" }))
+      map("n", "]t", function() require("octo.reviews.file-panel").next_thread() end, vim.tbl_extend("force", buf_opts, { desc = "Next Octo review thread" }))
+      map("n", "[t", function() require("octo.reviews.file-panel").prev_thread() end, vim.tbl_extend("force", buf_opts, { desc = "Previous Octo review thread" }))
+      map("n", "<leader>t", function() require("octo.reviews.thread-panel").show_review_threads(true) end, vim.tbl_extend("force", buf_opts, { desc = "Show thread at cursor" }))
+      map("n", "<leader>cc", function() vim.cmd("Octo review commit") end, vim.tbl_extend("force", buf_opts, { desc = "Pick commit to review" }))
     end,
   })
 end

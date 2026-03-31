@@ -48,6 +48,29 @@ Cycle layout                               | g<C-x>
 Telescope: file commit log + diff preview  | :GitFileLog
 Diffview: file commit log + full diff      | :GitFileLogDiff
 
+## octo @git @pr
+PR commits                                 | ;oc
+Add comment on code                        | ;oca
+Save comment (submit to GitHub)            | :w (in comment buffer)
+Cancel/close comment buffer                | :q (in comment buffer)
+Delete comment                             | ;ocd
+Reply to comment under cursor              | ;ocr
+Resolve thread                             | :Octo thread resolve
+Approve PR                                 | :Octo review submit (approve)
+Request changes                            | :Octo review submit (request_changes)
+Add reaction                               | :Octo reaction <emoji>
+Copy PR URL                                | <C-y> (in telescope)
+Open PR in browser                         | <C-b> (in telescope)
+Show thread at cursor                      | ;t (in review diff)
+Next thread in file                        | ]t (in review diff)
+Previous thread in file                    | [t (in review diff)
+Next commit                                | ]c (in review diff)
+Previous commit                            | [c (in review diff)
+Pick commit to review (telescope)          | ;cc (in review diff)
+Go back from thread to diff                | q (in thread buffer)
+Open pending review comments               | :Octo review comments
+Close review tab                           | :tabclose
+
 ## visual
 Append to end of selected lines  | $A
 Merge current line with the previous line  | J
@@ -95,9 +118,14 @@ Reload config | :source $MYVIMRC
 <C-i> [Edit Window] | Use response as input
 <C-d> [Edit Window] | View diff between left and right panes and use diff-mode commands
 
+## Rails
+Toggle between file and spec         | <leader>s
+
 ## Iterm
 C-k | Clear line to the right of cursor location
 C-u | Clear line
 C-w | Clear word
 C-a | Move to beginning of line
 C-e | Move to end of line
+
+

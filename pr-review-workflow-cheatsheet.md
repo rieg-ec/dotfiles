@@ -125,18 +125,24 @@ This is a two-step workflow: start from gh-dash, deep-dive in nvim.
 3. Navigate to the changed files -- the diff is shown inline
 4. Place your cursor on the line(s) you want to comment on
 5. In visual mode, select the code block you want to comment on
-6. `:Octo comment add` to add a standalone comment, or add a review comment
+6. `;oca` (or `:Octo comment add`) to add a standalone comment, or add a review comment
 7. Write your comment in the buffer that opens
-8. When done with all comments: `;oR` (or `:Octo review submit`)
+8. `;ocr` (or `:Octo comment reply`) on an existing Octo comment to reply in-thread
+9. `;ocd` (or `:Octo comment delete`) on an existing Octo comment when you want to remove it
+10. When done with all comments: `;oR` (or `:Octo review submit`)
    - Choose: approve / request_changes / comment
 
 **Quick single comment (no full review):**
 
 ```vim
-:Octo comment add
+;oca
 ```
 
 This adds a comment at the cursor position.
+
+To reply to the comment under the cursor, use `;ocr`.
+
+To delete the comment under the cursor, use `;ocd`.
 
 **From gh-dash:**
 - Press `c` on a selected PR to add a general comment (not on specific code)
@@ -298,11 +304,13 @@ q                   quit
 ;op                 list PRs
 ;os                 search PRs
 ;oc                 PR commits
+;oca                add comment at cursor
+;ocd                delete comment at cursor
+;ocr                reply to comment under cursor
 ;od                 PR diff
 ;or                 start review
 ;oR                 submit review
 :Octo pr edit N     open PR #N
-:Octo comment add   comment at cursor
 :Octo review start  begin review
 :Octo review submit submit review
 <C-b>               open in browser (telescope)

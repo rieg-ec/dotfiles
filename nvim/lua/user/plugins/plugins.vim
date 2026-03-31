@@ -75,6 +75,7 @@ call plug#begin()
     Plug 'maxmellon/vim-jsx-pretty'
 
     Plug 'nvim-telescope/telescope.nvim'
+    Plug 'nvim-telescope/telescope-ui-select.nvim'
     Plug 'nvim-lua/popup.nvim'
     Plug 'sudormrfbin/cheatsheet.nvim'
 
@@ -86,7 +87,7 @@ call plug#begin()
     Plug 'tpope/vim-rhubarb'
 
     " GitHub issues and PRs
-    Plug 'pwntester/octo.nvim'
+    Plug 'rieg-ec/octo.nvim'
 
     Plug 'HiPhish/rainbow-delimiters.nvim'
 call plug#end()

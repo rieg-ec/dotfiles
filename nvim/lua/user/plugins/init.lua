@@ -70,7 +70,19 @@ require 'user.plugins.mrkdwn'
 
 require 'user.plugins.diffview'
 
-require('telescope').setup()
+require('telescope').setup({
+  extensions = {
+    ["ui-select"] = {
+      require("telescope.themes").get_dropdown({
+        layout_config = {
+          width = 0.6,
+          height = 0.5,
+        },
+      }),
+    },
+  },
+})
+require("telescope").load_extension("ui-select")
 require 'user.plugins.octo'
 
 -- require 'user.plugins.gitlinker'

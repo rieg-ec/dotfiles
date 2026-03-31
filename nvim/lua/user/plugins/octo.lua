@@ -31,8 +31,8 @@ require('octo').setup({
     projects_v2 = true,
   },
   ui = {
-    use_signcolumn = true,
-    use_signstatus = true,
+    use_signcolumn = false,
+    use_statuscolumn = true,
   },
   issues = {
     order_by = {
@@ -48,7 +48,12 @@ require('octo').setup({
     always_select_remote_on_create = false,
   },
   file_panel = {
-    size = 10,
+    size = 50,
     use_icons = true,
+    position = "left",
+  },
+  reviews = {
+    auto_show_threads = false,
   },
 })
+
