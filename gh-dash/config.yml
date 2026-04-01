@@ -2,6 +2,8 @@
 # Symlink: ln -sf ~/cs/dotfiles/gh-dash/config.yml ~/.config/gh-dash/config.yml
 
 prSections:
+  - title: "By project"
+    filters: "org:grupalia repo:grupalia/grupalia-rails repo:grupalia/grupalia-rn repo:grupalia/promoters project:grupalia/4"
   - title: "My PRs"
     filters: "is:open author:@me"
   - title: "Rails"
