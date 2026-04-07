@@ -69,7 +69,17 @@ Previous commit                            | [c (in review diff)
 Pick commit to review (telescope)          | ;cc (in review diff)
 Go back from thread to diff                | q (in thread buffer)
 Open pending review comments               | :Octo review comments
+Preview image URL                          | ;oi
 Close review tab                           | :tabclose
+
+## folds
+Toggle fold                              | za
+Open fold                                | zo
+Close fold                               | zc
+Open all folds                           | zR
+Close all folds                          | zM
+Open fold recursively                    | zO
+Close fold recursively                   | zC
 
 ## visual
 Append to end of selected lines  | $A
