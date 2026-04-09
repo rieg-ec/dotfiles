@@ -14,29 +14,295 @@ _G.copy_files_to_clipboard = function(selected_files)
     print("Copied " .. #selected_files .. " file(s) to clipboard")
 end
 
+local function open_in_browser(url)
+  local job = vim.fn.jobstart({ 'open', url }, { detach = true })
+  if job <= 0 then
+    vim.notify('Failed to open URL: ' .. url, vim.log.levels.ERROR)
+    return false
+  end
+
+  return true
+end
+
+local function git_repo_root_for_file(file)
+  local dir = vim.fn.fnamemodify(file, ':h')
+  local root = vim.trim(vim.fn.system({ 'git', '-C', dir, 'rev-parse', '--show-toplevel' }))
+  if vim.v.shell_error ~= 0 or root == '' then
+    return nil
+  end
+
+  return root
+end
+
+local function github_repo_info(repo_root)
+  local remote = vim.trim(vim.fn.system({ 'git', '-C', repo_root, 'remote', 'get-url', 'origin' }))
+  if vim.v.shell_error ~= 0 or remote == '' then
+    return nil
+  end
+
+  remote = remote:gsub('%.git$', '')
+
+  local host, path = remote:match('^git@([^:]+):(.+)$')
+  if not host then
+    host, path = remote:match('^ssh://git@([^/]+)/(.+)$')
+  end
+  if not host then
+    host, path = remote:match('^https?://([^/]+)/(.+)$')
+  end
+  if not host or not path then
+    return nil
+  end
+
+  path = path:gsub('^/', '')
+
+  return {
+    host = host,
+    path = path,
+    url = string.format('https://%s/%s', host, path),
+  }
+end
+
+local function pr_url_for_commit(sha, repo_root)
+  local repo = github_repo_info(repo_root)
+  if not repo then
+    return nil
+  end
+
+  local cmd = { 'gh', 'api' }
+  if repo.host ~= 'github.com' then
+    vim.list_extend(cmd, { '--hostname', repo.host })
+  end
+
+  vim.list_extend(cmd, {
+    string.format('repos/%s/commits/%s/pulls', repo.path, sha),
+    '--jq',
+    '.[0].html_url',
+  })
+
+  local result = vim.trim(vim.fn.system(cmd))
+  if vim.v.shell_error ~= 0 or result == '' or result == 'null' then
+    return nil
+  end
+
+  return result
+end
+
+local function commit_url_for_commit(sha, repo_root)
+  local repo = github_repo_info(repo_root)
+  if not repo then
+    return nil
+  end
+
+  return string.format('%s/commit/%s', repo.url, sha)
+end
+
+local function github_url_for_commit(sha, repo_root)
+  local pr_url = pr_url_for_commit(sha, repo_root)
+  if pr_url then
+    return pr_url, 'PR'
+  end
+
+  local commit_url = commit_url_for_commit(sha, repo_root)
+  if commit_url then
+    return commit_url, 'commit'
+  end
+
+  return nil, nil
+end
+
+local function make_git_file_log_entry(opts)
+  local entry_display = require('telescope.pickers.entry_display')
+  local make_entry = require('telescope.make_entry')
+
+  local displayer = entry_display.create({
+    separator = ' ',
+    items = {
+      { width = 8 },
+      { width = 18 },
+      { width = 12 },
+      { remaining = true },
+    },
+  })
+
+  local make_display = function(entry)
+    return displayer({
+      { entry.value, 'TelescopeResultsIdentifier' },
+      entry.author,
+      { entry.date, 'TelescopePreviewDate' },
+      entry.msg,
+    })
+  end
+
+  return function(line)
+    if line == '' then
+      return nil
+    end
+
+    local parts = vim.split(line, '\t', { plain = true })
+    local sha = parts[1] or ''
+    local author = parts[2] or ''
+    local date = parts[3] or ''
+    local msg = #parts > 3 and table.concat(vim.list_slice(parts, 4), '\t') or ''
+
+    if msg == '' then
+      msg = '<empty commit message>'
+    end
+
+    return make_entry.set_default_entry_mt({
+      value = sha,
+      ordinal = table.concat({ sha, author, date, msg }, ' '),
+      author = author,
+      date = date,
+      msg = msg,
+      display = make_display,
+      current_file = opts.current_file,
+    }, opts)
+  end
+end
+
 -- Git file history commands
 vim.api.nvim_create_user_command('GitFileLog', function()
-  require('telescope.builtin').git_bcommits({
-    attach_mappings = function(_, map)
-      map('n', ';pr', function()
-        local entry = require('telescope.actions.state').get_selected_entry()
-        if not entry then return end
-        local sha = entry.value
-        local cmd = string.format(
-          'gh api "repos/{owner}/{repo}/commits/%s/pulls" --jq ".[0].html_url" 2>/dev/null',
-          sha
-        )
-        local result = vim.trim(vim.fn.system(cmd))
-        if result == '' or result == 'null' then
-          vim.notify('No PR found for ' .. sha:sub(1, 7), vim.log.levels.WARN)
-        else
-          vim.fn.setreg('+', result)
-          vim.notify('Copied: ' .. result)
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+  local conf = require('telescope.config').values
+  local finders = require('telescope.finders')
+  local pickers = require('telescope.pickers')
+  local previewers = require('telescope.previewers')
+  local utils = require('telescope.utils')
+  local Path = require('plenary.path')
+  local current_file = vim.api.nvim_buf_get_name(0)
+  local repo_root = git_repo_root_for_file(current_file)
+
+  if current_file == '' then
+    vim.notify('Current buffer has no file path', vim.log.levels.WARN)
+    return
+  end
+
+  if not repo_root then
+    vim.notify('Could not determine git repo for current file', vim.log.levels.ERROR)
+    return
+  end
+
+  local relative_file = Path:new(current_file):make_relative(repo_root)
+  local results = vim.fn.systemlist({
+    'git',
+    '-C', repo_root,
+    '--no-pager',
+    'log',
+    '--pretty=format:%h%x09%an%x09%ad%x09%s',
+    '--date=short',
+    '--abbrev-commit',
+    '--follow',
+    '--',
+    relative_file,
+  })
+
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Failed to load git history for current file', vim.log.levels.ERROR)
+    return
+  end
+
+  local picker_opts = {
+    cwd = repo_root,
+    current_file = current_file,
+  }
+
+  pickers.new(picker_opts, {
+    prompt_title = 'Git File Log',
+    finder = finders.new_table({
+      results = results,
+      entry_maker = make_git_file_log_entry({ current_file = current_file }),
+    }),
+    previewer = {
+      previewers.git_commit_diff_to_parent.new(picker_opts),
+      previewers.git_commit_diff_to_head.new(picker_opts),
+      previewers.git_commit_diff_as_was.new(picker_opts),
+      previewers.git_commit_message.new(picker_opts),
+    },
+    sorter = conf.file_sorter(picker_opts),
+    attach_mappings = function(prompt_bufnr, map)
+      local function get_buffer_of_orig(selection)
+        local value = selection.value .. ':' .. relative_file
+        local content = utils.get_os_command_output({ 'git', '-C', repo_root, '--no-pager', 'show', value })
+
+        local bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
+        vim.api.nvim_buf_set_name(bufnr, 'Original')
+        return bufnr
+      end
+
+      local function vimdiff(selection, command)
+        local ft = vim.bo.filetype
+        vim.cmd('diffthis')
+
+        local bufnr = get_buffer_of_orig(selection)
+        vim.cmd(string.format('%s %s', command, bufnr))
+        vim.bo.filetype = ft
+        vim.cmd('diffthis')
+
+        vim.api.nvim_create_autocmd('WinClosed', {
+          buffer = bufnr,
+          nested = true,
+          once = true,
+          callback = function()
+            vim.api.nvim_buf_delete(bufnr, { force = true })
+          end,
+        })
+      end
+
+      actions.select_default:replace(function(prompt_bufnr)
+        local entry = action_state.get_selected_entry()
+        if not entry then
+          return
         end
+
+        actions.close(prompt_bufnr)
+
+        local url, kind = github_url_for_commit(entry.value, repo_root)
+        if not url then
+          vim.notify('Could not determine GitHub URL for ' .. entry.value:sub(1, 7), vim.log.levels.ERROR)
+          return
+        end
+
+        if open_in_browser(url) then
+          vim.notify('Opened ' .. kind .. ': ' .. url)
+        end
+      end)
+
+      actions.select_vertical:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vimdiff(selection, 'leftabove vert sbuffer')
+      end)
+
+      actions.select_horizontal:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vimdiff(selection, 'belowright sbuffer')
+      end)
+
+      actions.select_tab:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vim.cmd('tabedit ' .. current_file)
+        vimdiff(selection, 'leftabove vert sbuffer')
+      end)
+
+      map('n', ';pr', function()
+        local entry = action_state.get_selected_entry()
+        if not entry then return end
+        local url, kind = github_url_for_commit(entry.value, repo_root)
+        if not url then
+          vim.notify('Could not determine GitHub URL for ' .. entry.value:sub(1, 7), vim.log.levels.ERROR)
+          return
+        end
+
+        vim.fn.setreg('+', url)
+        vim.notify('Copied ' .. kind .. ' URL: ' .. url)
       end)
       return true
     end,
-  })
+  }):find()
 end, { desc = 'Telescope: commit history for current file with diff preview' })
 
 vim.api.nvim_create_user_command('GitFileLogDiff', function()
