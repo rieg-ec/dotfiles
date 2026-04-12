@@ -9,6 +9,16 @@ local M = {}
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
+local function shift_tab_outdent_or_prev_completion()
+  local ok, cmp = pcall(require, 'cmp')
+  if ok and cmp.visible() then
+    cmp.select_prev_item()
+    return '<Ignore>'
+  end
+
+  return '<C-d>'
+end
+
 -- ╭─────────────────────────────────────────────────────────╮
 -- │ General Mappings                                       │
 -- ╰─────────────────────────────────────────────────────────╯
@@ -49,6 +59,8 @@ function M.setup_general()
   map('v', '<S-e>', '$h', { desc = 'Go to end of line' })
   map('i', '<C-e>', '<Esc>A', { desc = 'Go to end of line in insert mode' })
   map('i', '<C-a>', '<Esc>I', { desc = 'Go to beginning of line in insert mode' })
+  map('i', '<S-Tab>', shift_tab_outdent_or_prev_completion, { expr = true, silent = true, desc = 'Outdent or previous completion item' })
+  map('i', '<BTab>', shift_tab_outdent_or_prev_completion, { expr = true, silent = true, desc = 'Outdent or previous completion item' })
 
   -- Search in buffer
   map('n', '<Leader>/', ':BLines<CR>', { desc = 'Search lines in buffer' })
