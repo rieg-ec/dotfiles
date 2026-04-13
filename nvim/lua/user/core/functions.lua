@@ -24,6 +24,75 @@ local function open_in_browser(url)
   return true
 end
 
+local function extract_urls_from_line(line)
+  local urls = {}
+  local search_start = 1
+  while true do
+    local s, e = line:find('https?://[%S]+', search_start)
+    if not s then break end
+    local raw = line:sub(s, e)
+    local url = raw:gsub('[>%)%]"\',;]+$', '')
+    table.insert(urls, { url = url, s = s, e = s + #url - 1 })
+    search_start = e + 1
+  end
+  return urls
+end
+
+_G.open_url_under_cursor = function()
+  local line = vim.api.nvim_get_current_line()
+  local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+  local urls = extract_urls_from_line(line)
+
+  if #urls == 0 then
+    vim.notify('No URL found on current line', vim.log.levels.WARN)
+    return
+  end
+
+  -- Pick URL under cursor, or nearest one on the line
+  local best = urls[1]
+  local best_dist = math.huge
+  for _, entry in ipairs(urls) do
+    if col >= entry.s and col <= entry.e then
+      best = entry
+      break
+    end
+    local dist = math.min(math.abs(col - entry.s), math.abs(col - entry.e))
+    if dist < best_dist then
+      best_dist = dist
+      best = entry
+    end
+  end
+
+  open_in_browser(best.url)
+end
+
+_G.open_urls_in_selection = function()
+  local s_line = vim.fn.line("'<")
+  local e_line = vim.fn.line("'>")
+  local lines = vim.api.nvim_buf_get_lines(0, s_line - 1, e_line, false)
+
+  local seen = {}
+  local unique_urls = {}
+  for _, line in ipairs(lines) do
+    for _, entry in ipairs(extract_urls_from_line(line)) do
+      if not seen[entry.url] then
+        seen[entry.url] = true
+        table.insert(unique_urls, entry.url)
+      end
+    end
+  end
+
+  if #unique_urls == 0 then
+    vim.notify('No URLs found in selection', vim.log.levels.WARN)
+    return
+  end
+
+  for _, url in ipairs(unique_urls) do
+    open_in_browser(url)
+  end
+  vim.notify('Opened ' .. #unique_urls .. ' URL(s)', vim.log.levels.INFO)
+end
+
 local function git_repo_root_for_file(file)
   local dir = vim.fn.fnamemodify(file, ':h')
   local root = vim.trim(vim.fn.system({ 'git', '-C', dir, 'rev-parse', '--show-toplevel' }))

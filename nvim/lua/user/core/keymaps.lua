@@ -27,6 +27,7 @@ function M.setup_general()
   -- File operations
   map('n', '<Leader>w', ':w<CR>', { desc = 'Save current buffer' })
   map('n', '<Leader>c', ':bp<BAR>bd#<CR>', { silent = true, desc = 'Close current buffer' })
+  map('n', '<Leader>cs', ':Cheatsheet<CR>', { desc = 'Open cheatsheet' })
   map('n', '<Leader>d', function()
     local buf = vim.api.nvim_get_current_buf()
     vim.cmd('close')
@@ -165,6 +166,8 @@ function M.setup_general()
   map('n', '<Leader>or', ':Octo review start<CR>', { desc = 'Start review (Octo)' })
   map('n', '<Leader>oR', ':Octo review submit<CR>', { desc = 'Submit review (Octo)' })
   map('n', '<Leader>oi', open_image_preview, { desc = 'Preview image URL (Octo)' })
+  map('n', 'gx', open_url_under_cursor, { desc = 'Open URL under cursor in browser' })
+  map('v', 'gx', ':<C-u>lua open_urls_in_selection()<CR>', { desc = 'Open all URLs in selection in browser' })
 end
 
 -- ╭─────────────────────────────────────────────────────────╮
