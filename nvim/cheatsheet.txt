@@ -70,8 +70,6 @@ Pick commit to review (telescope)          | ;cc (in review diff)
 Go back from thread to diff                | q (in thread buffer)
 Open pending review comments               | :Octo review comments
 Preview image URL                          | ;oi
-Open URL under cursor in browser           | gx
-Open all URLs in selection in browser      | gx (visual)
 Close review tab                           | :tabclose
 
 ## folds
@@ -112,6 +110,8 @@ Ultisnips | UltiSnipsEdit
 ## nvim
 Verbose | nvim -V
 Reload config | :source $MYVIMRC
+Open URL under cursor in browser | gx
+Open all URLs in selection in browser | gx (visual)
 
 ## ChatGPT
 <C-Enter> [Both] | Submit
@@ -139,5 +139,4 @@ C-u | Clear line
 C-w | Clear word
 C-a | Move to beginning of line
 C-e | Move to end of line
-
 
