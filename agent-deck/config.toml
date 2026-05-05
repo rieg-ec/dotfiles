@@ -1,0 +1,28 @@
+default_tool = "claude"
+theme = "dark"
+
+[tmux]
+inject_status_line = false
+
+[tools.yolocode]
+command = "yolocode"
+icon = "🌐"
+busy_patterns = [
+  "esc interrupt",
+  "esc to exit",
+  "thinking...",
+  "generating...",
+  "building tool call...",
+  "waiting for tool response...",
+]
+prompt_patterns = [
+  "Ask anything",
+  "press enter to send",
+  "enter submit",
+  "esc dismiss",
+]
+spinner_chars = ["█", "▓", "▒", "░"]
+detect_patterns = [
+  "re:(?i)opencode",
+  "Ask anything",
+]

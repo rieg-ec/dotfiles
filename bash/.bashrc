@@ -236,7 +236,10 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 alias sed='gsed'
 
 
+# claude
+export CLAUDE_CODE_EFFORT_LEVEL=max
+
 # opencode
 export PATH=/Users/rieg/.opencode/bin:$PATH
-export OPENCODE_DISABLE_DEFAULT_PLUGINS=1
-alias yolocode='OPENCODE_CONFIG_CONTENT='\''{"permission":{"*":"allow","bash":{"*":"allow","rm *":"deny"}}}'\'' opencode'
+# yolocode is an executable in ~/.local/bin so agent-deck and non-interactive
+# shells can launch it without relying on alias expansion.

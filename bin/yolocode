@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+YOLOCODE_PERMISSION='{"edit":"allow","*":"allow","bash":{"*":"allow","rm":"deny","rm *":"deny","git push":"deny","git push *":"deny","git push --force":"deny","git push --force *":"deny","git push -f":"deny","git push -f *":"deny","gh push":"deny","gh push *":"deny"}}'
+
+if command -v opencode >/dev/null 2>&1; then
+  OPENCODE_BIN="$(command -v opencode)"
+elif [ -x "$HOME/.opencode/bin/opencode" ]; then
+  OPENCODE_BIN="$HOME/.opencode/bin/opencode"
+else
+  printf 'yolocode: could not find opencode in PATH or at %s\n' "$HOME/.opencode/bin/opencode" >&2
+  exit 1
+fi
+
+exec env OPENCODE_PERMISSION="$YOLOCODE_PERMISSION" "$OPENCODE_BIN" "$@"

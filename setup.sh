@@ -34,9 +34,21 @@ else
     echo "fzf FAILED TO INSTALL!!!" >> $log_file
 fi
 
-sh $dotfiles_dir/.macos # optional, macOS only
-
-# opencode
+# # ================== opencode ===============================
 mkdir -p $HOME/.config/opencode
 ln -sf $dotfiles_dir/opencode.json $HOME/.config/opencode/opencode.json
-ln -sfn $dotfiles_dir/opencode/plugins $HOME/.config/opencode/plugins
+ln -sf $dotfiles_dir/opencode/plugins $HOME/.config/opencode/plugins
+ln -sf $dotfiles_dir/opencode/commands $HOME/.config/opencode/commands
+ln -sf $dotfiles_dir/opencode/agents $HOME/.config/opencode/agents
+
+# # ================== agent-deck =============================
+mkdir -p $HOME/.agent-deck
+ln -sf $dotfiles_dir/agent-deck/config.toml $HOME/.agent-deck/config.toml
+
+# # ================== local bin ==============================
+mkdir -p $HOME/.local/bin
+ln -sf $dotfiles_dir/bin/yolocode $HOME/.local/bin/yolocode
+ln -sf $dotfiles_dir/bin/mem-watch $HOME/.local/bin/mem-watch
+ln -sf $dotfiles_dir/bin/mem-watch-launchd $HOME/.local/bin/mem-watch-launchd
+
+sh $dotfiles_dir/.macos # optional, macOS only
