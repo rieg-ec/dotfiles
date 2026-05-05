@@ -42,14 +42,14 @@ vim.lsp.config('solargraph', {
   }
 })
 
--- RuboCop LSP (for proper Ruby linting and formatting with project's .rubocop.yml)
+-- RuboCop LSP (diagnostics via bundle exec rubocop)
 vim.lsp.config('rubocop', {
   root_dir = ruby_root_dir,
   on_attach = ruby_on_attach(function(client, bufnr)
-    -- Enable RuboCop's formatting capability
-    client.server_capabilities.documentFormattingProvider = true
-    client.server_capabilities.documentRangeFormattingProvider = true
+    -- Formatting is handled by conform.nvim via bundled RuboCop CLI
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentRangeFormattingProvider = false
   end),
-  cmd = { "/Users/rieg/.rbenv/shims/rubocop", "--lsp" },
+  cmd = { "/Users/rieg/.rbenv/shims/bundle", "exec", "rubocop", "--lsp" },
   filetypes = { "ruby" },
 })

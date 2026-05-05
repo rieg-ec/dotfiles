@@ -19,6 +19,41 @@ local function shift_tab_outdent_or_prev_completion()
   return '<C-d>'
 end
 
+local function relative_to_nearest_project_marker()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == '' then
+    return nil
+  end
+
+  if not path:match('^/') then
+    return path
+  end
+
+  path = vim.fn.fnamemodify(path, ':p')
+  local dir = vim.fs.dirname(path)
+
+  while dir do
+    if vim.fs.basename(dir) == 'node_modules'
+      or vim.uv.fs_stat(dir .. '/.git')
+      or vim.uv.fs_stat(dir .. '/.ruby-version')
+      or vim.uv.fs_stat(dir .. '/.node-version') then
+      if dir == '/' then
+        return path:sub(2)
+      end
+
+      return path:sub(#dir + 2)
+    end
+
+    local parent = vim.fs.dirname(dir)
+    if not parent or parent == dir then
+      break
+    end
+    dir = parent
+  end
+
+  return vim.fn.fnamemodify(path, ':t')
+end
+
 -- ╭─────────────────────────────────────────────────────────╮
 -- │ General Mappings                                       │
 -- ╰─────────────────────────────────────────────────────────╯
@@ -140,9 +175,25 @@ function M.setup_general()
     end
   end, { desc = 'Toggle between source and RSpec file' })
 
-  -- Copy full path of current file
+  -- Copy file paths
   map('n', '<Leader>yp', function()
+    local path = relative_to_nearest_project_marker()
+    if not path then
+      vim.notify('No file path for current buffer', vim.log.levels.WARN)
+      return
+    end
+
+    vim.fn.setreg('+', path)
+    print('Copied: ' .. path)
+  end, { desc = 'Copy project-relative path of current file' })
+
+  map('n', '<Leader>yf', function()
     local path = vim.fn.expand('%:p')
+    if path == '' then
+      vim.notify('No file path for current buffer', vim.log.levels.WARN)
+      return
+    end
+
     vim.fn.setreg('+', path)
     print('Copied: ' .. path)
   end, { desc = 'Copy full path of current file' })

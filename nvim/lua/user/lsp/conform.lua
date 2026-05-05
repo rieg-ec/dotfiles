@@ -38,8 +38,8 @@ end
 
 require("conform").setup({
   formatters_by_ft = {
-    -- Ruby - handled by RuboCop LSP (see languages/ruby.lua)
-    -- ruby = {},
+    -- Ruby - formatted with bundled RuboCop CLI, diagnostics via RuboCop LSP
+    ruby = { "rubocop_bundle" },
 
     -- Python - use black
     python = { "black" },
@@ -81,7 +81,7 @@ require("conform").setup({
     -- Ruby: sync only when quitting (so file is formatted before exit)
     if filetype == "ruby" then
       if vim.g._conform_quitting then
-        return { timeout_ms = 5000, lsp_fallback = true }
+        return { timeout_ms = 10000, lsp_format = "never" }
       end
       return -- defer to async format_after_save
     end
@@ -109,7 +109,7 @@ require("conform").setup({
     end
 
     return {
-      lsp_fallback = true,
+      lsp_format = "never",
     }
   end,
 
@@ -117,6 +117,24 @@ require("conform").setup({
   formatters = {
     black = {
       command = "/Users/rieg/.pyenv/shims/black",
+    },
+    rubocop_bundle = {
+      command = "/Users/rieg/.rbenv/shims/bundle",
+      args = {
+        "exec",
+        "rubocop",
+        "--server",
+        "-a",
+        "-f",
+        "quiet",
+        "--stderr",
+        "--stdin",
+        "$FILENAME",
+      },
+      cwd = require("conform.util").root_file({ "Gemfile", ".rubocop.yml", ".git" }),
+      require_cwd = true,
+      stdin = true,
+      exit_codes = { 0, 1 },
     },
   },
 })
@@ -126,18 +144,22 @@ function M.format_manually()
   local bufnr = vim.api.nvim_get_current_buf()
   local filetype = vim.bo[bufnr].filetype
 
-  -- For Ruby files, use LSP formatting (RuboCop LSP)
+  -- For Ruby files, use bundled RuboCop CLI via conform.nvim
   if filetype == "ruby" then
-    vim.notify("Formatting Ruby file with RuboCop LSP...", vim.log.levels.INFO)
-    vim.lsp.buf.format({
+    vim.notify("Formatting Ruby file with bundled RuboCop...", vim.log.levels.INFO)
+    require("conform").format({
       async = false,
-      timeout_ms = 5000,
+      timeout_ms = 10000,
       bufnr = bufnr,
-      filter = function(client)
-        return client.name == "rubocop"
-      end,
-    })
-    vim.notify("Formatting completed", vim.log.levels.INFO)
+      formatters = { "rubocop_bundle" },
+      lsp_format = "never",
+    }, function(err)
+      if err then
+        vim.notify("Formatting failed: " .. err, vim.log.levels.ERROR)
+      else
+        vim.notify("Formatting completed", vim.log.levels.INFO)
+      end
+    end)
   else
     vim.notify("Formatting " .. filetype .. " file...", vim.log.levels.INFO)
     require("conform").format({
