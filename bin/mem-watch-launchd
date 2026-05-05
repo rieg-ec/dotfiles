@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+label="com.rieg.mem-watch"
+plist="$HOME/Library/LaunchAgents/${label}.plist"
+
+script_path="$(/usr/bin/python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "${BASH_SOURCE[0]}")"
+script_dir="$(cd "$(dirname "$script_path")" && pwd)"
+repo_root="$(cd "$script_dir/.." && pwd)"
+watch_script="$script_dir/mem-watch"
+config_file="$repo_root/.mem-watch"
+state_dir=""
+
+required_config_keys=(
+  MEM_WATCH_PROCESS_GB
+  MEM_WATCH_GROUP_GB
+  MEM_WATCH_GROWTH_GB
+  MEM_WATCH_INTERVAL_SECONDS
+  MEM_WATCH_SAMPLE_TOP_N
+  MEM_WATCH_ALERT_COOLDOWN_SECONDS
+  MEM_WATCH_STATE_DIR
+)
+
+usage() {
+  cat >&2 <<USAGE
+Usage: $(basename "$0") <install|uninstall|status|run-once|write-plist>
+
+Required config file:
+  $config_file
+
+Required keys:
+  MEM_WATCH_PROCESS_GB
+  MEM_WATCH_GROUP_GB
+  MEM_WATCH_GROWTH_GB
+  MEM_WATCH_INTERVAL_SECONDS
+  MEM_WATCH_SAMPLE_TOP_N
+  MEM_WATCH_ALERT_COOLDOWN_SECONDS
+  MEM_WATCH_STATE_DIR
+
+Examples:
+  $EDITOR $config_file
+  mem-watch-launchd install
+  mem-watch-launchd status
+  mem-watch-launchd uninstall
+USAGE
+}
+
+die() {
+  printf 'mem-watch-launchd: %s\n' "$*" >&2
+  exit 78
+}
+
+load_config() {
+  [[ -f "$config_file" ]] || die "missing required config file: $config_file"
+
+  # shellcheck source=/dev/null
+  source "$config_file"
+
+  local key
+  for key in "${required_config_keys[@]}"; do
+    [[ -n "${!key:-}" ]] || die "missing required config key: $key"
+  done
+
+  [[ "$MEM_WATCH_PROCESS_GB" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "MEM_WATCH_PROCESS_GB must be numeric"
+  [[ "$MEM_WATCH_GROUP_GB" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "MEM_WATCH_GROUP_GB must be numeric"
+  [[ "$MEM_WATCH_GROWTH_GB" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "MEM_WATCH_GROWTH_GB must be numeric"
+  [[ "$MEM_WATCH_INTERVAL_SECONDS" =~ ^[0-9]+$ ]] || die "MEM_WATCH_INTERVAL_SECONDS must be an integer"
+  [[ "$MEM_WATCH_SAMPLE_TOP_N" =~ ^[0-9]+$ ]] || die "MEM_WATCH_SAMPLE_TOP_N must be an integer"
+  [[ "$MEM_WATCH_ALERT_COOLDOWN_SECONDS" =~ ^[0-9]+$ ]] || die "MEM_WATCH_ALERT_COOLDOWN_SECONDS must be an integer"
+
+  state_dir="$MEM_WATCH_STATE_DIR"
+}
+
+xml_escape() {
+  local value="$1"
+  value="${value//&/&amp;}"
+  value="${value//</&lt;}"
+  value="${value//>/&gt;}"
+  value="${value//\"/&quot;}"
+  value="${value//\'/&apos;}"
+  printf '%s' "$value"
+}
+
+current_gui_domain() {
+  printf 'gui/%s' "$(id -u)"
+}
+
+launchctl_bootout() {
+  if launchctl print "$(current_gui_domain)/$label" >/dev/null 2>&1; then
+    launchctl bootout "$(current_gui_domain)" "$plist" >/dev/null 2>&1 || true
+  else
+    launchctl unload "$plist" >/dev/null 2>&1 || true
+  fi
+}
+
+write_plist() {
+  load_config
+  mkdir -p "$HOME/Library/LaunchAgents" "$state_dir"
+
+  cat >"$plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>$label</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>$(xml_escape "$watch_script")</string>
+    <string>--once</string>
+  </array>
+
+  <key>StartInterval</key>
+  <integer>$(xml_escape "$MEM_WATCH_INTERVAL_SECONDS")</integer>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>$(xml_escape "$state_dir/launchd.out.log")</string>
+
+  <key>StandardErrorPath</key>
+  <string>$(xml_escape "$state_dir/launchd.err.log")</string>
+</dict>
+</plist>
+PLIST
+
+  if command -v plutil >/dev/null 2>&1; then
+    plutil -lint "$plist" >/dev/null
+  fi
+}
+
+install_agent() {
+  if [[ ! -x "$watch_script" ]]; then
+    chmod +x "$watch_script"
+  fi
+
+  write_plist
+  launchctl_bootout
+
+  if launchctl bootstrap "$(current_gui_domain)" "$plist" 2>/dev/null; then
+    launchctl enable "$(current_gui_domain)/$label" >/dev/null 2>&1 || true
+  else
+    launchctl load "$plist"
+  fi
+
+  echo "Installed $label"
+  echo "Config: $config_file"
+  echo "Logs: $state_dir"
+}
+
+uninstall_agent() {
+  launchctl_bootout
+  rm -f "$plist"
+  echo "Uninstalled $label"
+}
+
+status_agent() {
+  load_config
+  echo "Config: $config_file"
+  echo "Plist: $plist"
+  echo "Logs:  $state_dir"
+  if launchctl print "$(current_gui_domain)/$label" >/dev/null 2>&1; then
+    echo "Status: loaded"
+    launchctl print "$(current_gui_domain)/$label" | sed -n '1,30p'
+  elif launchctl list "$label" >/dev/null 2>&1; then
+    echo "Status: loaded"
+    launchctl list "$label"
+  else
+    echo "Status: not loaded"
+  fi
+}
+
+case "${1:-}" in
+  install)
+    install_agent
+    ;;
+  uninstall)
+    uninstall_agent
+    ;;
+  status)
+    status_agent
+    ;;
+  run-once)
+    "$watch_script" --once --top
+    ;;
+  write-plist)
+    write_plist
+    echo "Wrote $plist"
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    usage
+    exit 64
+    ;;
+esac

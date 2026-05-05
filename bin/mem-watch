@@ -1,0 +1,884 @@
+#!/usr/bin/env python3
+"""Lightweight macOS memory watchdog.
+
+Run directly for a single sample, or install with bin/mem-watch-launchd to run
+periodically via launchd. The script intentionally uses only Python stdlib and
+macOS built-ins so it is safe to keep in dotfiles.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+import time
+from collections import defaultdict
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Tuple
+
+
+KB_PER_GIB = 1024 * 1024
+CONFIG_FILENAME = ".mem-watch"
+REQUIRED_CONFIG_KEYS = (
+    "MEM_WATCH_PROCESS_GB",
+    "MEM_WATCH_GROUP_GB",
+    "MEM_WATCH_GROWTH_GB",
+    "MEM_WATCH_INTERVAL_SECONDS",
+    "MEM_WATCH_SAMPLE_TOP_N",
+    "MEM_WATCH_ALERT_COOLDOWN_SECONDS",
+    "MEM_WATCH_STATE_DIR",
+)
+
+APP_BUNDLE_RE = re.compile(r"/([^/]+)\.app/Contents/")
+
+TERMINAL_APPS = {
+    "Alacritty",
+    "Ghostty",
+    "iTerm2",
+    "kitty",
+    "Terminal",
+    "Warp",
+}
+
+PROCESS_NOTIFICATION_IGNORE = {
+    "kernel_task",
+}
+
+
+@dataclass(frozen=True)
+class ProcessInfo:
+    pid: int
+    ppid: int
+    rss_kb: int
+    command: str
+    group: str
+    kind: str
+    terminal_ancestor: Optional[int] = None
+
+    @property
+    def rss_gb(self) -> float:
+        return self.rss_kb / KB_PER_GIB
+
+
+@dataclass(frozen=True)
+class GroupInfo:
+    name: str
+    rss_kb: int
+    count: int
+    top_processes: Tuple[ProcessInfo, ...]
+
+    @property
+    def rss_gb(self) -> float:
+        return self.rss_kb / KB_PER_GIB
+
+
+@dataclass(frozen=True)
+class Alert:
+    key: str
+    title: str
+    body: str
+    details: str
+
+
+def now_iso() -> str:
+    return datetime.now().astimezone().isoformat(timespec="seconds")
+
+
+def repo_root() -> Path:
+    return Path(__file__).resolve().parent.parent
+
+
+def config_path() -> Path:
+    return repo_root() / CONFIG_FILENAME
+
+
+def config_error(message: str) -> None:
+    print(f"mem-watch: {message}", file=sys.stderr)
+    print(f"mem-watch: expected config file at {config_path()}", file=sys.stderr)
+    raise SystemExit(78)
+
+
+def load_config() -> Dict[str, str]:
+    path = config_path()
+    if not path.exists():
+        config_error(
+            "missing .mem-watch config. Create it with MEM_WATCH_PROCESS_GB, "
+            "MEM_WATCH_GROUP_GB, MEM_WATCH_GROWTH_GB, MEM_WATCH_INTERVAL_SECONDS, "
+            "MEM_WATCH_SAMPLE_TOP_N, MEM_WATCH_ALERT_COOLDOWN_SECONDS, and "
+            "MEM_WATCH_STATE_DIR."
+        )
+
+    config: Dict[str, str] = {}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        config_error(f"could not read config: {exc}")
+
+    for line_number, raw_line in enumerate(lines, start=1):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        try:
+            tokens = shlex.split(line, comments=True, posix=True)
+        except ValueError as exc:
+            config_error(f"invalid config syntax on line {line_number}: {exc}")
+
+        if not tokens:
+            continue
+        if tokens[0] == "export":
+            tokens = tokens[1:]
+
+        if len(tokens) != 1 or "=" not in tokens[0]:
+            config_error(
+                f"invalid config line {line_number}: expected KEY=value, got {raw_line!r}"
+            )
+
+        key, value = tokens[0].split("=", 1)
+        if key not in REQUIRED_CONFIG_KEYS:
+            config_error(f"unknown config key on line {line_number}: {key}")
+        config[key] = os.path.expandvars(os.path.expanduser(value))
+
+    missing = [key for key in REQUIRED_CONFIG_KEYS if config.get(key, "").strip() == ""]
+    if missing:
+        config_error(f"missing required config key(s): {', '.join(missing)}")
+
+    return config
+
+
+def config_float(config: Dict[str, str], name: str) -> float:
+    raw = config[name]
+    try:
+        return float(raw)
+    except ValueError:
+        config_error(f"invalid {name}={raw!r}; expected number")
+
+
+def config_int(config: Dict[str, str], name: str) -> int:
+    raw = config[name]
+    try:
+        return int(raw)
+    except ValueError:
+        config_error(f"invalid {name}={raw!r}; expected integer")
+
+
+def kb_to_gb(kb: int) -> float:
+    return kb / KB_PER_GIB
+
+
+def format_gb(kb: int) -> str:
+    return f"{kb_to_gb(kb):.2f} GB"
+
+
+def truncate(value: str, length: int = 180) -> str:
+    single_line = " ".join(value.split())
+    if len(single_line) <= length:
+        return single_line
+    return single_line[: length - 1] + "…"
+
+
+def state_dir(config: Dict[str, str]) -> Path:
+    return Path(config["MEM_WATCH_STATE_DIR"]).expanduser()
+
+
+def ensure_state_dir(paths: Dict[str, Path]) -> None:
+    paths["dir"].mkdir(parents=True, exist_ok=True)
+
+
+def paths(config: Dict[str, str]) -> Dict[str, Path]:
+    base = state_dir(config)
+    return {
+        "dir": base,
+        "state": base / "state.json",
+        "events": base / "events.log",
+        "samples": base / "samples.tsv",
+        "latest": base / "latest.txt",
+    }
+
+
+def read_json(path: Path, default: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            loaded = json.load(handle)
+            if isinstance(loaded, dict):
+                return loaded
+    except FileNotFoundError:
+        return default
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"mem-watch: could not read {path}: {exc}", file=sys.stderr)
+    return default
+
+
+def write_json(path: Path, data: Dict[str, Any]) -> None:
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w", encoding="utf-8") as handle:
+        json.dump(data, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+    tmp.replace(path)
+
+
+def normalize_app_name(name: str) -> str:
+    aliases = {
+        "iTerm": "iTerm2",
+        "iTerm2-beta": "iTerm2-beta",
+        "Google Chrome Canary": "Google Chrome Canary",
+    }
+    return aliases.get(name, name)
+
+
+def executable_name(command: str) -> str:
+    if not command:
+        return "unknown"
+
+    bundle = APP_BUNDLE_RE.search(command)
+    if bundle:
+        return normalize_app_name(bundle.group(1))
+
+    first = command.split(None, 1)[0]
+    return Path(first).name or first or "unknown"
+
+
+def group_name(command: str) -> str:
+    if not command:
+        return "unknown"
+
+    bundle = APP_BUNDLE_RE.search(command)
+    if bundle:
+        return normalize_app_name(bundle.group(1))
+
+    first = command.split(None, 1)[0]
+    base = Path(first).name or first
+    return normalize_app_name(base)
+
+
+def process_kind(command: str, group: str) -> str:
+    if "Google Chrome" in group or "Chromium" in group:
+        if "--type=renderer" in command:
+            if "--extension-process" in command:
+                return "Chrome extension renderer"
+            return "Chrome tab/renderer"
+        if "--type=gpu-process" in command:
+            return "Chrome GPU"
+        if "--type=utility" in command:
+            return "Chrome utility"
+        if "--type=broker" in command:
+            return "Chrome broker"
+        if "Google Chrome Helper" in command:
+            return "Chrome helper"
+        return "Chrome browser"
+
+    if is_terminal_app_command(command, group):
+        return "terminal app"
+    if group == "iTerm2" and "ShellLauncher" in command:
+        return "iTerm2 shell launcher"
+
+    return executable_name(command)
+
+
+def is_terminal_app_command(command: str, group: str) -> bool:
+    if group not in TERMINAL_APPS:
+        return False
+
+    if group == "iTerm2":
+        return "/Contents/MacOS/iTerm2" in command
+
+    if group == "iTerm2-beta":
+        return "/Contents/MacOS/iTerm2" in command
+
+    return f"/{group}.app/Contents/MacOS/{group}" in command
+
+
+def collect_processes() -> List[ProcessInfo]:
+    try:
+        result = subprocess.run(
+            ["/bin/ps", "axww", "-o", "pid=,ppid=,rss=,command="],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise SystemExit(exc.returncode)
+
+    raw: List[ProcessInfo] = []
+    for line in result.stdout.splitlines():
+        parts = line.strip().split(None, 3)
+        if len(parts) < 4:
+            continue
+
+        pid_raw, ppid_raw, rss_raw, command = parts
+        try:
+            pid = int(pid_raw)
+            ppid = int(ppid_raw)
+            rss_kb = int(rss_raw)
+        except ValueError:
+            continue
+
+        group = group_name(command)
+        raw.append(
+            ProcessInfo(
+                pid=pid,
+                ppid=ppid,
+                rss_kb=rss_kb,
+                command=command,
+                group=group,
+                kind=process_kind(command, group),
+            )
+        )
+
+    terminal_descendants = terminal_descendant_map(raw)
+    return [
+        ProcessInfo(
+            pid=proc.pid,
+            ppid=proc.ppid,
+            rss_kb=proc.rss_kb,
+            command=proc.command,
+            group=proc.group,
+            kind=proc.kind,
+            terminal_ancestor=terminal_descendants.get(proc.pid),
+        )
+        for proc in raw
+    ]
+
+
+def terminal_descendant_map(processes: Iterable[ProcessInfo]) -> Dict[int, int]:
+    children: Dict[int, List[int]] = defaultdict(list)
+    by_pid: Dict[int, ProcessInfo] = {}
+
+    for proc in processes:
+        by_pid[proc.pid] = proc
+        children[proc.ppid].append(proc.pid)
+
+    terminal_roots = [
+        proc.pid
+        for proc in processes
+        if is_terminal_app_command(proc.command, proc.group)
+    ]
+    descendant_to_root: Dict[int, int] = {}
+
+    for root in terminal_roots:
+        stack = list(children.get(root, []))
+        seen = set()
+        while stack:
+            pid = stack.pop()
+            if pid in seen:
+                continue
+            seen.add(pid)
+            descendant_to_root[pid] = root
+            stack.extend(children.get(pid, []))
+
+    return descendant_to_root
+
+
+def aggregate_groups(processes: Iterable[ProcessInfo]) -> List[GroupInfo]:
+    grouped: Dict[str, List[ProcessInfo]] = defaultdict(list)
+    for proc in processes:
+        grouped[proc.group].append(proc)
+
+    groups = []
+    for name, procs in grouped.items():
+        top = tuple(sorted(procs, key=lambda proc: proc.rss_kb, reverse=True)[:5])
+        groups.append(
+            GroupInfo(
+                name=name,
+                rss_kb=sum(proc.rss_kb for proc in procs),
+                count=len(procs),
+                top_processes=top,
+            )
+        )
+    return sorted(groups, key=lambda group: group.rss_kb, reverse=True)
+
+
+def command_matches_previous(current: ProcessInfo, previous: Dict[str, Any]) -> bool:
+    previous_command = str(previous.get("command", ""))
+    if not previous_command:
+        return False
+
+    # Full command lines can contain volatile flags; matching the executable/app
+    # group avoids missing growth alerts while still protecting against PID reuse.
+    return group_name(previous_command) == current.group
+
+
+def build_alerts(
+    processes: List[ProcessInfo],
+    groups: List[GroupInfo],
+    previous_state: Dict[str, Any],
+    process_threshold_kb: int,
+    group_threshold_kb: int,
+    growth_threshold_kb: int,
+) -> List[Alert]:
+    alerts: List[Alert] = []
+    previous_processes = previous_state.get("processes", {})
+    previous_groups = previous_state.get("groups", {})
+
+    for group in groups:
+        if group.rss_kb >= group_threshold_kb:
+            top_lines = "\n".join(
+                format_process_line(proc) for proc in group.top_processes[:5]
+            )
+            alerts.append(
+                Alert(
+                    key=f"group-threshold:{group.name}",
+                    title=f"{group.name} is using {format_gb(group.rss_kb)}",
+                    body=f"{group.count} processes total. Top PID: {group.top_processes[0].pid if group.top_processes else 'n/a'}.",
+                    details=(
+                        f"Group {group.name} crossed threshold: {format_gb(group.rss_kb)} "
+                        f"across {group.count} processes.\n{top_lines}"
+                    ),
+                )
+            )
+
+        previous_group = previous_groups.get(group.name)
+        if isinstance(previous_group, dict):
+            previous_rss_kb = int(previous_group.get("rss_kb", 0))
+            delta_kb = group.rss_kb - previous_rss_kb
+            if delta_kb >= growth_threshold_kb:
+                alerts.append(
+                    Alert(
+                        key=f"group-growth:{group.name}",
+                        title=f"{group.name} grew +{format_gb(delta_kb)}",
+                        body=f"Now at {format_gb(group.rss_kb)} across {group.count} processes.",
+                        details=(
+                            f"Group {group.name} grew from {format_gb(previous_rss_kb)} "
+                            f"to {format_gb(group.rss_kb)} since the last sample."
+                        ),
+                    )
+                )
+
+    for proc in processes:
+        if (
+            proc.group not in PROCESS_NOTIFICATION_IGNORE
+            and proc.rss_kb >= process_threshold_kb
+        ):
+            terminal_note = ""
+            if proc.terminal_ancestor:
+                terminal_note = f" Terminal descendant of PID {proc.terminal_ancestor}."
+            alerts.append(
+                Alert(
+                    key=f"process-threshold:{proc.pid}:{proc.group}",
+                    title=f"PID {proc.pid} is using {format_gb(proc.rss_kb)}",
+                    body=f"{proc.kind} / {proc.group}.{terminal_note}",
+                    details=(
+                        f"Process crossed threshold: {format_process_line(proc)}\n"
+                        f"Command: {proc.command}"
+                    ),
+                )
+            )
+
+        previous_proc = previous_processes.get(str(proc.pid))
+        if isinstance(previous_proc, dict) and command_matches_previous(
+            proc, previous_proc
+        ):
+            previous_rss_kb = int(previous_proc.get("rss_kb", 0))
+            delta_kb = proc.rss_kb - previous_rss_kb
+            if (
+                proc.group not in PROCESS_NOTIFICATION_IGNORE
+                and delta_kb >= growth_threshold_kb
+            ):
+                alerts.append(
+                    Alert(
+                        key=f"process-growth:{proc.pid}:{proc.group}",
+                        title=f"PID {proc.pid} grew +{format_gb(delta_kb)}",
+                        body=f"Now {format_gb(proc.rss_kb)}: {proc.kind} / {proc.group}.",
+                        details=(
+                            f"Process grew from {format_gb(previous_rss_kb)} to {format_gb(proc.rss_kb)} "
+                            f"since the last sample.\nCommand: {proc.command}"
+                        ),
+                    )
+                )
+
+    deduped: Dict[str, Alert] = {}
+    for alert in alerts:
+        deduped[alert.key] = alert
+    return list(deduped.values())
+
+
+def format_process_line(proc: ProcessInfo) -> str:
+    terminal_marker = (
+        f" terminal-child-of={proc.terminal_ancestor}" if proc.terminal_ancestor else ""
+    )
+    return (
+        f"pid={proc.pid} ppid={proc.ppid} rss={format_gb(proc.rss_kb)} "
+        f"group={proc.group!r} kind={proc.kind!r}{terminal_marker} "
+        f"cmd={truncate(proc.command)}"
+    )
+
+
+def system_memory_summary() -> List[str]:
+    lines: List[str] = []
+
+    try:
+        vm_stat = subprocess.run(
+            ["/usr/bin/vm_stat"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout
+        page_size = 4096
+        page_match = re.search(r"page size of (\d+) bytes", vm_stat)
+        if page_match:
+            page_size = int(page_match.group(1))
+
+        pages: Dict[str, int] = {}
+        for line in vm_stat.splitlines():
+            if ":" not in line:
+                continue
+            name, value = line.split(":", 1)
+            number_match = re.search(r"(\d+)", value.replace(".", ""))
+            if number_match:
+                pages[name.strip()] = int(number_match.group(1))
+
+        def pages_to_gb(page_count: int) -> float:
+            return page_count * page_size / (1024**3)
+
+        free = pages.get("Pages free", 0) + pages.get("Pages speculative", 0)
+        compressed = pages.get("Pages occupied by compressor", 0)
+        inactive = pages.get("Pages inactive", 0)
+        lines.append(
+            "vm_stat: "
+            f"free+speculative={pages_to_gb(free):.2f} GB, "
+            f"inactive={pages_to_gb(inactive):.2f} GB, "
+            f"compressed={pages_to_gb(compressed):.2f} GB"
+        )
+    except (subprocess.SubprocessError, OSError, ValueError):
+        pass
+
+    try:
+        swap = subprocess.run(
+            ["/usr/sbin/sysctl", "-n", "vm.swapusage"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout.strip()
+        if swap:
+            lines.append(f"swap: {swap}")
+    except (subprocess.SubprocessError, OSError):
+        pass
+
+    return lines
+
+
+def append_samples(
+    path: Path,
+    timestamp: str,
+    processes: List[ProcessInfo],
+    groups: List[GroupInfo],
+    previous_state: Dict[str, Any],
+    top_n: int,
+) -> None:
+    needs_header = not path.exists()
+    previous_processes = previous_state.get("processes", {})
+    previous_groups = previous_state.get("groups", {})
+
+    with path.open("a", encoding="utf-8") as handle:
+        if needs_header:
+            handle.write(
+                "timestamp\tscope\tname\tpid\trss_gb\tdelta_gb\tkind\tcommand\n"
+            )
+
+        for group in groups[:top_n]:
+            previous = previous_groups.get(group.name, {})
+            previous_rss_kb = (
+                int(previous.get("rss_kb", 0)) if isinstance(previous, dict) else 0
+            )
+            delta_gb = (
+                kb_to_gb(group.rss_kb - previous_rss_kb) if previous_rss_kb else 0.0
+            )
+            command = "; ".join(
+                truncate(proc.command, 80) for proc in group.top_processes[:3]
+            )
+            handle.write(
+                f"{timestamp}\tgroup\t{tsv(group.name)}\t\t{group.rss_gb:.3f}\t{delta_gb:.3f}\t"
+                f"{group.count} processes\t{tsv(command)}\n"
+            )
+
+        for proc in sorted(processes, key=lambda item: item.rss_kb, reverse=True)[
+            :top_n
+        ]:
+            previous = previous_processes.get(str(proc.pid), {})
+            previous_rss_kb = (
+                int(previous.get("rss_kb", 0)) if isinstance(previous, dict) else 0
+            )
+            delta_gb = (
+                kb_to_gb(proc.rss_kb - previous_rss_kb) if previous_rss_kb else 0.0
+            )
+            handle.write(
+                f"{timestamp}\tprocess\t{tsv(proc.group)}\t{proc.pid}\t{proc.rss_gb:.3f}\t{delta_gb:.3f}\t"
+                f"{tsv(proc.kind)}\t{tsv(proc.command)}\n"
+            )
+
+
+def tsv(value: str) -> str:
+    return value.replace("\t", " ").replace("\n", " ").replace("\r", " ")
+
+
+def write_latest_report(
+    path: Path,
+    timestamp: str,
+    processes: List[ProcessInfo],
+    groups: List[GroupInfo],
+    alerts: List[Alert],
+    thresholds: Dict[str, float],
+    top_n: int,
+) -> None:
+    terminal_children = [proc for proc in processes if proc.terminal_ancestor]
+    terminal_children.sort(key=lambda proc: proc.rss_kb, reverse=True)
+
+    lines = [
+        f"Memory Watch latest sample: {timestamp}",
+        "",
+        "Thresholds:",
+        f"  process: {thresholds['process_gb']:.2f} GB",
+        f"  group:   {thresholds['group_gb']:.2f} GB",
+        f"  growth:  {thresholds['growth_gb']:.2f} GB since previous sample",
+        "",
+    ]
+
+    summary = system_memory_summary()
+    if summary:
+        lines.append("System memory:")
+        lines.extend(f"  {line}" for line in summary)
+        lines.append("")
+
+    if alerts:
+        lines.append("Alerts this sample:")
+        for alert in alerts:
+            lines.append(f"  - {alert.title}: {alert.body}")
+        lines.append("")
+
+    lines.append(f"Top {top_n} groups/apps:")
+    for group in groups[:top_n]:
+        lines.append(
+            f"  {format_gb(group.rss_kb):>9}  {group.count:>3} proc  {group.name}"
+        )
+    lines.append("")
+
+    lines.append(f"Top {top_n} processes:")
+    for proc in sorted(processes, key=lambda item: item.rss_kb, reverse=True)[:top_n]:
+        lines.append(f"  {format_process_line(proc)}")
+    lines.append("")
+
+    if terminal_children:
+        lines.append(
+            f"Top {min(top_n, len(terminal_children))} terminal child processes:"
+        )
+        for proc in terminal_children[:top_n]:
+            lines.append(f"  {format_process_line(proc)}")
+        lines.append("")
+
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def append_events(path: Path, timestamp: str, alerts: List[Alert]) -> None:
+    if not alerts:
+        return
+
+    with path.open("a", encoding="utf-8") as handle:
+        for alert in alerts:
+            handle.write(f"[{timestamp}] {alert.title}\n")
+            handle.write(f"  {alert.body}\n")
+            for line in alert.details.splitlines():
+                handle.write(f"  {line}\n")
+            handle.write("\n")
+
+
+def notify(alert: Alert) -> None:
+    script = (
+        f'display notification "{applescript_escape(alert.body)}" '
+        f'with title "{applescript_escape(alert.title)}" '
+        'subtitle "Memory Watch"'
+    )
+    try:
+        subprocess.run(
+            ["/usr/bin/osascript", "-e", script],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        pass
+
+
+def applescript_escape(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
+
+
+def filter_alerts_for_cooldown(
+    alerts: List[Alert], previous_state: Dict[str, Any], cooldown_seconds: int
+) -> Tuple[List[Alert], Dict[str, Any]]:
+    timestamp = int(time.time())
+    alert_state = previous_state.get("alerts", {})
+    if not isinstance(alert_state, dict):
+        alert_state = {}
+
+    ready: List[Alert] = []
+    for alert in alerts:
+        last_sent = int(alert_state.get(alert.key, 0) or 0)
+        if timestamp - last_sent >= cooldown_seconds:
+            ready.append(alert)
+            alert_state[alert.key] = timestamp
+
+    return ready, alert_state
+
+
+def next_state(
+    processes: List[ProcessInfo], groups: List[GroupInfo], alert_state: Dict[str, Any]
+) -> Dict[str, Any]:
+    return {
+        "timestamp": now_iso(),
+        "processes": {
+            str(proc.pid): {
+                "rss_kb": proc.rss_kb,
+                "ppid": proc.ppid,
+                "command": proc.command,
+                "group": proc.group,
+                "kind": proc.kind,
+            }
+            for proc in processes
+        },
+        "groups": {
+            group.name: {
+                "rss_kb": group.rss_kb,
+                "count": group.count,
+            }
+            for group in groups
+        },
+        "alerts": alert_state,
+    }
+
+
+def print_top(
+    processes: List[ProcessInfo], groups: List[GroupInfo], top_n: int
+) -> None:
+    print(f"Top {top_n} groups/apps:")
+    for group in groups[:top_n]:
+        print(f"  {format_gb(group.rss_kb):>9}  {group.count:>3} proc  {group.name}")
+    print()
+
+    print(f"Top {top_n} processes:")
+    for proc in sorted(processes, key=lambda item: item.rss_kb, reverse=True)[:top_n]:
+        print(f"  {format_process_line(proc)}")
+
+    terminal_children = [proc for proc in processes if proc.terminal_ancestor]
+    terminal_children.sort(key=lambda item: item.rss_kb, reverse=True)
+    if terminal_children:
+        print()
+        print(f"Top {min(top_n, len(terminal_children))} terminal child processes:")
+        for proc in terminal_children[:top_n]:
+            print(f"  {format_process_line(proc)}")
+
+
+def print_log_locations(mem_paths: Dict[str, Path]) -> None:
+    print(f"mem-watch: logs saved in {mem_paths['dir']}")
+    print(f"  latest:  {mem_paths['latest']}")
+    print(f"  alerts:  {mem_paths['events']}")
+    print(f"  samples: {mem_paths['samples']}")
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Sample macOS memory usage and alert on runaway processes."
+    )
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="take one sample, update logs/state, and exit",
+    )
+    parser.add_argument(
+        "--top",
+        action="store_true",
+        help="print the current top memory users to stdout",
+    )
+    parser.add_argument(
+        "--no-notify",
+        action="store_true",
+        help="write logs but do not send macOS notifications",
+    )
+    parser.add_argument(
+        "--top-n",
+        type=int,
+        help="override the number of rows printed/recorded for this run",
+    )
+    args = parser.parse_args(argv)
+
+    config = load_config()
+
+    top_n = max(
+        1,
+        args.top_n
+        if args.top_n is not None
+        else config_int(config, "MEM_WATCH_SAMPLE_TOP_N"),
+    )
+    process_gb = config_float(config, "MEM_WATCH_PROCESS_GB")
+    group_gb = config_float(config, "MEM_WATCH_GROUP_GB")
+    growth_gb = config_float(config, "MEM_WATCH_GROWTH_GB")
+    cooldown_seconds = config_int(config, "MEM_WATCH_ALERT_COOLDOWN_SECONDS")
+
+    process_threshold_kb = int(process_gb * KB_PER_GIB)
+    group_threshold_kb = int(group_gb * KB_PER_GIB)
+    growth_threshold_kb = int(growth_gb * KB_PER_GIB)
+
+    mem_paths = paths(config)
+    ensure_state_dir(mem_paths)
+    previous_state = read_json(mem_paths["state"], {})
+
+    processes = collect_processes()
+    groups = aggregate_groups(processes)
+    timestamp = now_iso()
+
+    if args.top:
+        print_top(processes, groups, top_n)
+
+    alerts = build_alerts(
+        processes,
+        groups,
+        previous_state,
+        process_threshold_kb,
+        group_threshold_kb,
+        growth_threshold_kb,
+    )
+    ready_alerts, alert_state = filter_alerts_for_cooldown(
+        alerts, previous_state, cooldown_seconds
+    )
+
+    append_samples(
+        mem_paths["samples"], timestamp, processes, groups, previous_state, top_n
+    )
+    append_events(mem_paths["events"], timestamp, ready_alerts)
+    write_latest_report(
+        mem_paths["latest"],
+        timestamp,
+        processes,
+        groups,
+        ready_alerts,
+        {"process_gb": process_gb, "group_gb": group_gb, "growth_gb": growth_gb},
+        top_n,
+    )
+
+    if not args.no_notify:
+        for alert in ready_alerts:
+            notify(alert)
+
+    write_json(mem_paths["state"], next_state(processes, groups, alert_state))
+
+    if args.once:
+        if args.top:
+            print()
+        print(f"mem-watch: sampled {len(processes)} processes")
+        print_log_locations(mem_paths)
+        if ready_alerts:
+            print(f"mem-watch: {len(ready_alerts)} alert(s) written")
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -26,6 +26,14 @@ Terminal multiplexer config:
 - tmux-resurrect for session persistence (Ctrl-s save, Ctrl-r restore)
 - New panes open in current directory
 
+### Memory Watch (`bin/mem-watch`)
+Lightweight macOS watchdog for runaway memory usage:
+- Logs top processes/apps to `~/.local/state/mem-watch/`
+- Sends notifications when a process/app crosses configured thresholds
+- Tracks growth between samples to catch leaks before macOS pauses apps
+- Includes terminal-child markers to identify shell processes launched from iTerm2
+- Reads required local settings from gitignored `.mem-watch`
+
 ### Git (`.gitconfig`)
 - Delta pager with side-by-side diffs
 - zdiff3 merge conflict style
@@ -41,6 +49,7 @@ System defaults for keyboard, Finder, and trackpad.
 | `nvim_setup.sh` | Installs vim-plug and plugins |
 | `tmux_setup.sh` | Installs tpm and symlinks config |
 | `brew.sh` | Installs Homebrew packages |
+| `mem-watch-launchd` | Installs/uninstalls the memory watchdog LaunchAgent |
 
 ## Installation
 
@@ -60,7 +69,14 @@ git clone <repo> && cd dotfiles
 ./setup.sh
 ./nvim_setup.sh
 ./tmux_setup.sh
+
+# Optional: memory watchdog alerts at the interval configured in .mem-watch
+$EDITOR .mem-watch
+mem-watch --top --no-notify
+mem-watch-launchd install
 ```
+
+See [`docs/memory-watch.md`](docs/memory-watch.md) for thresholds and diagnosis tips.
 
 ### Language tooling
 
@@ -76,4 +92,3 @@ gem install solargraph rubocop bundler
 # Node
 nodenv install 22.x.x
 ```
-
