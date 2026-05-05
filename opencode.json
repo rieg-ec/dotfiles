@@ -1,14 +1,27 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "./plugins/anthropic-auth.ts",
-    "./plugins/reviewer.ts"
+    "./plugins/reviewer.ts",
+    "opencode-claude-auth@latest",
   ],
+  "agent": {
+    "build": {
+      "enable1mContext": true
+    }
+  },
   "mcp": {
     "linear": {
       "type": "remote",
       "url": "https://mcp.linear.app/mcp",
       "oauth": {}
+    }
+  },
+  "mode": {
+    "build": {
+      "prompt": "You are Claude Code, Anthropic's official CLI for Claude."
+    },
+    "plan": {
+      "prompt": "You are Claude Code, Anthropic's official CLI for Claude."
     }
   },
   "permission": {

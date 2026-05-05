@@ -1,5 +1,7 @@
 ---
-description: In-depth code review with a stronger model
+description: Multi-model adversarial code review
+agent: review-orchestrator
+subtask: true
 ---
 
-Use the `review` tool right now. Do not do anything else — just call the `review` tool with the following focus (if any): $ARGUMENTS
+Review scope: $ARGUMENTS

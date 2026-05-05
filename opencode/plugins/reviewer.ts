@@ -17,7 +17,7 @@ import { type Plugin, tool } from "@opencode-ai/plugin";
 
 const REVIEW_MODEL = {
   providerID: "anthropic",
-  modelID: "claude-opus-4-20250514",
+  modelID: "claude-opus-4-6",
 };
 
 function buildReviewPrompt(transcript: string, focus?: string): string {
