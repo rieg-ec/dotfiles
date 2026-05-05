@@ -6,6 +6,16 @@ prSections:
     filters: "org:grupalia repo:grupalia/grupalia-rails repo:grupalia/grupalia-rn repo:grupalia/promoters project:grupalia/4"
   - title: "My PRs"
     filters: "is:open author:@me"
+  - title: "Review follow-up"
+    filters: >-
+      is:open
+      -author:@me
+      reviewed-by:@me
+      updated:>={{ nowModify "-3d" }}
+      repo:grupalia/rn-ui-kit
+      repo:grupalia/grupalia-rn
+      repo:grupalia/promoters
+      repo:grupalia/grupalia-rails
   - title: "Rails"
     filters: "is:open repo:grupalia/grupalia-rails"
   - title: "Customers"
@@ -24,6 +34,40 @@ issueSections:
     filters: "is:open author:@me"
   - title: "Assigned"
     filters: "is:open assignee:@me"
+
+notificationsSections:
+  - title: "Review replies"
+    filters: >-
+      is:unread
+      reason:comment
+      repo:grupalia/rn-ui-kit
+      repo:grupalia/grupalia-rn
+      repo:grupalia/promoters
+      repo:grupalia/grupalia-rails
+  - title: "Review activity"
+    filters: >-
+      is:unread
+      reason:participating
+      repo:grupalia/rn-ui-kit
+      repo:grupalia/grupalia-rn
+      repo:grupalia/promoters
+      repo:grupalia/grupalia-rails
+  - title: "All"
+    filters: ""
+  - title: "Created"
+    filters: "reason:author"
+  - title: "Participating"
+    filters: "reason:participating"
+  - title: "Mentioned"
+    filters: "reason:mention"
+  - title: "Review Requested"
+    filters: "reason:review-requested"
+  - title: "Assigned"
+    filters: "reason:assign"
+  - title: "Subscribed"
+    filters: "reason:subscribed"
+  - title: "Team Mentioned"
+    filters: "reason:team-mention"
 
 repoPaths:
   grupalia/grupalia-rails: ~/cs/grupalia/dev/grupalia-rails
@@ -86,11 +130,19 @@ keybindings:
       name: checkout PR (worktree)
       command: >
         cd {{.RepoPath}} &&
-        git fetch origin pull/{{.PrNumber}}/head:pr-{{.PrNumber}} 2>/dev/null;
-        git worktree add /tmp/pr-reviews/{{.PrNumber}} pr-{{.PrNumber}} 2>/dev/null;
-        git -C /tmp/pr-reviews/{{.PrNumber}} fetch origin pull/{{.PrNumber}}/head &&
-        git -C /tmp/pr-reviews/{{.PrNumber}} reset --hard FETCH_HEAD &&
+        git worktree remove --force /tmp/pr-reviews/{{.PrNumber}} 2>/dev/null;
+        rm -rf /tmp/pr-reviews/{{.PrNumber}};
+        git worktree prune;
+        git fetch origin +pull/{{.PrNumber}}/head:pr-{{.PrNumber}} &&
+        git worktree add /tmp/pr-reviews/{{.PrNumber}} pr-{{.PrNumber}} &&
         tmux new-window -c /tmp/pr-reviews/{{.PrNumber}}
+    - key: F
+      name: full review workspace
+      command: >
+        ~/cs/dotfiles/bin/pr-review-workspace
+        '{{.RepoPath}}'
+        '{{.RepoName}}'
+        '{{.PrNumber}}'
     - key: "!"
       name: remove me as reviewer
       command: >

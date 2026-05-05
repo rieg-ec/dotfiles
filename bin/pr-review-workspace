@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  printf 'Usage: %s <repo-path> <repo-name> <pr-number>\n' "$(basename "$0")" >&2
+}
+
+die() {
+  printf 'pr-review-workspace: %s\n' "$*" >&2
+  exit 1
+}
+
+if [[ $# -lt 3 ]]; then
+  usage
+  exit 64
+fi
+
+repo_path="$1"
+repo_name="$2"
+pr_number="$3"
+
+repo_path="${repo_path/#\~/$HOME}"
+
+[[ -d "$repo_path" ]] || die "repo path does not exist: $repo_path"
+[[ "$pr_number" =~ ^[0-9]+$ ]] || die "PR number must be numeric: $pr_number"
+
+safe_repo="${repo_name//\//-}"
+worktree="/tmp/pr-reviews/${safe_repo}-${pr_number}"
+branch="pr-${safe_repo}-${pr_number}"
+session="review-${safe_repo}-${pr_number}"
+
+current_terminal_tty() {
+  local tmux_tty
+
+  if [[ -n "${TMUX:-}" ]] && command -v tmux >/dev/null 2>&1; then
+    tmux_tty="$(tmux display-message -p '#{client_tty}' 2>/dev/null || true)"
+    if [[ -n "$tmux_tty" ]]; then
+      printf '%s\n' "$tmux_tty"
+      return
+    fi
+  fi
+
+  tty 2>/dev/null || true
+}
+
+applescript_escape() {
+  local value="$1"
+  value="${value//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  printf '%s' "$value"
+}
+
+app_is_running() {
+  local app_name="$1"
+  [[ "$(osascript -e "application \"${app_name}\" is running" 2>/dev/null || true)" == "true" ]]
+}
+
+iterm_app_has_tty() {
+  local app_name="$1"
+  local source_tty="$2"
+  local escaped_tty
+
+  [[ -n "$source_tty" ]] || return 1
+
+  escaped_tty="$(applescript_escape "$source_tty")"
+
+  [[ "$(osascript <<APPLESCRIPT
+set sourceTTY to "$escaped_tty"
+set foundTTY to false
+
+tell application "$app_name"
+  repeat with candidateWindow in windows
+    repeat with candidateTab in tabs of candidateWindow
+      repeat with candidateSession in sessions of candidateTab
+        try
+          if (tty of candidateSession) is sourceTTY then
+            set foundTTY to true
+            exit repeat
+          end if
+        end try
+      end repeat
+      if foundTTY then exit repeat
+    end repeat
+    if foundTTY then exit repeat
+  end repeat
+end tell
+
+return foundTTY
+APPLESCRIPT
+)" == "true" ]]
+}
+
+choose_iterm_app() {
+  local source_tty="$1"
+  local app_name
+
+  for app_name in 'iTerm2-beta' 'iTerm2'; do
+    if app_is_running "$app_name" && iterm_app_has_tty "$app_name" "$source_tty"; then
+      printf '%s\n' "$app_name"
+      return
+    fi
+  done
+
+  for app_name in 'iTerm2-beta' 'iTerm2'; do
+    if app_is_running "$app_name"; then
+      printf '%s\n' "$app_name"
+      return
+    fi
+  done
+
+  if [[ -d '/Applications/iTerm2-beta.app' || -d "$HOME/Applications/iTerm2-beta.app" ]]; then
+    printf '%s\n' 'iTerm2-beta'
+  else
+    printf '%s\n' 'iTerm2'
+  fi
+}
+
+open_iterm_tab() {
+  local app_name="$1"
+  local source_tty="$2"
+  local attach_command="$3"
+  local escaped_tty escaped_attach_command
+
+  escaped_tty="$(applescript_escape "$source_tty")"
+  escaped_attach_command="$(applescript_escape "$attach_command")"
+
+  osascript <<APPLESCRIPT
+set sourceTTY to "$escaped_tty"
+set attachCommand to "$escaped_attach_command"
+
+tell application "$app_name"
+  if (count of windows) = 0 then
+    create window with default profile
+    tell current session of current window
+      write text attachCommand
+    end tell
+    activate
+    return
+  end if
+
+  set targetWindow to missing value
+
+  if sourceTTY is not "" then
+    repeat with candidateWindow in windows
+      repeat with candidateTab in tabs of candidateWindow
+        repeat with candidateSession in sessions of candidateTab
+          try
+            if (tty of candidateSession) is sourceTTY then
+              set targetWindow to candidateWindow
+              exit repeat
+            end if
+          end try
+        end repeat
+        if targetWindow is not missing value then exit repeat
+      end repeat
+      if targetWindow is not missing value then exit repeat
+    end repeat
+  end if
+
+  if targetWindow is missing value then
+    set targetWindow to current window
+  end if
+
+  tell targetWindow
+    create tab with default profile
+    tell current session
+      write text attachCommand
+    end tell
+  end tell
+
+  activate
+end tell
+APPLESCRIPT
+}
+
+if ! tmux has-session -t "$session" 2>/dev/null; then
+  mkdir -p "$(dirname "$worktree")"
+
+  git -C "$repo_path" worktree remove --force "$worktree" 2>/dev/null || true
+  rm -rf "$worktree"
+  git -C "$repo_path" worktree prune
+  git -C "$repo_path" fetch origin "+pull/${pr_number}/head:${branch}"
+  git -C "$repo_path" worktree add "$worktree" "$branch"
+
+  tmux new-session -d -s "$session" -n worktree -c "$worktree"
+  tmux new-window -t "$session:" -n octo -c "$repo_path" "nvim -c 'Octo pr edit ${pr_number}'"
+  tmux select-window -t "$session:worktree"
+fi
+
+source_tty="$(current_terminal_tty)"
+iterm_app="$(choose_iterm_app "$source_tty")"
+open_iterm_tab "$iterm_app" "$source_tty" "tmux attach-session -t $session"
