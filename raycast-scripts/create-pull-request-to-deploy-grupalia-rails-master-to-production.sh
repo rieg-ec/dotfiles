@@ -22,13 +22,30 @@ current_time=$(date +"%H:%M")
 # Construct PR title
 title="Paso a producción $current_date $current_time"
 
-# Fetch merged PRs from compare
-merged_prs=$(
-  gh api -X GET "repos/$org/$repo/compare/production...master" --jq '.commits[].commit.message' \
-  | grep "^Merge pull request" \
-  | grep -oE "#[0-9]+" \
-  | xargs -I {} gh pr view {} --repo "$org/$repo" --json number,author --jq '"* #\(.number) by @\(.author.login)"'
+# Fetch merged PRs from compare. Supports both regular merge commits:
+#   Merge pull request #123 ...
+# and squash merge commits:
+#   Some PR title (#123)
+pr_numbers=$(
+  gh api -X GET "repos/$org/$repo/compare/production...master" \
+    --jq '.commits[].commit.message
+      | split("\n")[0]
+      | capture("Merge pull request #(?<number>[0-9]+)|\\(#(?<number>[0-9]+)\\)")
+      | .number'
 )
+
+merged_prs=""
+while IFS= read -r pr_number; do
+  [ -z "$pr_number" ] && continue
+
+  pr_line=$(gh pr view "$pr_number" --repo "$org/$repo" --json number,author --jq '"* #\(.number) by @\(.author.login)"')
+
+  if [ -z "$merged_prs" ]; then
+    merged_prs="$pr_line"
+  else
+    merged_prs="$merged_prs"$'\n'"$pr_line"
+  fi
+done <<< "$pr_numbers"
 
 if [ -z "$merged_prs" ]; then
   merged_prs="No PRs found"
@@ -42,4 +59,3 @@ gh pr create \
   --title "$title" \
   --body "$merged_prs" \
   --web
-
