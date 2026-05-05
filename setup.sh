@@ -51,4 +51,18 @@ ln -sf $dotfiles_dir/bin/yolocode $HOME/.local/bin/yolocode
 ln -sf $dotfiles_dir/bin/mem-watch $HOME/.local/bin/mem-watch
 ln -sf $dotfiles_dir/bin/mem-watch-launchd $HOME/.local/bin/mem-watch-launchd
 
+# # ================== memory watch ===========================
+if [ -f "$dotfiles_dir/.mem-watch" ]; then
+    "$dotfiles_dir/bin/mem-watch-launchd" install
+    echo "mem-watch LaunchAgent installed" >> $log_file
+else
+    echo "mem-watch LaunchAgent skipped: missing $dotfiles_dir/.mem-watch" >> $log_file
+    echo "Skipping mem-watch LaunchAgent install; create $dotfiles_dir/.mem-watch and run mem-watch-launchd install"
+fi
+
+# # ================== ai-kool-aid skills =====================
+chmod +x $dotfiles_dir/ai-kool-aid-skills/*.sh
+$dotfiles_dir/ai-kool-aid-skills/install-cron.sh
+echo "ai-kool-aid skills cron installed" >> $log_file
+
 sh $dotfiles_dir/.macos # optional, macOS only

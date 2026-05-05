@@ -22,11 +22,13 @@ grows quickly between samples.
 ## Quick start
 
 ```bash
-./setup.sh
 $EDITOR .mem-watch
+./setup.sh
 mem-watch --top --no-notify
-mem-watch-launchd install
 ```
+
+`setup.sh` installs the LaunchAgent automatically when `.mem-watch` exists. If
+you create or edit `.mem-watch` after setup, run `mem-watch-launchd install`.
 
 Check status:
 

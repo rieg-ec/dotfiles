@@ -65,15 +65,16 @@ git clone <repo> && cd dotfiles
 # rbenv: https://github.com/rbenv/rbenv
 # nodenv: https://github.com/nodenv/nodenv-installer
 
+# Optional: create memory watchdog config before setup so setup installs it
+$EDITOR .mem-watch
+
 # Run setup scripts
 ./setup.sh
 ./nvim_setup.sh
 ./tmux_setup.sh
 
-# Optional: memory watchdog alerts at the interval configured in .mem-watch
-$EDITOR .mem-watch
+# Optional: inspect the memory watchdog's latest sample
 mem-watch --top --no-notify
-mem-watch-launchd install
 ```
 
 See [`docs/memory-watch.md`](docs/memory-watch.md) for thresholds and diagnosis tips.
