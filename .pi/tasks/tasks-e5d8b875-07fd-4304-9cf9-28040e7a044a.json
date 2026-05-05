@@ -1,0 +1,53 @@
+{
+  "nextId": 7,
+  "tasks": [
+    {
+      "id": "3",
+      "subject": "Trace insert-mode Shift-Tab behavior",
+      "description": "Investigate whether the repo ever had an insert-mode Shift-Tab mapping or indent-related setting that made Shift-Tab move left in Neovim, and compare current behavior/history to determine whether a repo change caused the regression.",
+      "status": "completed",
+      "activeForm": "Tracing insert-mode Shift-Tab behavior",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1775963772886,
+      "updatedAt": 1775963848924
+    },
+    {
+      "id": "4",
+      "subject": "Compare removed nvim mappings",
+      "description": "Compare the old deleted nvim/mappings.vim against current Neovim Lua config to identify which mappings/features were not migrated. Summarize lost mappings and note any replacements or behavior changes.",
+      "status": "completed",
+      "activeForm": "Comparing removed nvim mappings",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1775965537834,
+      "updatedAt": 1775965650582
+    },
+    {
+      "id": "5",
+      "subject": "Restore insert Shift-Tab outdent",
+      "description": "Add Neovim insert-mode mappings so Shift-Tab and BackTab outdent again, while preserving previous completion-item selection when the completion popup is visible.",
+      "status": "completed",
+      "activeForm": "Restoring insert Shift-Tab outdent",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1775970876266,
+      "updatedAt": 1775970947969
+    },
+    {
+      "id": "6",
+      "subject": "Commit Shift-Tab fix",
+      "description": "Create a git commit containing only the Neovim insert-mode Shift-Tab/BackTab outdent fix, excluding unrelated unstaged changes already present in the repo.",
+      "status": "completed",
+      "activeForm": "Committing Shift-Tab fix",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776017949926,
+      "updatedAt": 1776017978369
+    }
+  ]
+}
