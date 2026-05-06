@@ -30,7 +30,7 @@ pr_numbers=$(
   gh api -X GET "repos/$org/$repo/compare/production...master" \
     --jq '.commits[].commit.message
       | split("\n")[0]
-      | capture("Merge pull request #(?<number>[0-9]+)|\\(#(?<number>[0-9]+)\\)")
+      | capture("(?:Merge pull request #|\\(#)(?<number>[0-9]+)")
       | .number'
 )
 
