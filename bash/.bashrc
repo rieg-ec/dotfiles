@@ -143,8 +143,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 eval "$(nodenv init -)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 eval "$(rbenv init - --no-rehash bash)"
 eval "$(jenv init -)"
 
@@ -243,3 +241,13 @@ export CLAUDE_CODE_EFFORT_LEVEL=max
 export PATH=/Users/rieg/.opencode/bin:$PATH
 # yolocode is an executable in ~/.local/bin so agent-deck and non-interactive
 # shells can launch it without relying on alias expansion.
+
+function cmem() {
+  cd ~/cs/dotfiles && ./bin/mem-watch --once && cat /Users/rieg/.local/state/mem-watch/latest.txt
+}
+
+# pyenv: init LAST so its shims take precedence on PATH. brew shellenv (above) and other
+# later prepends would otherwise put Homebrew's python3 ahead of pyenv's shims, making
+# `pyenv global` a no-op. Keep this at the very end of the file.
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
