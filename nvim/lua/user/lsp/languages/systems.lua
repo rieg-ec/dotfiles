@@ -1,14 +1,5 @@
 -- Systems Programming LSP Configurations
--- C/C++, Go, Rust
-
--- C/C++ (Clangd)
-vim.lsp.config('clangd', {
-  cmd = {
-    "/opt/homebrew/opt/llvm/bin/clangd",
-    "--background-index",
-    "--completion-style=detailed",
-  },
-})
+-- Go, Rust
 
 -- Go
 vim.lsp.config('gopls', {

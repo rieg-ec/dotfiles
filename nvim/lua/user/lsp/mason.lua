@@ -28,9 +28,6 @@ require("mason-lspconfig").setup({
     -- Python
     "pyright", -- Python
 
-    -- C/C++
-    "clangd", -- C/C++
-
     -- Go (uncomment if you write Go code)
     -- "gopls",           -- Go
 

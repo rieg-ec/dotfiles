@@ -1,4 +1,4 @@
-default_tool = "claude"
+default_tool = "yolocode"
 theme = "dark"
 
 [tmux]
@@ -25,4 +25,20 @@ spinner_chars = ["█", "▓", "▒", "░"]
 detect_patterns = [
   "re:(?i)opencode",
   "Ask anything",
+]
+
+[tools.claude-yolo]
+command = "claude --dangerously-skip-permissions"
+icon = "⚡"
+busy_patterns = [
+  "esc to interrupt",
+  "esc interrupt",
+  "thinking",
+]
+prompt_patterns = [
+  "What do you want to do?",
+  "Try",
+]
+detect_patterns = [
+  "re:(?i)claude",
 ]
