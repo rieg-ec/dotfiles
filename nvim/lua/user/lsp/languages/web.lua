@@ -9,16 +9,33 @@ local vue_plugin = {
   name = '@vue/typescript-plugin',
   location = vue_language_server_path,
   languages = { 'vue' },
+  configNamespace = 'typescript',
 }
 
--- TypeScript/JavaScript (ts_ls)
-vim.lsp.config('ts_ls', {
-  init_options = {
-    plugins = {
-      vue_plugin,
-    },
-  },
+local tsserver_filetypes = {
+  "javascript",
+  "javascriptreact",
+  "javascript.jsx",
+  "typescript",
+  "typescriptreact",
+  "typescript.tsx",
+  "vue",  -- Required for Vue support
+}
+
+-- TypeScript/JavaScript (vtsls)
+vim.lsp.config('vtsls', {
+  filetypes = tsserver_filetypes,
   settings = {
+    vtsls = {
+      -- Keep vtsls on its bundled TypeScript for now. Set this to true later
+      -- if you want editor diagnostics to use the project's TypeScript version.
+      autoUseWorkspaceTsdk = false,
+      tsserver = {
+        globalPlugins = {
+          vue_plugin,
+        },
+      },
+    },
     javascript = {
       format = {
         insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = true,
@@ -29,19 +46,13 @@ vim.lsp.config('ts_ls', {
       },
     },
     typescript = {
+      tsserver = {
+        maxTsServerMemory = 4096,
+      },
       preferences = {
         quoteStyle = "single",
       },
     },
-  },
-  filetypes = {
-    "javascript",
-    "javascriptreact",
-    "javascript.jsx",
-    "typescript",
-    "typescriptreact",
-    "typescript.tsx",
-    "vue",  -- Required for Vue support
   },
 })
 
@@ -81,11 +92,6 @@ vim.lsp.config('eslint', {
 -- Official config: https://github.com/vuejs/language-tools
 vim.lsp.config('vue_ls', {
   filetypes = { "vue" },
-  init_options = {
-    vue = {
-      hybridMode = false,
-    },
-  },
   settings = {
     typescript = {
       inlayHints = {

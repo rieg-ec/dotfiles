@@ -13,7 +13,7 @@ require("mason-lspconfig").setup({
   -- Automatically install these language servers
   ensure_installed = {
     -- Web Development
-    "ts_ls",               -- TypeScript/JavaScript
+    "vtsls",               -- TypeScript/JavaScript
     "eslint",              -- ESLint
     "vue_ls",              -- Vue (TypeScript support in Vue files)
     "tailwindcss",         -- Tailwind CSS
@@ -42,5 +42,8 @@ require("mason-lspconfig").setup({
   },
 
   -- Automatically enable installed servers via vim.lsp.enable()
-  automatic_enable = true,
+  -- Keep ts_ls disabled if it is still installed locally; vtsls replaces it.
+  automatic_enable = {
+    exclude = { "ts_ls" },
+  },
 })
