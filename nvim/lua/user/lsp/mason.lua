@@ -22,8 +22,8 @@ require("mason-lspconfig").setup({
     "jsonls",              -- JSON
 
     -- Ruby
-    "solargraph", -- Ruby (code navigation, hover, etc)
-    "rubocop",    -- Ruby linting (respects project's .rubocop.yml)
+    -- ruby-lsp is installed via gem (rbenv), not Mason; see languages/ruby.lua
+    "rubocop", -- Ruby linting (respects project's .rubocop.yml)
 
     -- Python
     "pyright", -- Python
@@ -43,7 +43,8 @@ require("mason-lspconfig").setup({
 
   -- Automatically enable installed servers via vim.lsp.enable()
   -- Keep ts_ls disabled if it is still installed locally; vtsls replaces it.
+  -- Keep solargraph disabled while its Mason install remains; ruby_lsp replaces it.
   automatic_enable = {
-    exclude = { "ts_ls" },
+    exclude = { "ts_ls", "solargraph" },
   },
 })

@@ -22,25 +22,26 @@ local function ruby_on_attach(setup_fn)
   end
 end
 
--- Ruby (Solargraph)
-vim.lsp.config('solargraph', {
+-- Ruby (ruby-lsp)
+-- Installed per-ruby with `gem install ruby-lsp`, not Mason: its C extensions
+-- are tied to the Ruby ABI, so one shared Mason install breaks across rubies.
+-- Not Mason-managed, so mason-lspconfig will not auto-enable it; we enable it
+-- explicitly below.
+vim.lsp.config('ruby_lsp', {
   root_dir = ruby_root_dir,
   on_attach = ruby_on_attach(function(client, bufnr)
-    -- Disable Solargraph's formatting (we use RuboCop via conform.nvim instead)
+    -- Disable ruby-lsp's formatting (we use RuboCop via conform.nvim instead)
     client.server_capabilities.documentFormattingProvider = false
     client.server_capabilities.documentRangeFormattingProvider = false
   end),
-  cmd = { "/Users/rieg/.rbenv/shims/solargraph", "stdio" },
-  settings = {
-    solargraph = {
-      autoformat = false,
-      formatting = false,
-      diagnostics = true,
-      hover = true,
-      useBundler = false,
-    }
-  }
+  cmd = { "/Users/rieg/.rbenv/shims/ruby-lsp" },
+  init_options = {
+    formatter = 'none',
+    -- Diagnostics come from the separate rubocop --lsp server below
+    linters = {},
+  },
 })
+vim.lsp.enable('ruby_lsp')
 
 -- RuboCop LSP (diagnostics via bundle exec rubocop)
 vim.lsp.config('rubocop', {
