@@ -244,6 +244,34 @@ export PATH=/Users/rieg/.opencode/bin:$PATH
 # yolocode is an executable in ~/.local/bin so agent-deck and non-interactive
 # shells can launch it without relying on alias expansion.
 
+# `agent-deck new <tool> [path]` — add + start + attach a tracked session in one
+# step, for spawning an agent in a fresh terminal split without losing deck
+# tracking. <tool> is passed through as the command (claude, yolocode, ...);
+# model/permission defaults come from each tool's own config. Everything else
+# falls through to the real binary.
+function agent-deck() {
+  if [ "${1:-}" != "new" ]; then
+    command agent-deck "$@"
+    return
+  fi
+  shift
+  local tool="${1:-}"
+  if [ -z "$tool" ]; then
+    echo "Usage: agent-deck new <tool> [path]  (e.g. agent-deck new claude)" >&2
+    return 1
+  fi
+  local path="${2:-.}"
+  local out id
+  out=$(command agent-deck add --quick -json -c "$tool" "$path") || { printf '%s\n' "$out" >&2; return 1; }
+  id=$(printf '%s' "$out" | sed -n 's/.*"id": *"\([^"]*\)".*/\1/p' | head -1)
+  if [ -z "$id" ]; then
+    printf '%s\n' "$out" >&2
+    echo "agent-deck new: could not parse session id from add output" >&2
+    return 1
+  fi
+  command agent-deck session start "$id" && command agent-deck session attach "$id"
+}
+
 function cmem() {
   cd ~/cs/dotfiles && ./bin/mem-watch --once && cat /Users/rieg/.local/state/mem-watch/latest.txt
 }

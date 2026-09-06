@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: adg [options] [title]
+
+Create and start a new Agent Deck session with Grupalia defaults.
+
+Defaults:
+  path:    ~/cs/grupalia/dev
+  command: yolocode
+  group:   tmp
+
+Options:
+  -g, --group GROUP     Agent Deck group (default: tmp)
+  -c, --cmd COMMAND     Tool/command to run (default: yolocode)
+  -p, --path PATH       Project root (default: ~/cs/grupalia/dev)
+  -m, --message TEXT    Initial message to send after launch
+  -a, --add-only        Add the session without starting it
+  -h, --help            Show this help
+  --                    Pass remaining args through to agent-deck
+
+Examples:
+  adg "api research"
+  adg -g devresearch "pricing notes"
+  adg -c "claude --dangerously-skip-permissions" "rails spike"
+EOF
+}
+
+die() {
+  printf 'adg: %s\n' "$*" >&2
+  exit 1
+}
+
+root="${AGENT_DECK_DEFAULT_PATH:-$HOME/cs/grupalia/dev}"
+cmd="${AGENT_DECK_DEFAULT_CMD:-yolocode}"
+group="${AGENT_DECK_DEFAULT_GROUP:-tmp}"
+title=""
+message=""
+add_only=0
+extra_args=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -g|--group)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      group="$2"
+      shift 2
+      ;;
+    --group=*)
+      group="${1#*=}"
+      shift
+      ;;
+    -c|--cmd)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      cmd="$2"
+      shift 2
+      ;;
+    --cmd=*)
+      cmd="${1#*=}"
+      shift
+      ;;
+    -p|--path)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      root="$2"
+      shift 2
+      ;;
+    --path=*)
+      root="${1#*=}"
+      shift
+      ;;
+    -m|--message)
+      [[ $# -ge 2 ]] || die "$1 requires a value"
+      message="$2"
+      shift 2
+      ;;
+    --message=*)
+      message="${1#*=}"
+      shift
+      ;;
+    -a|--add-only)
+      add_only=1
+      shift
+      ;;
+    --)
+      shift
+      extra_args+=("$@")
+      break
+      ;;
+    -*)
+      extra_args+=("$1")
+      shift
+      ;;
+    *)
+      if [[ -z "$title" ]]; then
+        title="$1"
+      else
+        extra_args+=("$1")
+      fi
+      shift
+      ;;
+  esac
+done
+
+root="${root/#\~/$HOME}"
+[[ -d "$root" ]] || die "path does not exist: $root"
+command -v agent-deck >/dev/null 2>&1 || die "agent-deck is not on PATH"
+
+if [[ -z "$title" ]]; then
+  title="dev-$(date '+%m%d-%H%M%S')"
+fi
+
+if [[ "$add_only" -eq 1 ]]; then
+  [[ -z "$message" ]] || die "--message requires launch mode; remove --add-only"
+  exec agent-deck add "$root" -c "$cmd" -g "$group" -t "$title" "${extra_args[@]}"
+fi
+
+launch_args=(agent-deck launch "$root" -c "$cmd" -g "$group" -t "$title")
+if [[ -n "$message" ]]; then
+  launch_args+=(-m "$message")
+fi
+launch_args+=("${extra_args[@]}")
+
+exec "${launch_args[@]}"
