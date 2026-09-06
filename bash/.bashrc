@@ -340,6 +340,47 @@ function cmem() {
   cd ~/cs/dotfiles && ./bin/mem-watch --once && cat /Users/rieg/.local/state/mem-watch/latest.txt
 }
 
+optimize_video() {
+  if [ "$#" -ne 1 ]; then
+    echo "Usage: optimize_video <path-to-mov>" >&2
+    return 1
+  fi
+
+  local input="$1"
+  local output
+
+  if [ ! -f "$input" ]; then
+    echo "File not found: $input" >&2
+    return 1
+  fi
+
+  case "$input" in
+    *.[Mm][Oo][Vv]) ;;
+    *)
+      echo "Input must be a .mov file: $input" >&2
+      return 1
+      ;;
+  esac
+
+  if ! command -v ffmpeg >/dev/null 2>&1; then
+    echo "ffmpeg is required but is not installed." >&2
+    return 1
+  fi
+
+  output="${input%.*}.mp4"
+  if [ -e "$output" ]; then
+    echo "Output already exists: $output" >&2
+    return 1
+  fi
+
+  ffmpeg -hide_banner -n -i "$input" \
+    -map 0:v:0 -map '0:a?' \
+    -vf "fps=30,scale='min(1920,iw)':'min(1920,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2" \
+    -c:v libx264 -preset medium -crf 25 -pix_fmt yuv420p \
+    -c:a aac -b:a 128k \
+    -movflags +faststart "$output"
+}
+
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/rieg/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/rieg/Downloads/google-cloud-sdk/path.bash.inc'; fi
 

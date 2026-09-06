@@ -52,6 +52,7 @@ ln -sf $dotfiles_dir/agent-deck/config.toml $HOME/.agent-deck/config.toml
 mkdir -p $HOME/.local/bin
 ln -sf $dotfiles_dir/bin/yolocode $HOME/.local/bin/yolocode
 ln -sf $dotfiles_dir/bin/adg $HOME/.local/bin/adg
+ln -sf $dotfiles_dir/bin/expose_files $HOME/.local/bin/expose_files
 ln -sf $dotfiles_dir/bin/posthog-mcp-safe $HOME/.local/bin/posthog-mcp-safe
 ln -sf $dotfiles_dir/bin/mem-watch $HOME/.local/bin/mem-watch
 ln -sf $dotfiles_dir/bin/mem-watch-launchd $HOME/.local/bin/mem-watch-launchd

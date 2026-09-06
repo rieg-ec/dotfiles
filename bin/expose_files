@@ -1,0 +1,188 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage: expose_files <path-to-file> [path-to-another-file ...]
+
+Serves the given local files from a temporary HTTP directory and exposes it
+through ngrok. Press Ctrl-C to stop and clean up.
+
+Requirements:
+  - python3
+  - ngrok installed and authenticated (`ngrok config add-authtoken ...`)
+
+Example:
+  expose_files /Users/rieg/Downloads/vector_under_30kb.svg /Users/rieg/Downloads/mexico_corea_540x230.webp
+USAGE
+}
+
+if [[ $# -lt 1 ]]; then
+  usage >&2
+  exit 1
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "Error: python3 is required." >&2
+  exit 1
+fi
+
+if ! command -v ngrok >/dev/null 2>&1; then
+  echo "Error: ngrok is required." >&2
+  echo "Install with: brew install ngrok/ngrok/ngrok" >&2
+  echo "Then authenticate: ngrok config add-authtoken <token>" >&2
+  exit 1
+fi
+
+tmp_dir="$(mktemp -d -t expose_files.XXXXXX)"
+server_pid=""
+ngrok_pid=""
+ngrok_log="${TMPDIR:-/tmp}/expose_files_ngrok.log"
+
+if [[ -n "${EXPOSE_FILES_PORT:-}" ]]; then
+  port="${EXPOSE_FILES_PORT}"
+else
+  port="$(python3 - <<'PY'
+import socket
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+    sock.bind(('127.0.0.1', 0))
+    print(sock.getsockname()[1])
+PY
+)"
+fi
+
+cleanup() {
+  if [[ -n "${ngrok_pid}" ]] && kill -0 "${ngrok_pid}" >/dev/null 2>&1; then
+    kill "${ngrok_pid}" >/dev/null 2>&1 || true
+  fi
+
+  if [[ -n "${server_pid}" ]] && kill -0 "${server_pid}" >/dev/null 2>&1; then
+    kill "${server_pid}" >/dev/null 2>&1 || true
+  fi
+
+  rm -rf "${tmp_dir}"
+}
+trap cleanup EXIT
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM HUP
+
+declare -a served_names=()
+
+name_already_served() {
+  local candidate="$1"
+  local existing=""
+
+  for existing in "${served_names[@]}"; do
+    if [[ "${existing}" == "${candidate}" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+for file_path in "$@"; do
+  if [[ ! -f "${file_path}" ]]; then
+    echo "Error: not a file: ${file_path}" >&2
+    exit 1
+  fi
+
+  base_name="$(basename "${file_path}")"
+  served_name="${base_name}"
+
+  if name_already_served "${served_name}"; then
+    extension=""
+    stem="${base_name}"
+    if [[ "${base_name}" == *.* ]]; then
+      extension=".${base_name##*.}"
+      stem="${base_name%.*}"
+    fi
+
+    index=2
+    while name_already_served "${stem}-${index}${extension}"; do
+      index=$((index + 1))
+    done
+    served_name="${stem}-${index}${extension}"
+  fi
+
+  served_names+=("${served_name}")
+  ln -s "$(cd "$(dirname "${file_path}")" && pwd)/${base_name}" "${tmp_dir}/${served_name}"
+done
+
+python3 -m http.server "${port}" --bind 127.0.0.1 --directory "${tmp_dir}" >/dev/null 2>&1 &
+server_pid="$!"
+
+ngrok http "${port}" --log stdout >"${ngrok_log}" 2>&1 &
+ngrok_pid="$!"
+
+public_url=""
+for _ in {1..80}; do
+  if ! kill -0 "${ngrok_pid}" >/dev/null 2>&1; then
+    echo "Error: ngrok stopped unexpectedly. Log:" >&2
+    cat "${ngrok_log}" >&2 || true
+    exit 1
+  fi
+
+  public_url="$(python3 - "${port}" <<'PY' 2>/dev/null || true
+import json
+import sys
+import urllib.request
+
+port = sys.argv[1]
+
+try:
+    with urllib.request.urlopen('http://127.0.0.1:4040/api/tunnels', timeout=0.5) as response:
+        tunnels = json.load(response).get('tunnels', [])
+except Exception:
+    raise SystemExit(1)
+
+matching_tunnels = []
+for tunnel in tunnels:
+    addr = str(tunnel.get('config', {}).get('addr', ''))
+    if addr.endswith(f':{port}') or addr.endswith(f':{port}/'):
+        matching_tunnels.append(tunnel)
+
+for tunnel in matching_tunnels:
+    url = tunnel.get('public_url', '')
+    if url.startswith('https://'):
+        print(url)
+        break
+else:
+    for tunnel in matching_tunnels:
+        url = tunnel.get('public_url', '')
+        if url:
+            print(url)
+            break
+PY
+)"
+
+  if [[ -n "${public_url}" ]]; then
+    break
+  fi
+  sleep 0.25
+done
+
+if [[ -z "${public_url}" ]]; then
+  echo "Error: couldn't discover ngrok public URL." >&2
+  echo "ngrok log:" >&2
+  cat "${ngrok_log}" >&2 || true
+  exit 1
+fi
+
+echo
+echo "Public file URLs:"
+for served_name in "${served_names[@]}"; do
+  encoded_name="$(python3 - "${served_name}" <<'PY'
+import sys
+from urllib.parse import quote
+print(quote(sys.argv[1]))
+PY
+)"
+  echo "  ${public_url}/${encoded_name}"
+done
+echo
+echo "Local directory: ${tmp_dir}"
+echo "Press Ctrl-C to stop exposing these files."
+
+wait "${ngrok_pid}"
