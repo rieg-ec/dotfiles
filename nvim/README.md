@@ -142,3 +142,12 @@ lua/user/
 ## Keybindings
 
 See `cheatsheet.txt` or run `:Cheatsheet` inside Neovim.
+
+### Tree-sitter parser updates
+
+The configuration uses the `master` branch for the `nvim-treesitter.configs` API.
+The plugin update hook runs `:TSUpdateSync` so parser builds finish before exit.
+
+If highlighting reports an invalid node type, run `:TSUpdateSync`, then restart
+Neovim. The regex parser is also used inside shell files; update it with
+`:TSUpdateSync regex` when its highlight query rejects `<`.

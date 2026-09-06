@@ -68,7 +68,7 @@ call plug#begin()
 
     Plug 'matze/vim-move'
 
-    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'master', 'do': ':TSUpdateSync' }
     Plug 'p00f/nvim-ts-rainbow'
 
     Plug 'yuezk/vim-js'
