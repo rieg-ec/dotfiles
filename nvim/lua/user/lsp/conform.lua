@@ -3,6 +3,10 @@
 
 local M = {}
 
+local function is_db_schema(bufnr)
+  return vim.api.nvim_buf_get_name(bufnr):match("/db/schema%.rb$") ~= nil
+end
+
 -- Track when saving-and-quitting so Ruby formatting runs synchronously
 vim.g._conform_quitting = false
 
@@ -80,6 +84,10 @@ require("conform").setup({
 
     -- Ruby: sync only when quitting (so file is formatted before exit)
     if filetype == "ruby" then
+      if is_db_schema(bufnr) then
+        return
+      end
+
       if vim.g._conform_quitting then
         return { timeout_ms = 10000, lsp_format = "never" }
       end
@@ -104,7 +112,7 @@ require("conform").setup({
     local filetype = vim.bo[bufnr].filetype
 
     -- Ruby: async only when NOT quitting (quitting already handled sync above)
-    if filetype ~= "ruby" or vim.g._conform_quitting then
+    if filetype ~= "ruby" or vim.g._conform_quitting or is_db_schema(bufnr) then
       return
     end
 
@@ -146,6 +154,11 @@ function M.format_manually()
 
   -- For Ruby files, use bundled RuboCop CLI via conform.nvim
   if filetype == "ruby" then
+    if is_db_schema(bufnr) then
+      vim.notify("Skipping RuboCop formatting for db/schema.rb", vim.log.levels.INFO)
+      return
+    end
+
     vim.notify("Formatting Ruby file with bundled RuboCop...", vim.log.levels.INFO)
     require("conform").format({
       async = false,
