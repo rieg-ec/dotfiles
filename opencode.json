@@ -36,9 +36,54 @@
       ],
       "enabled": true
     },
+    "deepnote": {
+      "type": "local",
+      "command": [
+        "bash",
+        "-c",
+        "exec \"$HOME/cs/dotfiles/bin/deepnote-mcp-safe\""
+      ],
+      "enabled": false
+    },
+    "excalidraw": {
+      "type": "remote",
+      "url": "https://api.excalidraw.com/api/v1/mcp",
+      "enabled": false,
+      "headers": {
+        "Authorization": "Bearer {env:EXCALIDRAW_API_KEY}"
+      }
+    },
     "linear": {
       "type": "remote",
       "url": "https://mcp.linear.app/mcp",
+      "enabled": false,
+      "oauth": {}
+    },
+    "newrelic": {
+      "type": "remote",
+      "url": "https://mcp.newrelic.com/mcp/",
+      "enabled": false,
+      "oauth": {}
+    },
+    "notion": {
+      "type": "remote",
+      "url": "https://mcp.notion.com/mcp",
+      "enabled": false,
+      "oauth": {}
+    },
+    "posthog": {
+      "type": "local",
+      "command": [
+        "bash",
+        "-c",
+        "exec \"$HOME/.local/bin/posthog-mcp-safe\""
+      ],
+      "enabled": false
+    },
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "enabled": false,
       "oauth": {}
     }
   },

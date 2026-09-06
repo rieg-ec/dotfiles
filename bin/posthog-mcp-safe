@@ -1,0 +1,415 @@
+#!/usr/bin/env python3
+"""PostHog MCP stdio proxy that sanitizes OpenAI-incompatible schemas.
+
+PostHog's remote MCP currently exposes one tool with a top-level `anyOf` in
+its input schema. OpenAI rejects that before OpenCode can filter or use the
+tool. This proxy forwards MCP requests to PostHog and rewrites that schema into
+a plain object while preserving the original tool arguments for calls.
+"""
+
+from __future__ import annotations
+
+import copy
+import json
+import os
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any
+
+
+REMOTE_URL = os.environ.get("POSTHOG_MCP_URL", "https://mcp.posthog.com/mcp")
+AUTH_PATH = os.environ.get(
+    "OPENCODE_MCP_AUTH_PATH",
+    os.path.expanduser("~/.local/share/opencode/mcp-auth.json"),
+)
+PROTOCOL_VERSION = os.environ.get("MCP_PROTOCOL_VERSION", "2025-06-18")
+TOKEN_ENDPOINT = os.environ.get(
+    "POSTHOG_MCP_TOKEN_ENDPOINT",
+    "https://oauth.posthog.com/oauth/token/",
+)
+BROKEN_TOOL = "file-download-batch-exports-create"
+LOG_PATH = os.environ.get("POSTHOG_MCP_SAFE_LOG")
+DEFAULT_ALLOWED_TOOLS = {
+    "switch-organization",
+    "organizations-list",
+    "organization-get",
+    "projects-get",
+    "switch-project",
+    "project-get",
+    "docs-search",
+    "read-data-schema",
+    "read-data-warehouse-schema",
+    "execute-sql",
+    "insight-query",
+    "insights-list",
+    "insight-get",
+    "dashboards-get-all",
+    "dashboard-get",
+    "dashboard-insights-run",
+    "query-trends",
+    "query-funnel",
+    "query-retention",
+    "query-stickiness",
+    "query-paths",
+    "query-lifecycle",
+    "query-trends-actors",
+    "persons-list",
+    "persons-retrieve",
+    "persons-values-retrieve",
+    "cohorts-list",
+    "cohorts-retrieve",
+    "actions-get-all",
+    "action-get",
+    "feature-flag-get-all",
+    "feature-flag-get-definition",
+    "experiment-list",
+    "experiment-get",
+    "experiment-results-get",
+    "experiment-stats",
+    "experiment-timeseries-results",
+    "query-session-recordings-list",
+    "session-recording-get",
+    "session-recording-summarize",
+    "query-error-tracking-issues-list",
+    "query-error-tracking-issue",
+    "query-error-tracking-issue-events",
+    "activity-log-list",
+    "annotations-list",
+    "survey-get",
+    "survey-stats",
+    "surveys-get-all",
+    "get-llm-total-costs-for-project",
+}
+
+remote_session_id: str | None = None
+output_mode = "framed"
+
+
+def log(message: str) -> None:
+    if not LOG_PATH:
+        return
+
+    with open(LOG_PATH, "a", encoding="utf-8") as log_file:
+        log_file.write(f"{message}\n")
+
+
+def load_auth() -> dict[str, Any]:
+    try:
+        with open(AUTH_PATH, "r", encoding="utf-8") as auth_file:
+            return json.load(auth_file)
+    except FileNotFoundError as exc:
+        raise RuntimeError(
+            f"OpenCode MCP auth file not found at {AUTH_PATH}; run `opencode mcp auth posthog`."
+        ) from exc
+
+
+def save_auth(auth: dict[str, Any]) -> None:
+    tmp_path = f"{AUTH_PATH}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as auth_file:
+        json.dump(auth, auth_file, indent=2)
+        auth_file.write("\n")
+    os.replace(tmp_path, AUTH_PATH)
+
+
+def refresh_access_token(auth: dict[str, Any]) -> str:
+    posthog_auth = auth.get("posthog", {})
+    tokens = posthog_auth.get("tokens", {})
+    client_info = posthog_auth.get("clientInfo", {})
+
+    refresh_token = tokens.get("refreshToken")
+    client_id = client_info.get("clientId")
+    if not refresh_token or not client_id:
+        raise RuntimeError("PostHog MCP refresh credentials missing; run `opencode mcp auth posthog`.")
+
+    form = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token,
+        "client_id": client_id,
+    }
+    client_secret = client_info.get("clientSecret")
+    if client_secret:
+        form["client_secret"] = client_secret
+
+    request = urllib.request.Request(
+        TOKEN_ENDPOINT,
+        data=urllib.parse.urlencode(form).encode("utf-8"),
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            refreshed = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:1000]
+        raise RuntimeError(
+            f"PostHog MCP token refresh failed ({exc.code}); run `opencode mcp auth posthog`. {detail}"
+        ) from exc
+
+    access_token = refreshed.get("access_token")
+    if not access_token:
+        raise RuntimeError("PostHog MCP token refresh returned no access token.")
+
+    tokens["accessToken"] = access_token
+    tokens["refreshToken"] = refreshed.get("refresh_token", refresh_token)
+    if "expires_in" in refreshed:
+        tokens["expiresAt"] = (time.time() + float(refreshed["expires_in"])) * 1000
+    if "scope" in refreshed:
+        tokens["scope"] = refreshed["scope"]
+
+    save_auth(auth)
+    return access_token
+
+
+def load_access_token(force_refresh: bool = False) -> str:
+    auth = load_auth()
+
+    token = (
+        auth.get("posthog", {})
+        .get("tokens", {})
+        .get("accessToken")
+    )
+    if not token:
+        raise RuntimeError("PostHog MCP access token missing; run `opencode mcp auth posthog`.")
+
+    expires_at = auth.get("posthog", {}).get("tokens", {}).get("expiresAt")
+    if force_refresh or (isinstance(expires_at, (int, float)) and expires_at <= (time.time() + 60) * 1000):
+        return refresh_access_token(auth)
+
+    return token
+
+
+def decode_sse(payload: str) -> dict[str, Any] | None:
+    for event in payload.split("\n\n"):
+        data_lines = []
+        for line in event.splitlines():
+            if line.startswith("data:"):
+                data_lines.append(line[5:].strip())
+        if not data_lines:
+            continue
+
+        data = "\n".join(data_lines)
+        if data and data != "[DONE]":
+            return json.loads(data)
+
+    return None
+
+
+def remote_post(message: dict[str, Any], *, retry_on_auth_error: bool = True) -> dict[str, Any] | None:
+    global remote_session_id
+
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
+        "Authorization": f"Bearer {load_access_token()}",
+        "MCP-Protocol-Version": PROTOCOL_VERSION,
+    }
+    if remote_session_id:
+        headers["mcp-session-id"] = remote_session_id
+
+    body = json.dumps(message, separators=(",", ":")).encode("utf-8")
+    request = urllib.request.Request(REMOTE_URL, data=body, headers=headers, method="POST")
+
+    log(f"remote_post method={message.get('method')} id={message.get('id')}")
+    try:
+        with urllib.request.urlopen(request, timeout=90) as response:
+            session_header = response.headers.get("mcp-session-id")
+            if session_header:
+                remote_session_id = session_header
+
+            payload = response.read().decode("utf-8", errors="replace")
+            if response.status == 202 or not payload:
+                return None
+
+            content_type = response.headers.get("content-type", "")
+            if content_type.startswith("text/event-stream"):
+                return decode_sse(payload)
+
+            return json.loads(payload)
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:1000]
+        if exc.code == 401:
+            if retry_on_auth_error:
+                load_access_token(force_refresh=True)
+                return remote_post(message, retry_on_auth_error=False)
+            detail = "PostHog auth failed; run `opencode mcp auth posthog`."
+        raise RuntimeError(f"PostHog MCP HTTP {exc.code}: {detail}") from exc
+
+
+def merge_anyof_object_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    alternatives = [
+        alternative
+        for alternative in schema.get("anyOf", [])
+        if isinstance(alternative, dict) and alternative.get("type") == "object"
+    ]
+
+    merged: dict[str, Any] = {
+        "type": "object",
+        "properties": {},
+        "description": (
+            "Sanitized by posthog-mcp-safe: the original PostHog schema used a "
+            "top-level anyOf, which OpenAI rejects."
+        ),
+    }
+
+    required_sets: list[set[str]] = []
+    for alternative in alternatives:
+        properties = alternative.get("properties", {})
+        if isinstance(properties, dict):
+            for name, value in properties.items():
+                if name not in merged["properties"]:
+                    merged["properties"][name] = value
+                    continue
+
+                current = merged["properties"][name]
+                if isinstance(current, dict) and isinstance(value, dict):
+                    current_enum = current.get("enum")
+                    value_enum = value.get("enum")
+                    if isinstance(current_enum, list) and isinstance(value_enum, list):
+                        current["enum"] = sorted(set(current_enum) | set(value_enum))
+
+        required = alternative.get("required")
+        if isinstance(required, list):
+            required_sets.append(set(str(item) for item in required))
+
+    if required_sets:
+        merged["required"] = sorted(set.intersection(*required_sets))
+
+    return merged
+
+
+def sanitize_tools_list(response: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not response:
+        return response
+
+    result = response.get("result")
+    if not isinstance(result, dict):
+        return response
+
+    tools = result.get("tools")
+    if not isinstance(tools, list):
+        return response
+
+    patched = copy.deepcopy(response)
+    patched_tools = [
+        tool
+        for tool in patched["result"]["tools"]
+        if tool_allowed(tool.get("name") if isinstance(tool, dict) else None)
+    ]
+    patched["result"]["tools"] = patched_tools
+    for tool in patched_tools:
+        if not isinstance(tool, dict) or tool.get("name") != BROKEN_TOOL:
+            continue
+
+        schema = tool.get("inputSchema")
+        if isinstance(schema, dict) and "anyOf" in schema:
+            tool["inputSchema"] = merge_anyof_object_schema(schema)
+
+    return patched
+
+
+def tool_allowed(name: Any) -> bool:
+    if not isinstance(name, str):
+        return False
+
+    if os.environ.get("POSTHOG_MCP_INCLUDE_ALL") == "1":
+        return True
+
+    override = os.environ.get("POSTHOG_MCP_ALLOWED_TOOLS")
+    if override:
+        allowed = {item.strip() for item in override.split(",") if item.strip()}
+        return name in allowed
+
+    return name in DEFAULT_ALLOWED_TOOLS
+
+
+def read_message() -> dict[str, Any] | None:
+    global output_mode
+
+    log("waiting_for_message")
+    first_line = sys.stdin.buffer.readline()
+    if not first_line:
+        log("stdin_eof")
+        return None
+
+    while first_line in (b"\r\n", b"\n"):
+        first_line = sys.stdin.buffer.readline()
+        if not first_line:
+            return None
+
+    if first_line.lstrip().startswith(b"{"):
+        output_mode = "line"
+        message = json.loads(first_line.decode("utf-8"))
+        log(f"read_line_json method={message.get('method')} id={message.get('id')}")
+        return message
+
+    headers: dict[str, str] = {}
+    line = first_line
+    while line not in (b"\r\n", b"\n", b""):
+        name, _, value = line.decode("utf-8").partition(":")
+        headers[name.lower()] = value.strip()
+        line = sys.stdin.buffer.readline()
+
+    content_length = int(headers.get("content-length", "0"))
+    if content_length <= 0:
+        return None
+
+    payload = sys.stdin.buffer.read(content_length)
+    message = json.loads(payload.decode("utf-8"))
+    log(f"read_framed_json method={message.get('method')} id={message.get('id')} length={content_length}")
+    return message
+
+
+def send_message(message: dict[str, Any]) -> None:
+    payload = json.dumps(message, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    if output_mode == "line":
+        sys.stdout.buffer.write(payload + b"\n")
+    else:
+        sys.stdout.buffer.write(f"Content-Length: {len(payload)}\r\n\r\n".encode("ascii"))
+        sys.stdout.buffer.write(payload)
+    sys.stdout.buffer.flush()
+    log(f"sent id={message.get('id')} keys={','.join(message.keys())}")
+
+
+def error_response(request_id: Any, message: str) -> dict[str, Any]:
+    return {
+        "jsonrpc": "2.0",
+        "id": request_id,
+        "error": {"code": -32000, "message": message},
+    }
+
+
+def main() -> int:
+    log("posthog-mcp-safe start")
+    while True:
+        message = read_message()
+        if message is None:
+            return 0
+
+        request_id = message.get("id")
+        method = message.get("method")
+
+        try:
+            response = remote_post(message)
+            if request_id is None:
+                continue
+
+            if response is None:
+                response = {"jsonrpc": "2.0", "id": request_id, "result": {}}
+            elif method == "tools/list":
+                response = sanitize_tools_list(response)
+
+            send_message(response)
+        except Exception as exc:  # noqa: BLE001 - this is an MCP boundary.
+            if request_id is None:
+                print(f"posthog-mcp-safe: {exc}", file=sys.stderr)
+                continue
+
+            send_message(error_response(request_id, str(exc)))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Deepnote MCP stdio proxy that removes legacy JSON Schema `id` keywords.
+
+Deepnote currently includes draft-04-style `id` keywords in some tool schemas.
+The MCP SDK used by OpenCode validates schemas with a newer AJV version, which
+rejects `id` and requires `$id`. The IDs are metadata and are not used by the
+schemas' local references, so removing them preserves the tool contracts while
+allowing OpenCode to load the tools.
+"""
+
+from __future__ import annotations
+
+import copy
+import json
+import os
+import sys
+import urllib.error
+import urllib.request
+from typing import Any
+
+
+REMOTE_URL = os.environ.get("DEEPNOTE_MCP_URL", "https://deepnote.com/mcp")
+PROTOCOL_VERSION = os.environ.get("MCP_PROTOCOL_VERSION", "2025-06-18")
+
+remote_session_id: str | None = None
+output_mode = "framed"
+
+
+def api_key() -> str:
+    value = os.environ.get("DEEPNOTE_API_KEY")
+    if not value:
+        raise RuntimeError("DEEPNOTE_API_KEY is not set")
+    return value
+
+
+def decode_sse(payload: str) -> dict[str, Any] | None:
+    for event in payload.split("\n\n"):
+        data_lines = [
+            line[5:].strip()
+            for line in event.splitlines()
+            if line.startswith("data:")
+        ]
+        if not data_lines:
+            continue
+
+        data = "\n".join(data_lines)
+        if data and data != "[DONE]":
+            return json.loads(data)
+
+    return None
+
+
+def remote_post(message: dict[str, Any]) -> dict[str, Any] | None:
+    global remote_session_id
+
+    headers = {
+        "Accept": "application/json, text/event-stream",
+        "Authorization": f"Bearer {api_key()}",
+        "Content-Type": "application/json",
+        "MCP-Protocol-Version": PROTOCOL_VERSION,
+    }
+    if remote_session_id:
+        headers["mcp-session-id"] = remote_session_id
+
+    request = urllib.request.Request(
+        REMOTE_URL,
+        data=json.dumps(message, separators=(",", ":")).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=90) as response:
+            session_header = response.headers.get("mcp-session-id")
+            if session_header:
+                remote_session_id = session_header
+
+            payload = response.read().decode("utf-8", errors="replace")
+            if response.status == 202 or not payload:
+                return None
+
+            if response.headers.get("content-type", "").startswith("text/event-stream"):
+                return decode_sse(payload)
+
+            return json.loads(payload)
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:1000]
+        raise RuntimeError(f"Deepnote MCP HTTP {exc.code}: {detail}") from exc
+
+
+SCHEMA_MAP_KEYS = {
+    "$defs",
+    "definitions",
+    "dependentSchemas",
+    "patternProperties",
+    "properties",
+}
+SCHEMA_ARRAY_KEYS = {"allOf", "anyOf", "oneOf", "prefixItems"}
+SCHEMA_KEYS = {
+    "additionalProperties",
+    "contains",
+    "contentSchema",
+    "else",
+    "if",
+    "items",
+    "not",
+    "propertyNames",
+    "then",
+    "unevaluatedProperties",
+}
+
+
+def strip_legacy_schema_ids(schema: Any) -> None:
+    if not isinstance(schema, dict):
+        return
+
+    schema.pop("id", None)
+
+    for key in SCHEMA_MAP_KEYS:
+        values = schema.get(key)
+        if not isinstance(values, dict):
+            continue
+        for child in values.values():
+            strip_legacy_schema_ids(child)
+
+    for key in SCHEMA_ARRAY_KEYS:
+        values = schema.get(key)
+        if not isinstance(values, list):
+            continue
+        for child in values:
+            strip_legacy_schema_ids(child)
+
+    for key in SCHEMA_KEYS:
+        child = schema.get(key)
+        if isinstance(child, list):
+            for item in child:
+                strip_legacy_schema_ids(item)
+        else:
+            strip_legacy_schema_ids(child)
+
+
+def sanitize_tools_list(response: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not response:
+        return response
+
+    result = response.get("result")
+    if not isinstance(result, dict) or not isinstance(result.get("tools"), list):
+        return response
+
+    patched = copy.deepcopy(response)
+    for tool in patched["result"]["tools"]:
+        if not isinstance(tool, dict):
+            continue
+        strip_legacy_schema_ids(tool.get("inputSchema"))
+        strip_legacy_schema_ids(tool.get("outputSchema"))
+
+    return patched
+
+
+def read_message() -> dict[str, Any] | None:
+    global output_mode
+
+    first_line = sys.stdin.buffer.readline()
+    if not first_line:
+        return None
+
+    while first_line in (b"\r\n", b"\n"):
+        first_line = sys.stdin.buffer.readline()
+        if not first_line:
+            return None
+
+    if first_line.lstrip().startswith(b"{"):
+        output_mode = "line"
+        return json.loads(first_line.decode("utf-8"))
+
+    headers: dict[str, str] = {}
+    line = first_line
+    while line not in (b"\r\n", b"\n", b""):
+        name, _, value = line.decode("utf-8").partition(":")
+        headers[name.lower()] = value.strip()
+        line = sys.stdin.buffer.readline()
+
+    content_length = int(headers.get("content-length", "0"))
+    if content_length <= 0:
+        return None
+
+    return json.loads(sys.stdin.buffer.read(content_length).decode("utf-8"))
+
+
+def send_message(message: dict[str, Any]) -> None:
+    payload = json.dumps(message, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    if output_mode == "line":
+        sys.stdout.buffer.write(payload + b"\n")
+    else:
+        sys.stdout.buffer.write(f"Content-Length: {len(payload)}\r\n\r\n".encode("ascii"))
+        sys.stdout.buffer.write(payload)
+    sys.stdout.buffer.flush()
+
+
+def error_response(request_id: Any, message: str) -> dict[str, Any]:
+    return {
+        "jsonrpc": "2.0",
+        "id": request_id,
+        "error": {"code": -32000, "message": message},
+    }
+
+
+def main() -> int:
+    while True:
+        message = read_message()
+        if message is None:
+            return 0
+
+        request_id = message.get("id")
+        method = message.get("method")
+
+        try:
+            response = remote_post(message)
+            if request_id is None:
+                continue
+
+            if response is None:
+                response = {"jsonrpc": "2.0", "id": request_id, "result": {}}
+            elif method == "tools/list":
+                response = sanitize_tools_list(response)
+
+            send_message(response)
+        except Exception as exc:  # noqa: BLE001 - this is an MCP boundary.
+            if request_id is None:
+                print(f"deepnote-mcp-safe: {exc}", file=sys.stderr)
+                continue
+            send_message(error_response(request_id, str(exc)))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
