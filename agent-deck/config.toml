@@ -1,44 +1,35 @@
-default_tool = "yolocode"
+# Agent Deck Configuration
+# All options: https://github.com/asheshgoplani/agent-deck/blob/main/skills/agent-deck/references/config-reference.md
+
+default_tool = "codex"
 theme = "dark"
 
+[codex]
+  command = "codex"
+  yolo_mode = true
+
+  [tools.claude-yolo]
+    command = "claude --dangerously-skip-permissions"
+    icon = "⚡"
+    busy_patterns = ["esc to interrupt", "esc interrupt", "thinking"]
+    prompt_patterns = ["What do you want to do?", "Try"]
+    detect_patterns = ["re:(?i)claude"]
+  [tools.yolocode]
+    command = "yolocode"
+    icon = "🌐"
+    busy_patterns = ["esc interrupt", "esc to exit", "thinking...", "generating...", "building tool call...", "waiting for tool response..."]
+    prompt_patterns = ["Ask anything", "press enter to send", "enter submit", "esc dismiss"]
+    detect_patterns = ["re:(?i)opencode", "Ask anything"]
+    spinner_chars = ["█", "▓", "▒", "░"]
+
+[ui]
+  hidden_tools = ["claude", "gemini", "opencode", "copilot", "crush", "cursor", "hermes", "pi", "aider"]
+
 [tmux]
-inject_status_line = false
+  inject_status_line = false
 
-[tools.yolocode]
-command = "yolocode"
-icon = "🌐"
-busy_patterns = [
-  "esc interrupt",
-  "esc to exit",
-  "thinking...",
-  "generating...",
-  "building tool call...",
-  "waiting for tool response...",
-]
-prompt_patterns = [
-  "Ask anything",
-  "press enter to send",
-  "enter submit",
-  "esc dismiss",
-]
-spinner_chars = ["█", "▓", "▒", "░"]
-detect_patterns = [
-  "re:(?i)opencode",
-  "Ask anything",
-]
+[fork]
+  worktree = false
 
-[tools.claude-yolo]
-command = "claude --dangerously-skip-permissions"
-icon = "⚡"
-busy_patterns = [
-  "esc to interrupt",
-  "esc interrupt",
-  "thinking",
-]
-prompt_patterns = [
-  "What do you want to do?",
-  "Try",
-]
-detect_patterns = [
-  "re:(?i)claude",
-]
+[feedback]
+  disabled = true
