@@ -4,3 +4,8 @@ test.sh
 tmux-client*
 node_modules/
 .mem-watch
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
