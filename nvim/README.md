@@ -102,6 +102,13 @@ Python (black), Go (gofmt), Rust (rustfmt), C/C++ (clang_format), Shell (shfmt),
 | alpha-nvim | Dashboard / start screen |
 | nvim-web-devicons | File type icons |
 
+The `darker` One Dark variant is loaded by default. Theme changes are scoped to
+the current Neovim process:
+
+- `:LightMode` — switch to the matching One Light theme
+- `:DarkMode` — switch back to the default darker theme
+- `:ToggleTheme` — toggle between them
+
 ### Other
 
 | Plugin | Purpose |
