@@ -5,3 +5,4 @@ fi
 
 source $HOME/.bashrc_macOS
 source $HOME/.bashrc
+. "$HOME/.cargo/env"

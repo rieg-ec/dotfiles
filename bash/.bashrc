@@ -90,7 +90,6 @@ fi
 
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-export TERM=screen-256color
 
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US:en
@@ -115,6 +114,8 @@ c17() {
   g++ -std=c++17 "$1";
   ./a.out < "$2";
 }
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # =============================================================================
 # PATH Configuration
@@ -146,6 +147,8 @@ export NVM_DIR="$HOME/.nvm"
 eval "$(nodenv init -)"
 eval "$(rbenv init - --no-rehash bash)"
 eval "$(jenv init -)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # nvim
 alias n="nvim"
@@ -162,6 +165,14 @@ alias gcf="git commit --fixup"
 alias gca="git commit --amend"
 alias grc="git rebase --continue"
 alias gpfl="git push --force-with-lease origin"
+
+_gpfl_completion() {
+  local cur prev words cword
+  _get_comp_words_by_ref -n =: cur words cword prev
+  __git_complete_refs --mode=heads
+}
+
+complete -o bashdefault -o default -o nospace -F _gpfl_completion gpfl
 alias gd="git diff"
 alias ga="git add"
 
@@ -173,12 +184,6 @@ export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.vscode,.sass-cache,node_mo
 
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '$HOME/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '$HOME/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '$HOME/Downloads/google-cloud-sdk/completion.bash.inc'; fi
 
 function print_all_files() {
   directory_path="$1"
@@ -230,14 +235,9 @@ grupalia_tunnel() {
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 alias sed='gsed'
-
-
-# claude
-export CLAUDE_CODE_EFFORT_LEVEL=max
 
 # opencode
 export PATH=/Users/rieg/.opencode/bin:$PATH
@@ -276,8 +276,9 @@ function cmem() {
   cd ~/cs/dotfiles && ./bin/mem-watch --once && cat /Users/rieg/.local/state/mem-watch/latest.txt
 }
 
-# pyenv: init LAST so its shims take precedence on PATH. brew shellenv (above) and other
-# later prepends would otherwise put Homebrew's python3 ahead of pyenv's shims, making
-# `pyenv global` a no-op. Keep this at the very end of the file.
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/rieg/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/rieg/Downloads/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/rieg/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/rieg/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+. "$HOME/.cargo/env"
