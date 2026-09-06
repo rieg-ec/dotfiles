@@ -205,6 +205,8 @@ function M.setup_general()
     require('gitsigns').diffthis()
     vim.cmd('wincmd h')
   end, { desc = 'Diff current file against index' })
+  map('n', '<Leader>vo', '<cmd>DiffviewOpen<CR>', { desc = 'Open Diffview' })
+  map('n', '<Leader>vc', '<cmd>DiffviewClose<CR>', { desc = 'Close Diffview' })
 
   -- Octo (PR review)
   map('n', '<Leader>op', ':Octo pr list<CR>', { desc = 'List PRs (Octo)' })

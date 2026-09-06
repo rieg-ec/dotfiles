@@ -82,7 +82,17 @@ require("diffview").setup({
     },
   },
   commit_log_panel = {
-    win_config = {},  -- See |diffview-config-win_config|
+    win_config = function()
+      local view = require("diffview.lib").get_current_view()
+
+      return {
+        type = "split",
+        position = "bottom",
+        relative = "win",
+        win = view and view.panel.winid or 0,
+        height = 10,
+      }
+    end,
   },
   default_args = {    -- Default args prepended to the arg-list for the listed commands
     DiffviewOpen = {},
@@ -103,6 +113,7 @@ require("diffview").setup({
       { "n", "<C-w>gf",     actions.goto_file_tab,                  { desc = "Open the file in a new tabpage" } },
       { "n", "<leader>E",   actions.focus_files,                    { desc = "Bring focus to the file panel" } },
       { "n", "<leader>b",   actions.toggle_files,                   { desc = "Toggle the file panel." } },
+      { "n", "L",           actions.open_commit_log,                { desc = "Open the commit log below the file panel" } },
       { "n", "g<C-x>",      actions.cycle_layout,                   { desc = "Cycle through available layouts." } },
       { "n", "[x",          actions.prev_conflict,                  { desc = "In the merge-tool: jump to the previous conflict" } },
       { "n", "]x",          actions.next_conflict,                  { desc = "In the merge-tool: jump to the next conflict" } },
