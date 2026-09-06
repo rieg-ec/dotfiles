@@ -117,6 +117,70 @@ c17() {
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+if command -v aws_completer >/dev/null 2>&1; then
+  complete -C "$(command -v aws_completer)" aws
+fi
+
+awsl() {
+  local choice action label account_name account_id role_name display_name
+  local login_command="aws sso login --profile "
+  local console_url
+
+  if ! command -v fzf >/dev/null 2>&1; then
+    echo "awsl: fzf is required" >&2
+    return 1
+  fi
+
+  choice=$(
+    {
+      printf '%s\t%s\n' \
+        login "AWS SSO login  ·  ${login_command}<profile>" \
+        console "management  ·  ps-admin"
+
+      while IFS=$'\t' read -r account_name account_id; do
+        printf 'role\t%s  ·  terraform-exec  ·  admin\t%s\tterraform-exec\t%s-admin\n' \
+          "$account_name" "$account_id" "$account_name"
+        printf 'role\t%s  ·  terraform-exec-plan  ·  metadata only\t%s\tterraform-exec-plan\t%s-plan\n' \
+          "$account_name" "$account_id" "$account_name"
+        printf 'role\t%s  ·  OrganizationAccountAccessRole  ·  recovery admin\t%s\tOrganizationAccountAccessRole\t%s-recovery\n' \
+          "$account_name" "$account_id" "$account_name"
+      done <<'AWS_ACCOUNTS'
+log-archive	707408839613
+security	975661984664
+staging	038040472188
+tooling	037918101356
+shared-services	286481516912
+sandbox	399311815863
+sbx-production	564623062795
+sbx-staging	016147628637
+sbx-shared-services	969325258324
+AWS_ACCOUNTS
+    } |
+      fzf --delimiter=$'\t' --with-nth=2 --prompt='AWS > ' \
+        --height=40% --layout=reverse --border
+  ) || return
+
+  IFS=$'\t' read -r action label account_id role_name display_name <<< "$choice"
+  case "$action" in
+    login)
+      printf '%s' "$login_command" | pbcopy
+      if command -v osascript >/dev/null 2>&1 &&
+        osascript -e 'tell application "System Events" to keystroke "v" using command down' >/dev/null 2>&1; then
+        return
+      fi
+      printf 'Copied to clipboard: %s\n' "$login_command"
+      ;;
+    console)
+      console_url="https://grupalia.awsapps.com/start/#/console?account_id=765298221931&role_name=ps-admin"
+      open "$console_url"
+      ;;
+    role)
+      console_url="https://signin.aws.amazon.com/switchrole?account=${account_id}&roleName=${role_name}&displayName=${display_name}"
+      open "$console_url"
+      ;;
+  esac
+}
+
 # =============================================================================
 # PATH Configuration
 # =============================================================================
