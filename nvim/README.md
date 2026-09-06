@@ -13,6 +13,7 @@ Native LSP setup with nvim-cmp for autocompletion. Leader key is `;`.
 Language-specific:
 - Ruby: solargraph + rubocop gems
 - Python: pyenv + black
+- Go: Go toolchain (gopls installs through Mason)
 - C/C++: LLVM/clangd (`brew install llvm`)
 - Rust: cargo
 
@@ -55,7 +56,7 @@ nvim +PlugInstall
 - **Web:** ts_ls, eslint, vue_ls, tailwindcss, html, cssls, jsonls
 - **Ruby:** solargraph, rubocop
 - **Python:** pyright
-- **Systems:** clangd, rust_analyzer
+- **Systems:** gopls, clangd, rust_analyzer
 - **Other:** yamlls, lua_ls
 
 ### Formatters (via conform.nvim)

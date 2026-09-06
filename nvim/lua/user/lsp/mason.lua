@@ -28,8 +28,8 @@ require("mason-lspconfig").setup({
     -- Python
     "pyright", -- Python
 
-    -- Go (uncomment if you write Go code)
-    -- "gopls",           -- Go
+    -- Go
+    "gopls", -- Go
 
     -- Rust
     "rust_analyzer", -- Rust
