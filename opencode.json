@@ -1,9 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "./plugins/reviewer.ts",
-    "opencode-claude-auth@latest",
-  ],
+  "plugin": [],
   "agent": {
     "build": {
       "enable1mContext": true
@@ -133,7 +130,6 @@
     "glob": "allow",
     "grep": "allow",
     "list": "allow",
-    "task": "allow",
     "skill": "allow",
     "todoread": "allow",
     "todowrite": "allow",
