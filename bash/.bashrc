@@ -124,6 +124,7 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export BUN_INSTALL="$HOME/.bun"
 
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/nvim/bin:$PATH"
 export PATH="$HOME/.nodenv/bin:$PATH"
