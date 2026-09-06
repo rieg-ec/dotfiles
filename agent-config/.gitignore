@@ -1,0 +1,9 @@
+/.agents/
+/.claude/
+/.codex/
+/.opencode/
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
+/opencode.json
+*.bak

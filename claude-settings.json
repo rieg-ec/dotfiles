@@ -3,6 +3,7 @@
     "commit": "",
     "pr": ""
   },
+  "autoMemoryEnabled": false,
   "permissions": {
     "allow": [
       "Bash(*)",

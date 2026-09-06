@@ -1,0 +1,30 @@
+default_agents = ["agentsmd", "claude", "codex", "opencode"]
+
+[mcp]
+enabled = true
+merge_strategy = "merge"
+
+[mcp_servers.basic-memory]
+command = "bm"
+args = ["mcp", "--project", "agent-memory"]
+
+[skills]
+enabled = true
+
+[gitignore]
+enabled = false
+
+[backup]
+enabled = true
+
+[agents.claude]
+enabled = true
+output_path = "CLAUDE.md"
+
+[agents.codex]
+enabled = true
+output_path = "AGENTS.md"
+output_path_config = ".codex/config.toml"
+
+[agents.opencode]
+enabled = true

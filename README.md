@@ -34,6 +34,13 @@ Lightweight macOS watchdog for runaway memory usage:
 - Includes terminal-child markers to identify shell processes launched from iTerm2
 - Reads required local settings from gitignored `.mem-watch`
 
+### Unified agent configuration (`agent-config/`)
+Ruler-managed configuration shared across Claude Code, Codex, and OpenCode:
+- Canonical global instructions with a portable `update memory` workflow
+- A `debug-production` skill for local-first Rails diagnosis and gated CloudWatch access
+- Basic Memory backed by the separate private repository `~/cs/agent-memory`
+- Claude Code native auto memory disabled in favor of Basic Memory
+
 ### Git (`.gitconfig`)
 - Delta pager with side-by-side diffs
 - zdiff3 merge conflict style
@@ -50,6 +57,7 @@ System defaults for keyboard, Finder, and trackpad.
 | `tmux_setup.sh` | Installs tpm and symlinks config |
 | `brew.sh` | Installs Homebrew packages |
 | `mem-watch-launchd` | Installs/uninstalls the memory watchdog LaunchAgent |
+| `agent-config/install.sh` | Installs Ruler and Basic Memory, generates adapters, and links global agent configuration |
 
 ## Installation
 
@@ -78,6 +86,7 @@ mem-watch --top --no-notify
 ```
 
 See [`docs/memory-watch.md`](docs/memory-watch.md) for thresholds and diagnosis tips.
+See [`agent-config/README.md`](agent-config/README.md) for unified agent instructions, skills, and long-term memory.
 
 ### Language tooling
 

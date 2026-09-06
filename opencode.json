@@ -7,6 +7,16 @@
     }
   },
   "mcp": {
+    "basic-memory": {
+      "type": "local",
+      "command": [
+        "bm",
+        "mcp",
+        "--project",
+        "agent-memory"
+      ],
+      "enabled": true
+    },
     "linear": {
       "type": "remote",
       "url": "https://mcp.linear.app/mcp",

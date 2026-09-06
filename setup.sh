@@ -41,6 +41,9 @@ ln -sf $dotfiles_dir/opencode/plugins $HOME/.config/opencode/plugins
 ln -sf $dotfiles_dir/opencode/commands $HOME/.config/opencode/commands
 ln -sf $dotfiles_dir/opencode/agents $HOME/.config/opencode/agents
 
+# # ================== unified agent config ===================
+$dotfiles_dir/agent-config/install.sh
+
 # # ================== agent-deck =============================
 mkdir -p $HOME/.agent-deck
 ln -sf $dotfiles_dir/agent-deck/config.toml $HOME/.agent-deck/config.toml

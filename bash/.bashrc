@@ -149,6 +149,7 @@ eval "$(jenv init -)"
 
 # nvim
 alias n="nvim"
+alias memory="bm"
 
 source ~/.bash-git-completion
 
