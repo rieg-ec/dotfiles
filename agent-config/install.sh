@@ -112,13 +112,6 @@ link_managed_file "$config_root/AGENTS.md" "$HOME/.codex/AGENTS.md"
 link_managed_file "$config_root/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 link_managed_file "$config_root/.ruler" "$HOME/.config/ruler"
 
-for skill_dir in "$config_root/.ruler/skills"/*; do
-  [[ -d "$skill_dir" ]] || continue
-  skill_name="$(basename "$skill_dir")"
-  link_managed_file "$skill_dir" "$HOME/.claude/skills/$skill_name"
-  link_managed_file "$skill_dir" "$HOME/.agents/skills/$skill_name"
-  link_managed_file "$skill_dir" "$HOME/.config/opencode/skills/$skill_name"
-done
 
 disable_claude_auto_memory
 

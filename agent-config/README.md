@@ -1,34 +1,21 @@
 # Unified agent configuration
 
-This directory is the canonical source for personal instructions and portable
-skills shared by Claude Code, Codex, OpenCode, and other Ruler targets.
+This directory is the canonical source for personal instructions shared by Claude Code, Codex, OpenCode, and other Ruler targets.
 
 ## Layout
 
 ```text
 .ruler/
 ├── AGENTS.md
-├── ruler.toml
-└── skills/
-    ├── debug-production/
-    │   └── SKILL.md
-    └── show-me/
-        └── SKILL.md
+└── ruler.toml
 ```
 
 - `.ruler/AGENTS.md` defines the technical explanation style, Basic Memory
   policy, and the exact **"update memory"** workflow.
-- `debug-production` investigates Rails issues locally first, uses a local
-  sandboxed Rails console when useful, and allows necessary read-only
-  production checks during an investigation. Production mutations require approval.
-- `show-me` uses concise diagrams, code-shape sketches, and focused HTML files
-  to explain technical topics. It comes from
-  [`humanlayer/skills`](https://github.com/humanlayer/skills) under the MIT
-  license.
 - `.ruler/ruler.toml` exposes Basic Memory as `bm mcp --project agent-memory`.
 
 Generated harness files are intentionally ignored. `install.sh` regenerates
-them before linking the global instruction and skill locations.
+them before linking the global instruction locations.
 
 ## Install or refresh
 
@@ -41,7 +28,7 @@ The installer:
 1. Installs Ruler, uv, and Basic Memory when missing.
 2. Registers `~/cs/agent-memory` as Basic Memory project `agent-memory`.
 3. Runs Ruler for Claude Code, Codex, OpenCode, and `AGENTS.md`.
-4. Links global instructions and the canonical skills into each harness.
+4. Links global instructions into each harness.
 5. Registers Basic Memory globally with installed Claude Code and Codex CLIs.
 6. Disables Claude Code native auto memory while preserving other settings.
 
@@ -83,3 +70,6 @@ ruler apply --agents agentsmd,claude,codex,opencode --no-gitignore
 
 Ruler writes project-local instruction, skill, and MCP adapters. Review the
 diff before committing generated project files.
+
+Personal skills live outside this repository, in `~/.agents/skills/<name>`,
+with a symlink in `~/.claude/skills/<name>`.
