@@ -387,3 +387,5 @@ if [ -f '/Users/rieg/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/rieg/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/rieg/Downloads/google-cloud-sdk/completion.bash.inc'; fi
 . "$HOME/.cargo/env"
+
+alias clauded='claude --dangerously-skip-permissions'
