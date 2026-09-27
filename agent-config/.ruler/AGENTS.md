@@ -13,7 +13,20 @@
 - Add a comment only when the behaviour is really non-trivial to understand
   from the code alone.
 - A comment must give the non-trivial reason — a subtle bug or a constraint
-  the code cannot show. Never describe what the code does.
+  the code cannot show. Never describe what the code does without saying why.
+- Write it the way you would explain it to a teammate: plain words, whole
+  sentences, and "we" for our own decisions. Say what we do, then why.
+- Name the thing you mean ("the rule above", "the Role tag"). Do not let an
+  abstract noun do the work ("the deny keys on", "the lock to match").
+
+  ```text
+  Stiff:   The deny keys on the Role tag, so the tag is locked on a running
+           bastion.
+  Natural: The rule above finds the bastion by its Role tag, so we also deny
+           changes to that tag. Otherwise, someone could remove the tag and
+           then use Run Command.
+  ```
+
 - Write for a reader who has only the code. They did not see the chat,
   the PR, the review, or the incident.
 - State the constraint that the code cannot show, in the present tense.
