@@ -12,9 +12,18 @@
 
 - Add a comment only when the behaviour is really non-trivial to understand
   from the code alone.
-- A comment must give the non-trivial reason — a subtle bug, a constraint the
-  code cannot show, a change to an old decision. Never describe what the code
-  does.
+- A comment must give the non-trivial reason — a subtle bug or a constraint
+  the code cannot show. Never describe what the code does.
+- Write for a reader who has only the code. They did not see the chat,
+  the PR, the review, or the incident.
+- State the constraint that the code cannot show, in the present tense.
+  Do not tell how you found it.
+- Put history in the commit body: dates, metrics and their source,
+  incidents, rejected options, earlier versions of the code.
+- Do not refer to things the reader cannot see: "as discussed",
+  "per review", "the old approach", "now", "no longer", "instead of".
+- Test: if the comment would not be true or clear in one year with no
+  git history, move it to the commit body.
 
 ## Technical explanations
 
