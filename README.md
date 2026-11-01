@@ -41,6 +41,12 @@ Ruler-managed configuration shared across Claude Code, Codex, and OpenCode:
 - Basic Memory backed by the separate private repository `~/cs/agent-memory`
 - Claude Code native auto memory disabled in favor of Basic Memory
 
+### Open in Sheets (`open-in-sheets/`)
+macOS app that opens `.xlsx` files from Finder in Google Sheets:
+- Uploads the file to Google Drive as a Google Sheet with `gws`
+- Opens the sheet in the browser
+- Is the default app for `.xlsx` files
+
 ### Git (`.gitconfig`)
 - Delta pager with side-by-side diffs
 - zdiff3 merge conflict style
@@ -58,6 +64,7 @@ System defaults for keyboard, Finder, and trackpad.
 | `brew.sh` | Installs Homebrew packages |
 | `mem-watch-launchd` | Installs/uninstalls the memory watchdog LaunchAgent |
 | `agent-config/install.sh` | Installs Ruler and Basic Memory, generates adapters, and links global agent configuration |
+| `open-in-sheets/install.sh` | Builds the Open in Sheets app and sets it as the default app for `.xlsx` files |
 
 ## Installation
 
@@ -87,6 +94,7 @@ mem-watch --top --no-notify
 
 See [`docs/memory-watch.md`](docs/memory-watch.md) for thresholds and diagnosis tips.
 See [`agent-config/README.md`](agent-config/README.md) for unified agent instructions, skills, and long-term memory.
+See [`open-in-sheets/README.md`](open-in-sheets/README.md) for the Google sign-in step that Open in Sheets needs.
 
 ### Language tooling
 
