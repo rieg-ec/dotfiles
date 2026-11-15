@@ -14,15 +14,15 @@ install_prerequisites() {
     npm install -g @intellectronica/ruler
   fi
 
-  if ! command -v bm >/dev/null 2>&1; then
-    local python_path="/opt/homebrew/bin/python3.12"
-    if [[ ! -x "$python_path" ]]; then
-      brew install python@3.12
-    fi
-
+  # We run bm instead of only looking it up, because the bm script stays on
+  # PATH after the Python under it is removed.
+  if ! bm --version >/dev/null 2>&1; then
     # Basic Memory needs a Python build whose sqlite3 supports loadable
     # extensions. pyenv's default macOS builds commonly omit that support.
-    if ! uv tool install --python "$python_path" basic-memory; then
+    # We also avoid Homebrew's Python: the tool breaks when Homebrew removes
+    # a versioned formula such as python@3.12. So we let uv manage it.
+    local uv_python=(--python 3.12 --python-preference only-managed)
+    if ! uv tool install --reinstall "${uv_python[@]}" basic-memory; then
       uv tool uninstall basic-memory >/dev/null 2>&1 || true
 
       if [[ ! -x "$HOME/.cargo/bin/rustup" ]]; then
@@ -31,7 +31,7 @@ install_prerequisites() {
       fi
       "$HOME/.cargo/bin/rustup" update stable
       PATH="$HOME/.cargo/bin:$PATH" \
-        uv tool install --python "$python_path" basic-memory
+        uv tool install --reinstall "${uv_python[@]}" basic-memory
     fi
   fi
 }
