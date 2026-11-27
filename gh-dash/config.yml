@@ -3,7 +3,7 @@
 
 prSections:
   - title: "By project"
-    filters: "org:grupalia repo:grupalia/grupalia-rails repo:grupalia/grupalia-rn repo:grupalia/promoters project:grupalia/4"
+    filters: "org:grupalia repo:grupalia/monorepo repo:grupalia/grupalia-org project:grupalia/4"
   - title: "My PRs"
     filters: "is:open author:@me"
   - title: "Review follow-up"
@@ -12,18 +12,12 @@ prSections:
       -author:@me
       reviewed-by:@me
       updated:>={{ nowModify "-3d" }}
-      repo:grupalia/rn-ui-kit
-      repo:grupalia/grupalia-rn
-      repo:grupalia/promoters
-      repo:grupalia/grupalia-rails
-  - title: "Rails"
-    filters: "is:open repo:grupalia/grupalia-rails"
-  - title: "Customers"
-    filters: "is:open repo:grupalia/grupalia-rn"
-  - title: "Promoters"
-    filters: "is:open repo:grupalia/promoters"
-  - title: "UI Kit"
-    filters: "is:open repo:grupalia/rn-ui-kit"
+      repo:grupalia/monorepo
+      repo:grupalia/grupalia-org
+  - title: "Monorepo"
+    filters: "is:open repo:grupalia/monorepo"
+  - title: "Org"
+    filters: "is:open repo:grupalia/grupalia-org"
   - title: "AI Kool-Aid"
     filters: "is:open repo:grupalia/ai-kool-aid"
   - title: "Other repos"
@@ -40,18 +34,14 @@ notificationsSections:
     filters: >-
       is:unread
       reason:comment
-      repo:grupalia/rn-ui-kit
-      repo:grupalia/grupalia-rn
-      repo:grupalia/promoters
-      repo:grupalia/grupalia-rails
+      repo:grupalia/monorepo
+      repo:grupalia/grupalia-org
   - title: "Review activity"
     filters: >-
       is:unread
       reason:participating
-      repo:grupalia/rn-ui-kit
-      repo:grupalia/grupalia-rn
-      repo:grupalia/promoters
-      repo:grupalia/grupalia-rails
+      repo:grupalia/monorepo
+      repo:grupalia/grupalia-org
   - title: "All"
     filters: ""
   - title: "Created"
@@ -70,10 +60,8 @@ notificationsSections:
     filters: "reason:team-mention"
 
 repoPaths:
-  grupalia/grupalia-rails: ~/cs/grupalia/dev/grupalia-rails
-  grupalia/grupalia-rn: ~/cs/grupalia/dev/grupalia-rn
-  grupalia/promoters: ~/cs/grupalia/dev/promoters
-  grupalia/rn-ui-kit: ~/cs/grupalia/dev/rn-ui-kit
+  grupalia/monorepo: ~/cs/grupalia/dev/monorepo
+  grupalia/grupalia-org: ~/cs/grupalia/dev/grupalia-org
   grupalia/ai-kool-aid: ~/cs/grupalia/dev/ai-kool-aid
   rieg-ec/octo.nvim: ~/cs/octo.nvim
 
