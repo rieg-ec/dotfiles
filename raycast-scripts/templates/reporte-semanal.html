@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporte semanal</title>
+<style>
+  :root {
+    --bg: #f6f7fb; --card: #fff; --text: #1d1f27; --muted: #6b7083; --border: #e2e4ee;
+    --accent: #5b5bd6; --accent-text: #fff; --input: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15161c; --card: #1e2029; --text: #e8e9f0; --muted: #9a9db0; --border: #2f3240;
+      --accent: #8b8bf5; --accent-text: #111; --input: #171820;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; max-width: 1400px; margin: 0 auto; padding: 20px; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  h3 { font-size: 14px; margin: 14px 0 6px; }
+  .card > h3:first-child { margin-top: 0; }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+  input, select, textarea { width: 100%; font: inherit; color: var(--text); background: var(--input); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; }
+  textarea { min-height: 64px; resize: vertical; }
+  .row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .kpi { display: grid; grid-template-columns: minmax(0, 2fr) 64px minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: end; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+  .kpi:last-child { border-bottom: 0; }
+  .kpi .name { font-size: 13px; }
+  .kpi .meta { font-size: 11px; color: var(--muted); }
+  .hint { font-size: 11px; color: var(--muted); }
+  .sticky { position: sticky; top: 20px; align-self: start; }
+  .preview { max-height: calc(100vh - 140px); overflow: auto; }
+  .preview ul { padding-left: 20px; margin: 4px 0 10px; }
+  .preview p { margin: 4px 0; }
+  .actions { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+  button { font: inherit; border-radius: 6px; padding: 8px 14px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
+  #status { font-size: 12px; color: var(--muted); }
+  .tabs { display: flex; gap: 8px; max-width: 1400px; margin: 0 auto; padding: 20px 20px 0; }
+</style>
+</head>
+<body>
+<div class="tabs" id="tabs"></div>
+<div class="layout">
+  <div>
+    <div class="card">
+      <h1 id="areaTitle"></h1>
+      <div class="hint">En los campos de texto, cada línea es un bullet. El borrador se guarda solo.</div>
+      <div class="row">
+        <div><label>Semana</label><input id="week"></div>
+        <div><label>Semáforo de KPIs</label>
+          <select id="semaforo">
+            <option>🟢 Verde — en meta</option>
+            <option selected>🟡 Amarillo — atención</option>
+            <option>🔴 Rojo — fuera de meta</option>
+          </select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>KPIs</h2>
+      <div id="kpis"></div>
+      <label>Comentarios KPIs</label><textarea id="kpiComments"></textarea>
+    </div>
+
+    <div id="objectives"></div>
+  </div>
+
+  <div class="sticky">
+    <div class="actions">
+      <button class="primary" id="copy">Copiar para Mute</button>
+      <button id="copyKpis">Copiar KPIs</button>
+      <button id="clear">Limpiar</button>
+      <span id="status"></span>
+    </div>
+    <div class="card preview" id="preview"></div>
+  </div>
+</div>
+
+<script>
+const COLORS = ["🟢", "🟡", "🔴"];
+
+const AVANCES = ["Avanzando bien 👍", "En riesgo ⚠️", "Bajo progreso 🙁", "Mal progreso 📉", "Sin avances 😕"];
+
+const AREAS = {
+  producto: {
+    tab: "Producto", title: "Reporte semanal · Product & Engineering", header: "PRODUCT & ENGINEERING", label: "Producto", storagePrefix: "",
+    kpis: [
+      { id: "productividad", short: "Productividad comercial mensualizada", name: "Productividad comercial mensualizada (KPI clave)", unit: "MDP", decimals: 3,
+        goal: "$1.4M/mes", monthly: { 10: "$1.312M", 11: "$1.468M", 12: "$1.413M" } },
+      { id: "coord35", short: "# coordinaciones con cartera > $3.5M", name: "Coordinaciones con cartera > $3.5M", decimals: 0, goal: "≥38" },
+      { id: "nivel2", short: "# de asesores nivel 2 o más", name: "Asesores de nivel ≥2 y ≥3, por coordinación", decimals: 0 },
+      { id: "universo", short: "# asesores elegibles", name: "Universo de asesores flexibles calificados para nivel 2", decimals: 0 },
+      { id: "draws", short: "# draws línea revolvente", name: "Línea revolvente, draws totales", decimals: 0, goal: "100" },
+    ],
+    objectives: [
+      { id: "o1", title: "[Objetivo prioridad #1] · Lograr productividad promedio de +$1.4M/mes",
+        initiatives: [
+          { id: "i1", title: "#1 · Cobranza por WhatsApp y llamadas" },
+          { id: "i2", title: "#2 · Controles de asistencia de coordinadores a desembolsos" },
+          { id: "i3", title: "#3 · Controles de originación de asesores flexibles" },
+        ] },
+      { id: "o2", title: "[Objetivo prioridad #2] · Lanzar la primera versión de la línea revolvente antes del 31-dic-2026 y alcanzar 100 draws totales",
+        initiatives: [] },
+      { id: "otros", title: "[Otros]", hint: "Trabajo que no está ligado a los objetivos", avance: false, initiatives: [] },
+    ],
+  },
+  growth: {
+    tab: "Growth", title: "Reporte semanal · Growth", header: "GROWTH", label: "Growth", storagePrefix: "growth_",
+    kpis: [
+      { id: "cumplimiento", short: "% de cumplimiento colocación C1", name: "% de cumplimiento colocación C1 (KPI clave)", unit: "%", decimals: 1, goal: "100%" },
+      { id: "nuevos", short: "# asesores nuevos en la semana", name: "# asesores nuevos en la semana", decimals: 0,
+        goal: "290", monthly: { 10: "120", 11: "90", 12: "80" } },
+      { id: "mob1", short: "Activación MOB1 cohort activo", name: "Activación MOB1 cohort activo", unit: "%", decimals: 1, goal: ">36%" },
+      { id: "referidos", short: "$ de colocación C1 por referidos", name: "$ de colocación C1 por referidos", unit: "MDP", decimals: 2, goal: "$19.5M" },
+    ],
+    objectives: [
+      { id: "o1", title: "[Objetivo prioridad #1] · Lograr $114M MXN en colocación C1 Flexibles",
+        initiatives: [
+          { id: "i1", title: "#1 · Aumentar colocación C1 por cohorte de asesores flexibles" },
+          { id: "i2", title: "#2 · Lograr >36% de activación MOB1 de asesores" },
+          { id: "i3", title: "#3 · Adquisición de 290 asesores flexibles" },
+          { id: "i4", title: "#4 · Aumentar C1 por referidos de clientes con asesores flexibles" },
+        ] },
+      { id: "otros", title: "[Otros]", hint: "Trabajo que no está ligado a los objetivos", avance: false, initiatives: [] },
+    ],
+  },
+};
+
+let area;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const lines = (s) => s.split("\n").map((l) => l.replace(/^\s*[-•*]\s*/, "").trim()).filter(Boolean);
+
+function store(key, value) {
+  try { if (value === undefined) return JSON.parse(localStorage.getItem(key)); localStorage.setItem(key, JSON.stringify(value)); }
+  catch { return null; }
+}
+
+function isoWeek(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+  return `${t.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+function avanceSelect(id) {
+  return `<select id="${id}">${AVANCES.map((a) => `<option>${a}</option>`).join("")}</select>`;
+}
+
+function buildForm() {
+  $("kpis").innerHTML = area.kpis.map((k) => `
+    <div class="kpi">
+      <div><div class="name">${k.name}</div><div class="meta">${kpiGoals(k)}</div></div>
+      <div><label>Color</label><select id="kpic_${k.id}">${COLORS.map((c) => `<option>${c}</option>`).join("")}</select></div>
+      <div><label>Valor${k.unit ? ` (${k.unit})` : ""}</label><input id="kpi_${k.id}" inputmode="decimal"></div>
+      <div><label>Δ semana</label><input id="kpid_${k.id}" inputmode="decimal"></div>
+    </div>`).join("");
+
+  $("objectives").innerHTML = area.objectives.map((o) => `
+    <div class="card">
+      <h3>${o.title}</h3>
+      ${o.hint ? `<div class="hint">${o.hint}</div>` : ""}
+      ${o.avance === false ? "" : `<label>Avance</label>${avanceSelect(`${o.id}_avance`)}`}
+      <label>Detalle</label><textarea id="${o.id}_text"></textarea>
+      ${o.initiatives.map((i) => `
+        <h3>${i.title}</h3>
+        <label>Avance</label>${avanceSelect(`${i.id}_avance`)}
+        <label>Detalle</label><textarea id="${i.id}_text"></textarea>`).join("")}
+    </div>`).join("");
+}
+
+const fields = () => [...document.querySelectorAll("input, select, textarea")];
+
+const num = (s) => parseFloat(s.replace(",", "."));
+
+// Returns the weekly change as a number, or as the raw text when the Δ field
+// holds something that is not a number.
+function kpiDelta(k) {
+  const typed = $(`kpid_${k.id}`).value.trim();
+  if (!typed) return null;
+  return isNaN(num(typed)) ? typed : num(typed);
+}
+
+function kpiGoals(k) {
+  const month = k.monthly && k.monthly[new Date().getMonth() + 1];
+  return [month && `meta del mes ${month}`, k.goal && `meta Q4 ${k.goal}`].filter(Boolean).join(" · ");
+}
+
+function kpiValue(k) {
+  const raw = $(`kpi_${k.id}`).value.trim();
+  if (raw && k.unit === "MDP") return `$${raw} MDP`;
+  if (raw && k.unit === "%") return `${raw}%`;
+  return raw;
+}
+
+const deltaSuffix = (k) => (k.unit === "%" ? "%" : "");
+const signedDelta = (k, d) => `${d > 0 ? "+" : ""}${Number(d.toFixed(k.decimals))}${deltaSuffix(k)}`;
+
+function kpiLine(k) {
+  const d = kpiDelta(k);
+  let text = kpiValue(k) || "…";
+  if (typeof d === "number") text += ` (${d > 0 ? "▲" : d < 0 ? "▼" : "="} ${Math.abs(d).toFixed(k.decimals)}${deltaSuffix(k)})`;
+  else if (d) text += ` (${d})`;
+  const goals = kpiGoals(k);
+  return `<li><strong>${k.name}:</strong> ${esc(text + (goals ? ` · ${goals}` : ""))}</li>`;
+}
+
+function renderKpis() {
+  const rows = area.kpis.filter((k) => kpiValue(k)).map((k) => {
+    const d = kpiDelta(k);
+    let text = kpiValue(k);
+    if (typeof d === "number") text += ` (${signedDelta(k, d)} respecto a la semana pasada)`;
+    else if (d) text += ` (${d} respecto a la semana pasada)`;
+    const goals = kpiGoals(k);
+    if (goals) text += ` · ${goals}`;
+    return `<p>${$(`kpic_${k.id}`).value} <strong>${k.short}:</strong> ${esc(text)}</p>`;
+  });
+  return `<p><strong>[${area.label}]</strong></p><p></p><p>📊 <strong>KPIs</strong></p>${rows.join("")}`;
+}
+
+function bullets(text) {
+  const items = lines(text);
+  return items.length ? `<ul>${items.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>` : "";
+}
+
+function render() {
+  const week = $("week").value.trim();
+  let html = `<p><strong>${esc(area.header)} · ${esc(week)}</strong></p>`;
+  html += `<p><strong>Semáforo de KPIs:</strong> ${$("semaforo").value}</p><p></p>`;
+  html += `<p><strong>[KPIs reportados]</strong></p><ul>${area.kpis.map(kpiLine).join("")}</ul>`;
+  const comments = bullets($("kpiComments").value);
+  if (comments) html += `<p><strong>[Comentarios KPIs]</strong></p>${comments}`;
+
+  for (const o of area.objectives) {
+    const detail = bullets($(`${o.id}_text`).value);
+    if (o.avance === false && !detail) continue;
+    html += `<p></p><p><strong>${esc(o.title)}</strong></p>`;
+    if (o.avance !== false) html += `<p>Avance: ${$(`${o.id}_avance`).value}</p>`;
+    html += detail;
+    for (const i of o.initiatives) {
+      html += `<p><strong>${esc(i.title)}</strong> — Avance: ${$(`${i.id}_avance`).value}</p>${bullets($(`${i.id}_text`).value)}`;
+    }
+  }
+
+  $("preview").innerHTML = html;
+  store(`${area.storagePrefix}draft`, Object.fromEntries(fields().map((f) => [f.id, f.value])));
+  return html;
+}
+
+async function copyHtml(html) {
+  const holder = document.createElement("div");
+  holder.innerHTML = html;
+  holder.style.cssText = "position: fixed; left: -9999px;";
+  document.body.appendChild(holder);
+  try {
+    await navigator.clipboard.write([new ClipboardItem({
+      "text/html": new Blob([html], { type: "text/html" }),
+      "text/plain": new Blob([holder.innerText], { type: "text/plain" }),
+    })]);
+  } catch {
+    // Some browsers block the async clipboard API on file:// pages. Selecting
+    // the rendered HTML and using execCommand still copies it as rich text.
+    const range = document.createRange();
+    range.selectNodeContents(holder);
+    const sel = getSelection();
+    sel.removeAllRanges(); sel.addRange(range);
+    document.execCommand("copy");
+    sel.removeAllRanges();
+  }
+  holder.remove();
+  $("status").textContent = "Copiado ✓ — pégalo en Mute con ⌘V";
+  setTimeout(() => ($("status").textContent = ""), 4000);
+}
+
+function resetFields() {
+  for (const f of fields()) f.tagName === "SELECT" ? (f.selectedIndex = 0) : (f.value = "");
+  $("semaforo").selectedIndex = 1;
+  $("week").value = isoWeek(new Date());
+}
+
+function setArea(id) {
+  area = AREAS[id];
+  store("area", id);
+  $("areaTitle").textContent = area.title;
+  for (const b of $("tabs").children) b.classList.toggle("primary", b.dataset.area === id);
+  buildForm();
+  resetFields();
+  const draft = store(`${area.storagePrefix}draft`) || {};
+  for (const f of fields()) if (f.id !== "week" && draft[f.id] != null) f.value = draft[f.id];
+  render();
+}
+
+// The drafts live in Chrome's localStorage, which nothing outside the browser can
+// write. To load KPIs from outside, we open the form with "#prefill=<base64 JSON>"
+// and copy that into localStorage once. The JSON holds one { draft, keepText } per
+// area. keepText merges into the saved draft, so a correction to the numbers does
+// not erase what was already written.
+if (location.hash.startsWith("#prefill=")) {
+  const bytes = Uint8Array.from(atob(location.hash.slice("#prefill=".length)), (c) => c.charCodeAt(0));
+  for (const [id, { draft, keepText }] of Object.entries(JSON.parse(new TextDecoder().decode(bytes)))) {
+    const key = `${AREAS[id].storagePrefix}draft`;
+    store(key, keepText ? { ...(store(key) || {}), ...draft } : draft);
+  }
+  window.history.replaceState(null, "", location.pathname);
+}
+
+$("tabs").innerHTML = Object.entries(AREAS).map(([id, a]) => `<button data-area="${id}">${a.tab}</button>`).join("");
+$("tabs").addEventListener("click", (e) => e.target.dataset.area && setArea(e.target.dataset.area));
+document.addEventListener("input", render);
+$("copy").addEventListener("click", () => copyHtml(render()));
+$("copyKpis").addEventListener("click", () => copyHtml(renderKpis()));
+$("clear").addEventListener("click", () => {
+  if (!confirm("¿Borrar el borrador?")) return;
+  resetFields();
+  render();
+});
+setArea(store("area") || "producto");
+</script>
+</body>
+</html>
