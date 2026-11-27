@@ -389,3 +389,4 @@ if [ -f '/Users/rieg/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '
 . "$HOME/.cargo/env"
 
 alias clauded='claude --dangerously-skip-permissions'
+alias opencode='opencode2'
