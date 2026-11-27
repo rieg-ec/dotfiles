@@ -157,6 +157,12 @@ A name:     headers := relayedHeaders(response.Header)
 - Use the `show-me` skill when the user asks for a visual explanation or
   says **"show me"**.
 
+## Work that you give to a different agent
+
+- The brief MUST point to this file. It MUST NOT weaken a rule: do not write
+  "add a comment if it is necessary".
+- You MUST review the work with these rules, as you review your own.
+
 ## Long-term memory
 
 Basic Memory project `agent-memory` is the canonical long-term memory store.
