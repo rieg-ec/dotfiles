@@ -133,7 +133,10 @@ A name:     headers := relayedHeaders(response.Header)
 
 - Prefer concise visual forms over long prose.
 - Pick the smallest form that makes the point clear: pseudocode, call tree,
-  component tree, file tree, Mermaid diagram, type signature, or diff.
+  component tree, file tree, diagram, type signature, or diff.
+- Do not write Mermaid source in a chat reply. The chat shows it as raw text.
+  When a diagram helps, render it as an SVG with an inline visual tool (for
+  example `show_widget`) so the reader sees the picture.
 - Use the `show-me` skill when the user asks for a visual explanation or says
   **"show me"**.
 - Do not run `calldiff`.
