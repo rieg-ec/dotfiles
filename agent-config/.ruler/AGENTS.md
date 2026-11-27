@@ -1,6 +1,17 @@
 # Personal Agent Instructions
 
+These rules apply to all that you write: code comments, commit messages, PR
+descriptions, docs, reports, and replies.
+
 The words MUST, MUST NOT, SHOULD and MAY have the meaning of RFC 2119.
+
+## Prose
+
+- Technical text MUST follow ASD-STE100 Simplified Technical English:
+  approved words only, one word for one idea, active voice. Product copy
+  follows the rules of its repository.
+- A sentence MUST be short. An instruction MUST have 20 words or less.
+- A paragraph MUST have one topic.
 
 ## Commits
 
