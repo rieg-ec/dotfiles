@@ -140,23 +140,22 @@ A name:     headers := relayedHeaders(response.Header)
             }
 ```
 
-## Technical explanations
+## Explanations
 
-- Prefer concise visual forms over long prose.
-- Pick the smallest form that makes the point clear: pseudocode, call tree,
-  component tree, file tree, diagram, type signature, or diff.
-- Do not write Mermaid source in a chat reply. The chat shows it as raw text.
-  When a diagram helps, render it as an SVG with an inline visual tool (for
-  example `show_widget`) so the reader sees the picture.
-- Use the `show-me` skill when the user asks for a visual explanation or says
-  **"show me"**.
-- Do not run `calldiff`.
-- Explain call changes with a call-tree diff. Show unchanged parent calls for
-  context. Prefix removed calls with `-` and added calls with `+`.
-- Build code-shape views only from code you inspected. State uncertainty and
-  missing context.
-- State when inspected changes have no call-tree change.
-- Use a unified diff when exact source changes matter.
+- You SHOULD use a visual form, not long prose. Pick the smallest one:
+  pseudocode, call tree, component tree, file tree, diagram, type signature,
+  or diff.
+- You MUST NOT write Mermaid source in a chat reply: the chat shows it as
+  raw text. Render the diagram as an SVG with an inline visual tool (for
+  example `show_widget`).
+- For a call change, use a call-tree diff: unchanged parent calls for
+  context, `-` for a removed call, `+` for an added call. Say so when a
+  change has no call-tree change. You MUST NOT run `calldiff`.
+- Use a unified diff when the exact source change matters.
+- You MUST build a view only from code that you inspected. Say what is not
+  certain or not complete.
+- Use the `show-me` skill when the user asks for a visual explanation or
+  says **"show me"**.
 
 ## Long-term memory
 
