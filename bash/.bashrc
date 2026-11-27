@@ -374,7 +374,7 @@ optimize_video() {
   fi
 
   ffmpeg -hide_banner -n -i "$input" \
-    -map 0:v:0 -map '0:a?' \
+    -map 0:v:0 -map '0:a:0?' \
     -vf "fps=30,scale='min(1920,iw)':'min(1920,ih)':force_original_aspect_ratio=decrease:force_divisible_by=2" \
     -c:v libx264 -preset medium -crf 25 -pix_fmt yuv420p \
     -c:a aac -b:a 128k \
