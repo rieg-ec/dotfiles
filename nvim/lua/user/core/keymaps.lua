@@ -153,13 +153,17 @@ function M.setup_general()
 
   -- Toggle between source and RSpec file
   map('n', '<Leader>s', function()
-    local path = vim.fn.expand('%:.')
+    -- The Rails app is not always the working directory (in the monorepo it is
+    -- rails/), so we build the path from the nearest Gemfile.
+    local file = vim.fn.expand('%:p')
+    local root = vim.fs.root(file, 'Gemfile') or vim.fn.getcwd()
+    local path = file:sub(#root + 2)
     local target
 
     if path:match('_spec%.rb$') then
       -- Spec -> source
       target = path:gsub('^spec/lib/', 'lib/'):gsub('^spec/', 'app/'):gsub('_spec%.rb$', '.rb')
-      if vim.fn.filereadable(target) == 0 then
+      if vim.fn.filereadable(root .. '/' .. target) == 0 then
         -- Try lib/ if app/ doesn't exist
         target = path:gsub('^spec/', 'lib/'):gsub('_spec%.rb$', '.rb')
       end
@@ -167,6 +171,7 @@ function M.setup_general()
       -- Source -> spec
       target = path:gsub('^app/', 'spec/'):gsub('^lib/', 'spec/lib/'):gsub('%.rb$', '_spec.rb')
     end
+    target = root .. '/' .. target
 
     if vim.fn.filereadable(target) == 1 then
       vim.cmd('vsplit ' .. target)
