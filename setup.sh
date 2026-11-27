@@ -48,6 +48,10 @@ $dotfiles_dir/agent-config/install.sh
 mkdir -p $HOME/.agent-deck
 ln -sf $dotfiles_dir/agent-deck/config.toml $HOME/.agent-deck/config.toml
 
+# # ================== rex ====================================
+mkdir -p $HOME/.config/rex
+ln -sf $dotfiles_dir/rex/init.lua $HOME/.config/rex/init.lua
+
 # # ================== local bin ==============================
 mkdir -p $HOME/.local/bin
 ln -sf $dotfiles_dir/bin/yolocode $HOME/.local/bin/yolocode
