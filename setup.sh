@@ -60,6 +60,7 @@ ln -sf $dotfiles_dir/bin/expose_files $HOME/.local/bin/expose_files
 ln -sf $dotfiles_dir/bin/posthog-mcp-safe $HOME/.local/bin/posthog-mcp-safe
 ln -sf $dotfiles_dir/bin/mem-watch $HOME/.local/bin/mem-watch
 ln -sf $dotfiles_dir/bin/mem-watch-launchd $HOME/.local/bin/mem-watch-launchd
+ln -sf $dotfiles_dir/bin/rex-monorepo $HOME/.local/bin/rex-monorepo
 
 # # ================== memory watch ===========================
 if [ -f "$dotfiles_dir/.mem-watch" ]; then

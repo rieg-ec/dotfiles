@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+rex="/Applications/Rex.app/Contents/Helpers/Rex Server.rex/Contents/MacOS/rex"
+label=monorepo
+monorepo="$HOME/cs/grupalia/dev/monorepo"
+rails="$monorepo/rails"
+mobile="$monorepo/mobile"
+
+if "$rex" ls --json | jq -e --arg label "$label" '.. | objects | select(.label? == $label)' >/dev/null; then
+  echo "Rex already has a session named $label." >&2
+  exit 1
+fi
+
+new_block() { jq -er '.block_ids[0]'; }
+
+run_in() {
+  "$rex" send -s "$session" -b "$1" "$2"
+  "$rex" send-key -s "$session" -b "$1" enter
+}
+
+created=$("$rex" new "$label" -c "$rails" --window Dev --json)
+session=$(jq -er '.session_id' <<<"$created")
+vite=$(jq -er '.initial_windows[0].block_ids[0]' <<<"$created")
+
+promoters=$("$rex" split -s "$session" -b "$vite" --split=right --ratio 50 -c "$mobile/promoters" --focus=false --json | new_block)
+server=$("$rex" split -s "$session" -b "$vite" --split=below --ratio 85 -c "$rails" --focus=false --json | new_block)
+tunnel=$("$rex" split -s "$session" -b "$vite" --split=right --ratio 50 -c "$rails" --focus=false --json | new_block)
+"$rex" split -s "$session" -b "$server" --split=below --ratio 35 -c "$rails" --focus=false --json >/dev/null
+"$rex" split -s "$session" -b "$promoters" --split=below --ratio 50 -c "$mobile/customers" --focus=false --json >/dev/null
+
+run_in "$vite" "bin/vite dev"
+run_in "$tunnel" "dev_tunnel"
+run_in "$server" "bin/rails s"
+
+claude=$("$rex" window new -s "$session" Claude -c "$monorepo" --focus=false --json | new_block)
+editor=$("$rex" window new -s "$session" Editor -c "$monorepo" --focus=false --json | new_block)
+run_in "$claude" "claude"
+run_in "$editor" "nvim"
+
+echo "Created Rex session $label. Open it from the session picker."
