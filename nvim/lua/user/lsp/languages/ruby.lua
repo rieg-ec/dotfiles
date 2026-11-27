@@ -39,6 +39,11 @@ vim.lsp.config('ruby_lsp', {
     formatter = 'none',
     -- Diagnostics come from the separate rubocop --lsp server below
     linters = {},
+    addonSettings = {
+      ['Ruby LSP Rails'] = {
+        enablePendingMigrationsPrompt = false,
+      },
+    },
   },
 })
 vim.lsp.enable('ruby_lsp')
